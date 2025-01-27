@@ -2,7 +2,7 @@ package org.dataintegration.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.MappedItemNotFoundException;
+import org.dataintegration.exception.runtime.MappedItemNotFoundException;
 import org.dataintegration.jpa.entity.MappedItemEntity;
 import org.dataintegration.jpa.entity.MappingEntity;
 import org.dataintegration.jpa.repository.JpaMappedItemRepository;

@@ -1,8 +1,8 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.ProjectForbiddenException;
-import org.dataintegration.exception.ProjectNotFoundException;
+import org.dataintegration.exception.runtime.ProjectForbiddenException;
+import org.dataintegration.exception.runtime.ProjectNotFoundException;
 import org.dataintegration.jpa.entity.ProjectEntity;
 import org.dataintegration.jpa.repository.JpaProjectRepository;
 import org.springframework.data.domain.Page;

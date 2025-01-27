@@ -2,7 +2,7 @@ package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.cache.DataIntegrationCache;
-import org.dataintegration.exception.CheckpointNotFoundException;
+import org.dataintegration.exception.runtime.CheckpointNotFoundException;
 import org.dataintegration.jpa.entity.CheckpointEntity;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.jpa.repository.JpaCheckpointBatchRepository;

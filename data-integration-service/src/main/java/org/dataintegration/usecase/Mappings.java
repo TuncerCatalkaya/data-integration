@@ -1,14 +1,14 @@
 package org.dataintegration.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ArrayUtils;
-import org.dataintegration.exception.MappingValidationException;
+import org.dataintegration.exception.runtime.MappingValidationException;
 import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.ItemEntity;
 import org.dataintegration.jpa.entity.MappedItemEntity;
 import org.dataintegration.jpa.entity.MappingEntity;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.mapper.MappingMapper;
+import org.dataintegration.model.HeaderModel;
 import org.dataintegration.model.ItemStatusModel;
 import org.dataintegration.model.MappingModel;
 import org.dataintegration.service.HostsService;
@@ -23,10 +23,13 @@ import org.dataintegration.usecase.model.CreateOrUpdateMappingsRequestModel;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 class Mappings implements MappingsMethods {
@@ -46,8 +49,9 @@ class Mappings implements MappingsMethods {
         final ScopeEntity scopeEntity = scopesService.getAndCheckIfScopeFinished(scopeId);
         final UUID mappingId = createOrUpdateMappingsRequest.getMappingId();
         final Map<String, String[]> mapping = createOrUpdateMappingsRequest.getMapping();
-        final String[] headers =
-                ArrayUtils.addAll(scopeEntity.getHeaders(), scopeEntity.getExtraHeaders().toArray(String[]::new));
+        final LinkedHashSet<HeaderModel> headers = scopeEntity.getHeaders().stream()
+                .filter(Predicate.not(HeaderModel::isHidden))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         mappingsService.validateMapping(mappingId, mapping, headers);
         final DatabaseEntity databaseEntity = hostsService.getDatabase(createOrUpdateMappingsRequest.getDatabaseId());
         final MappingEntity mappingEntity = (mappingId != null) ? mappingsService.get(mappingId) : getNewMappingEntity();

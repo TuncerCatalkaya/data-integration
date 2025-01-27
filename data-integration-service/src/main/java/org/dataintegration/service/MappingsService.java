@@ -1,10 +1,11 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.MappingNotFoundException;
-import org.dataintegration.exception.MappingValidationException;
+import org.dataintegration.exception.runtime.MappingNotFoundException;
+import org.dataintegration.exception.runtime.MappingValidationException;
 import org.dataintegration.jpa.entity.MappingEntity;
 import org.dataintegration.jpa.repository.JpaMappingRepository;
+import org.dataintegration.model.HeaderModel;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -50,19 +51,19 @@ public class MappingsService {
         jpaMappingRepository.saveAll(mappingEntities);
     }
 
-    public void validateMapping(UUID mappingId, Map<String, String[]> mapping, String[] headers) {
+    public void validateMapping(UUID mappingId, Map<String, String[]> mapping, Set<HeaderModel> headers) {
         final String errorPrefix = "Mapping with id " + mappingId + " ";
         validateSources(errorPrefix, mapping, headers);
         validateTargets(errorPrefix, mapping);
     }
 
-    private void validateSources(String errorPrefix, Map<String, String[]> mapping, String[] headers) {
+    private void validateSources(String errorPrefix, Map<String, String[]> mapping, Set<HeaderModel> headers) {
         final Set<String> sources = mapping.keySet();
-        if (sources.size() != headers.length) {
+        if (sources.size() != headers.size()) {
             throw new MappingValidationException(errorPrefix + "has a different size of source mappings than available headers.");
         }
-        for (String header : headers) {
-            if (!sources.contains(header)) {
+        for (HeaderModel header : headers) {
+            if (!sources.contains(header.getName())) {
                 throw new MappingValidationException(errorPrefix + "has source mappings that are different to the original headers.");
             }
         }

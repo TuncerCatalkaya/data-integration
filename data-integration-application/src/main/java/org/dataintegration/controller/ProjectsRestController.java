@@ -2,6 +2,8 @@ package org.dataintegration.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.dataintegration.exception.checked.ScopeHeaderValidationException;
+import org.dataintegration.model.HeaderModel;
 import org.dataintegration.model.ItemModel;
 import org.dataintegration.model.MappedItemModel;
 import org.dataintegration.model.MappingModel;
@@ -12,9 +14,9 @@ import org.dataintegration.usecase.ProjectsUsecase;
 import org.dataintegration.usecase.model.ApplyMappingRequestModel;
 import org.dataintegration.usecase.model.ApplyUnmappingRequestModel;
 import org.dataintegration.usecase.model.CreateOrUpdateMappingsRequestModel;
+import org.dataintegration.usecase.model.CreateOrUpdateScopeHeadersRequestModel;
 import org.dataintegration.usecase.model.CreateProjectsRequestModel;
 import org.dataintegration.usecase.model.CurrentCheckpointStatusResponseModel;
-import org.dataintegration.usecase.model.GetScopeHeadersResponseModel;
 import org.dataintegration.usecase.model.UpdateItemPropertiesRequestModel;
 import org.dataintegration.usecase.model.UpdateProjectsRequestModel;
 import org.dataintegration.utils.DataIntegrationUtils;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Tag(name = "/projects")
@@ -80,13 +83,6 @@ public class ProjectsRestController {
     }
 
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
-    @PostMapping("/{projectId}/scopes/{scopeId}/extra-header")
-    public void addExtraHeader(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId, @PathVariable UUID scopeId,
-                               @RequestParam String extraHeader) {
-        projectsUsecase.getScopesMethods().addExtraHeader(projectId, scopeId, extraHeader, DataIntegrationUtils.getJwtUserId(jwt));
-    }
-
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @PostMapping("/{projectId}/mappings/apply-map")
     public void applyMapping(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                              @RequestBody ApplyMappingRequestModel applyMappingRequest) {
@@ -118,6 +114,17 @@ public class ProjectsRestController {
     }
 
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PutMapping("/{projectId}/scopes/{scopeId}/headers")
+    public Set<HeaderModel> createOrUpdateScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
+                                                                 @PathVariable UUID scopeId, @RequestBody
+                                                                 CreateOrUpdateScopeHeadersRequestModel createOrUpdateScopeHeadersRequest)
+            throws ScopeHeaderValidationException {
+        return projectsUsecase.getScopesMethods()
+                .createOrUpdateScopeHeaders(projectId, scopeId, createOrUpdateScopeHeadersRequest,
+                        DataIntegrationUtils.getJwtUserId(jwt));
+    }
+
+    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @PutMapping("/{projectId}/items/{itemId}/properties/{key}")
     public ItemModel updateItemProperty(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                         @PathVariable UUID itemId, @PathVariable String key, @RequestParam String newValue) {
@@ -128,8 +135,8 @@ public class ProjectsRestController {
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @PutMapping("/{projectId}/items/bulk/properties/{key}")
     public void updateItemProperties(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
-                                   @RequestBody UpdateItemPropertiesRequestModel updateItemPropertiesRequest,
-                                   @PathVariable String key, @RequestParam String newValue) {
+                                     @RequestBody UpdateItemPropertiesRequestModel updateItemPropertiesRequest,
+                                     @PathVariable String key, @RequestParam String newValue) {
         projectsUsecase.getItemsMethods().updateItemProperties(projectId, updateItemPropertiesRequest, key, newValue,
                 DataIntegrationUtils.getJwtUserId(jwt));
     }
@@ -171,16 +178,16 @@ public class ProjectsRestController {
     }
 
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
-    @GetMapping("/{projectId}/scopes/{scopeId}/headers")
-    public GetScopeHeadersResponseModel getScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
-                                                        @PathVariable UUID scopeId) {
-        return projectsUsecase.getScopesMethods().getScopeHeaders(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
-    }
-
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @GetMapping("/{projectId}/scopes")
     public List<ScopeModel> getScopes(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId) {
         return projectsUsecase.getScopesMethods().getAllScopes(projectId, DataIntegrationUtils.getJwtUserId(jwt));
+    }
+
+    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @GetMapping("/{projectId}/scopes/{scopeId}/headers")
+    public Set<HeaderModel> getScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
+                                            @PathVariable UUID scopeId) {
+        return projectsUsecase.getScopesMethods().getScopeHeaders(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
@@ -235,14 +242,6 @@ public class ProjectsRestController {
     public void markMappingForDeletion(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                        @PathVariable UUID mappingId) {
         projectsUsecase.getMappingsMethods().markMappingForDeletion(projectId, mappingId, DataIntegrationUtils.getJwtUserId(jwt));
-    }
-
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
-    @DeleteMapping("/{projectId}/scopes/{scopeId}/extra-header")
-    public void removeExtraHeader(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId, @PathVariable UUID scopeId,
-                                  @RequestParam String extraHeader) {
-        projectsUsecase.getScopesMethods()
-                .removeExtraHeader(projectId, scopeId, extraHeader, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
 }

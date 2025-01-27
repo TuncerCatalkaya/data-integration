@@ -2,26 +2,30 @@ package org.dataintegration.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.dataintegration.exception.BucketNotFoundException;
-import org.dataintegration.exception.CheckpointNotFoundException;
-import org.dataintegration.exception.DataIntegrationException;
-import org.dataintegration.exception.DatabaseNotFoundException;
-import org.dataintegration.exception.DuplicateHostException;
 import org.dataintegration.exception.FileTypeNotSupportedException;
-import org.dataintegration.exception.HostNotFoundException;
 import org.dataintegration.exception.InvalidDelimiterException;
 import org.dataintegration.exception.InvalidUUIDException;
-import org.dataintegration.exception.ItemNotFoundException;
 import org.dataintegration.exception.KeyNotFoundException;
-import org.dataintegration.exception.MappedItemNotFoundException;
-import org.dataintegration.exception.MappingNotFoundException;
-import org.dataintegration.exception.MappingValidationException;
-import org.dataintegration.exception.ProjectForbiddenException;
-import org.dataintegration.exception.ProjectNotFoundException;
-import org.dataintegration.exception.ScopeNotFinishedException;
-import org.dataintegration.exception.ScopeNotFoundException;
-import org.dataintegration.exception.ScopeValidationException;
 import org.dataintegration.exception.TagNotFoundException;
+import org.dataintegration.exception.checked.DataIntegrationCheckedException;
+import org.dataintegration.exception.checked.ScopeHeaderValidationException;
+import org.dataintegration.exception.runtime.CheckpointNotFoundException;
+import org.dataintegration.exception.runtime.DataIntegrationRuntimeException;
+import org.dataintegration.exception.runtime.DatabaseNotFoundException;
+import org.dataintegration.exception.runtime.DuplicateHostException;
+import org.dataintegration.exception.runtime.HostNotFoundException;
+import org.dataintegration.exception.runtime.ItemNotFoundException;
+import org.dataintegration.exception.runtime.MappedItemNotFoundException;
+import org.dataintegration.exception.runtime.MappingNotFoundException;
+import org.dataintegration.exception.runtime.MappingValidationException;
+import org.dataintegration.exception.runtime.ProjectForbiddenException;
+import org.dataintegration.exception.runtime.ProjectNotFoundException;
+import org.dataintegration.exception.runtime.ScopeNotFinishedException;
+import org.dataintegration.exception.runtime.ScopeNotFoundException;
+import org.dataintegration.exception.runtime.ScopeValidationException;
+import org.dataintegration.service.ExceptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,11 +35,15 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionRestControllerAdvice {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private static final Map<List<Class<? extends DataIntegrationException>>, HttpStatus> EXCEPTION_STATUS_MAPPING = Map.of(
+    private final ExceptionService exceptionService;
+
+    private static final Map<List<Class<? extends DataIntegrationRuntimeException>>, HttpStatus>
+            RUNTIME_EXCEPTION_STATUS_MAPPING = Map.of(
             List.of(
                     ProjectNotFoundException.class,
                     ScopeNotFoundException.class,
@@ -60,14 +68,24 @@ public class ExceptionRestControllerAdvice {
             ), HttpStatus.CONFLICT
     );
 
-    @ExceptionHandler(DataIntegrationException.class)
-    ResponseEntity<String> handleUserServiceException(DataIntegrationException ex) throws JsonProcessingException {
-        final HttpStatus status = EXCEPTION_STATUS_MAPPING.entrySet().stream()
-                .filter(entry -> entry.getKey().contains(ex.getClass()))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(ex.getMessage()), status);
+    private static final Map<List<Class<? extends DataIntegrationCheckedException>>, HttpStatus>
+            CHECKED_EXCEPTION_STATUS_MAPPING = Map.of(
+            List.of(ScopeHeaderValidationException.class), HttpStatus.CONFLICT
+    );
+
+    @ExceptionHandler({DataIntegrationRuntimeException.class, DataIntegrationCheckedException.class})
+    ResponseEntity<String> handleDataIntegrationException(Exception ex) throws JsonProcessingException {
+        HttpStatus status;
+
+        if (ex instanceof DataIntegrationRuntimeException runtimeException) {
+            status = exceptionService.mapStatus(runtimeException, RUNTIME_EXCEPTION_STATUS_MAPPING);
+        } else if (ex instanceof DataIntegrationCheckedException checkedException) {
+            status = exceptionService.mapStatus(checkedException, CHECKED_EXCEPTION_STATUS_MAPPING);
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(OBJECT_MAPPER.writeValueAsString(ex.getMessage()), status);
     }
 
 }

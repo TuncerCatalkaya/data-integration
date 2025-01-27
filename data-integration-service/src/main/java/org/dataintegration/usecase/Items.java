@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.jpa.entity.ItemEntity;
 import org.dataintegration.mapper.ItemMapper;
+import org.dataintegration.model.HeaderModel;
 import org.dataintegration.model.ItemModel;
 import org.dataintegration.model.ItemPropertiesModel;
 import org.dataintegration.service.ItemsService;
@@ -17,9 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -46,12 +47,12 @@ class Items implements ItemsMethods {
         }
     }
 
-    public Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, boolean filterMappedItems, String header,
-                                       String search, String createdBy, Pageable pageable) {
+    public Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, boolean filterMappedItems,
+                                       String searchHeader, String searchText, String createdBy, Pageable pageable) {
         projectsService.isPermitted(projectId, createdBy);
-        final LinkedList<String> extraHeaders = scopesService.getAndCheckIfScopeFinished(scopeId).getExtraHeaders();
+        final Set<HeaderModel> headers = scopesService.getAndCheckIfScopeFinished(scopeId).getHeaders();
         final Page<ItemEntity> itemEntityPage =
-                itemsService.getAll(scopeId, mappingId, filterMappedItems, header, search, pageable);
+                itemsService.getAll(scopeId, mappingId, filterMappedItems, searchHeader, searchText, pageable);
 
         final Map<UUID, List<UUID>> itemToMappingsMap =
                 mappedItemsService.getItemWithMappings(itemEntityPage.stream()
@@ -61,9 +62,9 @@ class Items implements ItemsMethods {
         final List<ItemModel> items = itemEntityPage.stream()
                 .map(itemMapper::itemEntityToItem)
                 .map(item -> {
-                    for (String extraHeader : extraHeaders) {
-                        if (item.getProperties().get(extraHeader) == null) {
-                            item.getProperties().put(extraHeader, ItemPropertiesModel.builder()
+                    for (HeaderModel header : headers) {
+                        if (item.getProperties().get(header.getName()) == null) {
+                            item.getProperties().put(header.getName(), ItemPropertiesModel.builder()
                                     .value("")
                                     .build());
                         }

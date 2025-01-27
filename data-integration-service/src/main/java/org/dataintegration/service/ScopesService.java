@@ -2,22 +2,22 @@ package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.cache.DataIntegrationCache;
-import org.dataintegration.exception.ScopeNotFinishedException;
-import org.dataintegration.exception.ScopeNotFoundException;
-import org.dataintegration.exception.ScopeValidationException;
+import org.dataintegration.exception.checked.ScopeHeaderValidationException;
+import org.dataintegration.exception.runtime.ScopeNotFinishedException;
+import org.dataintegration.exception.runtime.ScopeNotFoundException;
 import org.dataintegration.jpa.entity.ProjectEntity;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.jpa.repository.JpaScopeRepository;
+import org.dataintegration.model.HeaderModel;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -67,29 +67,20 @@ public class ScopesService {
         jpaScopeRepository.finish(scopeId);
     }
 
-    public void updateHeaders(UUID scopeId, String[] headers) {
+    public void updateHeaders(UUID scopeId, Set<HeaderModel> headers) {
         jpaScopeRepository.updateHeaders(scopeId, headers);
     }
 
-    public void addExtraHeader(UUID scopeId, String extraHeader) {
-        if (!StringUtils.hasText(extraHeader)) {
-            throw new ScopeValidationException("Extra Header has no text.");
+    public void validateHeaders(Set<HeaderModel> headers) throws ScopeHeaderValidationException {
+        if (CollectionUtils.isEmpty(headers)) {
+            throw new ScopeHeaderValidationException("No scope headers provided, headers are empty.");
         }
-        final ScopeEntity scopeEntity = get(scopeId);
-        final LinkedList<String> extraHeaders = scopeEntity.getExtraHeaders();
-        final boolean duplicated = Stream.concat(extraHeaders.stream(), Arrays.stream(scopeEntity.getHeaders()))
-                .anyMatch(header -> header.equals(extraHeader));
-        if (duplicated) {
-            throw new ScopeValidationException();
-        }
-        extraHeaders.add(extraHeader);
-        jpaScopeRepository.save(scopeEntity);
-    }
 
-    public void removeExtraHeader(UUID scopeId, String extraHeader) {
-        final ScopeEntity scopeEntity = get(scopeId);
-        scopeEntity.getExtraHeaders().remove(extraHeader);
-        jpaScopeRepository.save(scopeEntity);
+        for (HeaderModel header : headers) {
+            if (!StringUtils.hasText(header.getName())) {
+                throw new ScopeHeaderValidationException("Header '" + header.getName() + "' has no text.");
+            }
+        }
     }
 
     public void markForDeletion(UUID scopeId) {

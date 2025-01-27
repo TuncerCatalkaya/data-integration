@@ -13,16 +13,19 @@ import {
     PaperProps,
     Select,
     SelectChangeEvent,
+    Stack,
     TextField,
-    Tooltip
+    Tooltip,
+    Typography
 } from "@mui/material"
 import Draggable from "react-draggable"
-import { Check, Close, ViewColumn } from "@mui/icons-material"
-import { ChangeEvent, useState } from "react"
-import { ProjectsApi } from "../../../../features/projects/projects.api"
-import { useSnackbar } from "notistack"
+import {Edit, ViewColumn} from "@mui/icons-material"
+import {ChangeEvent, useState} from "react"
+import {ProjectsApi} from "../../../../features/projects/projects.api"
+import {useSnackbar} from "notistack"
 import theme from "../../../../theme"
-import { useParams } from "react-router-dom"
+import {useParams} from "react-router-dom"
+import useShake from "../../../../components/shake/hooks/useShake";
 
 interface BulkEditDialogProps {
     open: boolean
@@ -45,6 +48,8 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
     const [newValue, setNewValue] = useState<string>("")
     const [updateItemProperties] = ProjectsApi.useUpdateItemPropertiesMutation()
     const { enqueueSnackbar } = useSnackbar()
+
+    const { handleShakeClick, shakeSx } = useShake();
 
     const closeDialog = (shouldReload = false) => {
         bulkEditDialogProps.handleClickClose(shouldReload)
@@ -69,7 +74,7 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
         if (event.key === "Enter") {
             event.preventDefault()
             if (header !== "select" && newValue) {
-                // backend call
+                await handleClickBulkEdit()
             }
         }
     }
@@ -77,12 +82,21 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
     return (
         <Dialog
             open={bulkEditDialogProps.open}
-            onClose={() => closeDialog()}
+            onClose={handleShakeClick}
             aria-labelledby="bulk-edit-dialog"
             PaperComponent={PaperComponent}
             sx={{ zIndex: theme.zIndex.modal }}
         >
-            <DialogTitle sx={{ cursor: "move" }}>{"Bulk edit currently shown items of a column"}</DialogTitle>
+            <DialogTitle sx={{ cursor: "move" }}>
+                <Stack spacing={1}>
+                    <Stack direction="row" display="flex" justifyContent="space-between">
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <Edit />
+                            <Typography variant="h6">{"Bulk edit currently shown items of a column"}</Typography>
+                        </Stack>
+                    </Stack>
+                </Stack>
+            </DialogTitle>
             <DialogContent>
                 <Box margin={1}>
                     <Tooltip title={header} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
@@ -122,11 +136,11 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" color="error" onClick={() => closeDialog()} startIcon={<Close />}>
-                    {"Cancel"}
+                <Button variant="contained" disabled={header === "select" || !newValue} onClick={handleClickBulkEdit}>
+                    {"Submit"}
                 </Button>
-                <Button variant="contained" disabled={header === "select" || !newValue} onClick={handleClickBulkEdit} endIcon={<Check />}>
-                    {"Accept"}
+                <Button variant="contained" color="error" onClick={() => closeDialog()} sx={shakeSx}>
+                    {"Cancel"}
                 </Button>
             </DialogActions>
         </Dialog>

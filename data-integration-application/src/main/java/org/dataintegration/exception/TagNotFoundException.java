@@ -1,7 +1,8 @@
 package org.dataintegration.exception;
 
 import lombok.experimental.StandardException;
+import org.dataintegration.exception.runtime.DataIntegrationRuntimeException;
 
 @StandardException
-public class TagNotFoundException extends DataIntegrationException {
+public class TagNotFoundException extends DataIntegrationRuntimeException {
 }

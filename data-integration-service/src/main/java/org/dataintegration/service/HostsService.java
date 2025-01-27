@@ -1,8 +1,8 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.DatabaseNotFoundException;
-import org.dataintegration.exception.DuplicateHostException;
+import org.dataintegration.exception.runtime.DatabaseNotFoundException;
+import org.dataintegration.exception.runtime.DuplicateHostException;
 import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
 import org.dataintegration.jpa.repository.JpaDatabaseRepository;

@@ -20,7 +20,6 @@ entity scope {
     * external : boolean
     * delete : boolean
     headers : jsonb
-    hiddenHeaders : jsonb
     * project_id : uuid <<FK>>
 }
 

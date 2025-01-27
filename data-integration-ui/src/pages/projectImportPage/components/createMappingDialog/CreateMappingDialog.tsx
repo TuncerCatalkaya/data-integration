@@ -7,7 +7,6 @@ import {
     FormControl,
     IconButton,
     InputLabel,
-    keyframes,
     List,
     ListItem,
     ListItemButton,
@@ -25,21 +24,22 @@ import {
 } from "@mui/material"
 import Draggable from "react-draggable"
 import theme from "../../../../theme"
-import { useTranslation } from "react-i18next"
-import { FixedSizeList } from "react-window"
-import { Add, Delete, Edit, Input, Output, Transform } from "@mui/icons-material"
-import { ChangeEvent, CSSProperties, FC, useCallback, useEffect, useRef, useState } from "react"
+import {useTranslation} from "react-i18next"
+import {FixedSizeList} from "react-window"
+import {Add, Delete, Edit, Input, Output, Transform} from "@mui/icons-material"
+import {ChangeEvent, CSSProperties, FC, useCallback, useEffect, useRef, useState} from "react"
 import CreateOrEditHostDialog from ".././createOrEditHostDialog/CreateOrEditHostDialog"
-import { HostsApi } from "../../../../features/hosts/hosts.api"
-import { Host } from "../../../../features/hosts/hosts.types"
+import {HostsApi} from "../../../../features/hosts/hosts.api"
+import {Host} from "../../../../features/hosts/hosts.types"
 import useConfirmationDialog from "../../../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../../../components/confirmationDialog/ConfirmationDialog"
-import { ProjectsApi } from "../../../../features/projects/projects.api"
-import { useParams } from "react-router-dom"
-import { v4 as uuidv4 } from "uuid"
-import { CreateOrUpdateMappingsRequest, MappingResponse } from "../../../../features/projects/projects.types"
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
-import { useSnackbar } from "notistack"
+import {ProjectsApi} from "../../../../features/projects/projects.api"
+import {useParams} from "react-router-dom"
+import {v4 as uuidv4} from "uuid"
+import {CreateOrUpdateMappingsRequest, MappingResponse} from "../../../../features/projects/projects.types"
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
+import {useSnackbar} from "notistack"
+import useShake from "../../../../components/shake/hooks/useShake";
 
 interface CreateMappingDialogProps {
     open: boolean
@@ -55,15 +55,6 @@ function PaperComponent(props: PaperProps) {
         </Draggable>
     )
 }
-
-const shakeAnimation = keyframes`
-    0% { transform: translate(0, 0); }
-    20% { transform: translate(-5px, -3px); }
-    40% { transform: translate(5px, 3px); }
-    60% { transform: translate(-5px, -3px); }
-    80% { transform: translate(5px, 3px); }
-    100% { transform: translate(0, 0); }
-`
 
 interface MappingsInput {
     id: string
@@ -100,17 +91,12 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
 
     const { openConfirmationDialog, handleClickCloseConfirmationDialog, handleClickOpenConfirmationDialog } = useConfirmationDialog()
 
-    const [shake, setShake] = useState(false)
-
+    const { handleShakeClick, shakeSx } = useShake();
+    
     const { enqueueSnackbar } = useSnackbar()
 
     const translation = useTranslation()
-
-    const handleBackdropClick = () => {
-        setShake(true)
-        setTimeout(() => setShake(false), 500)
-    }
-
+    
     const handleClickOpenCreateHostDialog = () => {
         setIsEditMode(false)
         setOpenCreateOrEditHostDialog(true)
@@ -191,10 +177,10 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
             setHost(mappingToEdit.database.host.id)
             setDatabase(mappingToEdit.database.id)
         }
-        const mappings = getScopeHeadersResponse.headers.concat(getScopeHeadersResponse.extraHeaders).map(scopeHeader => ({
+        const mappings = getScopeHeadersResponse.map(scopeHeader => ({
             id: uuidv4(),
-            header: scopeHeader,
-            values: (mappingToEdit?.mapping[scopeHeader] ?? [scopeHeader]).map(value => ({
+            header: scopeHeader.name,
+            values: (mappingToEdit?.mapping[scopeHeader.name] ?? [scopeHeader.name]).map(value => ({
                 id: uuidv4(),
                 value
             }))
@@ -325,7 +311,7 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
             )}
             <Dialog
                 open={open}
-                onClose={handleBackdropClick}
+                onClose={handleShakeClick}
                 aria-labelledby="create-mapping-dialog"
                 PaperComponent={PaperComponent}
                 sx={{ zIndex: theme.zIndex.modal }}
@@ -525,17 +511,10 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" disabled={submitButtonDisabled} onClick={handleClickSubmit}>
-                        Submit
+                        {"Submit"}
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleClickClose()}
-                        sx={{
-                            animation: shake ? `${shakeAnimation} 0.5s ease` : "none"
-                        }}
-                    >
-                        Cancel
+                    <Button variant="contained" color="error" onClick={() => handleClickClose()} sx={shakeSx}>
+                        {"Cancel"}
                     </Button>
                 </DialogActions>
             </Dialog>

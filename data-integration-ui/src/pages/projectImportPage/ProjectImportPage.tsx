@@ -21,35 +21,35 @@ import {
     Tooltip,
     Typography
 } from "@mui/material"
-import { useParams } from "react-router-dom"
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react"
-import { ProjectsApi } from "../../features/projects/projects.api"
-import { useSnackbar } from "notistack"
+import {useParams} from "react-router-dom"
+import React, {ChangeEvent, useCallback, useEffect, useState} from "react"
+import {ProjectsApi} from "../../features/projects/projects.api"
+import {useSnackbar} from "notistack"
 import FileBrowserDialog from "../projectPage/components/dialogs/FileBrowserDialog"
-import { Add, ArrowDropDown, Bolt, Clear, Cloud, CloudDownload, Delete, Edit, FileDownload, Link, Remove, Search } from "@mui/icons-material"
+import {Add, Bolt, Clear, Cloud, CloudDownload, Delete, Edit, FileDownload, Link, Search} from "@mui/icons-material"
 import {
     GetCurrentCheckpointStatusResponse,
-    GetScopeHeadersResponse,
     ItemResponse,
     MappingResponse,
+    ScopeHeaderResponse,
     ScopeResponse
 } from "../../features/projects/projects.types"
 import usePagination from "../../components/pagination/hooks/usePagination"
 import ItemsTable from "./components/itemsTable/ItemsTable"
 import theme from "../../theme"
-import { ColDef } from "ag-grid-community"
+import {ColDef} from "ag-grid-community"
 import useConfirmationDialog from "../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../components/confirmationDialog/ConfirmationDialog"
-import { useAppDispatch, useAppSelector } from "../../store/store"
+import {useAppDispatch, useAppSelector} from "../../store/store"
 import GenerateScopeKey from "../../utils/GenerateScopeKey"
 import GetFrontendEnvironment from "../../utils/GetFrontendEnvironment"
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
 import ImportDataDialog from "./components/importDataDialog/ImportDataDialog"
 import CreateMappingDialog from "./components/createMappingDialog/CreateMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
-import AddHeaderDialog from "./components/addHeaderDialog/AddHeaderDialog"
-import RemoveHeaderDialog from "./components/removeHeaderDialog/RemoveHeaderDialog"
 import BulkEditDialog from "./components/bulkEditDialog/BulkEditDialog"
+import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog";
+import GetScopeHeaders from "../../utils/GetScopeHeaders";
 
 export default function ProjectImportPage() {
     const { projectId } = useParams()
@@ -66,8 +66,7 @@ export default function ProjectImportPage() {
 
     const [openFileBrowserDialog, setOpenFileBrowserDialog] = useState(false)
 
-    const [openAddHeaderDialog, setOpenAddHeaderDialog] = useState(false)
-    const [openRemoveHeaderDialog, setOpenRemoveHeaderDialog] = useState(false)
+    const [openEditHeaderDialog, setOpenEditHeaderDialog] = useState(false)
 
     const [openBulkEditDialog, setOpenBulkEditDialog] = useState(false)
 
@@ -84,7 +83,6 @@ export default function ProjectImportPage() {
     const [checkedFilterMappedItems, setCheckedFilterMappedItems] = useState(filterMappedItemsFromStore[projectId!] || false)
 
     const [importAnchorEl, setImportAnchorEl] = useState<HTMLElement | null>(null)
-    const [extraHeaderAnchorEl, setExtraHeaderAnchorEl] = useState<HTMLElement | null>(null)
 
     const {
         openConfirmationDialog: openDeleteConfirmationDialog,
@@ -126,9 +124,6 @@ export default function ProjectImportPage() {
     const handleImportMenuOpen = (e: React.MouseEvent<HTMLElement>) => setImportAnchorEl(e.currentTarget)
     const handleImportMenuClose = () => setImportAnchorEl(null)
 
-    const handleExtraHeaderMenuOpen = (e: React.MouseEvent<HTMLElement>) => setExtraHeaderAnchorEl(e.currentTarget)
-    const handleExtraHeaderMenuClose = () => setExtraHeaderAnchorEl(null)
-
     const handleClickSearchClear = async () => {
         setSearch("")
         await fetchItemsData(scope, searchSelectedHeader, "", page, pageSize, sort)
@@ -164,16 +159,9 @@ export default function ProjectImportPage() {
     const handleClickOpenFileBrowserDialog = () => setOpenFileBrowserDialog(true)
     const handleClickCloseFileBrowserDialog = () => setOpenFileBrowserDialog(false)
 
-    const handleClickOpenAddHeaderDialog = () => setOpenAddHeaderDialog(true)
-    const handleClickCloseAddHeaderDialog = async (shouldReload = false) => {
-        setOpenAddHeaderDialog(false)
-        if (shouldReload) {
-            await fetchItemsData(scope, searchSelectedHeader, search, page, pageSize, sort)
-        }
-    }
-    const handleClickOpenRemoveHeaderDialog = () => setOpenRemoveHeaderDialog(true)
-    const handleClickCloseRemoveHeaderDialog = async (shouldReload = false) => {
-        setOpenRemoveHeaderDialog(false)
+    const handleClickOpenEditHeaderDialog = () => setOpenEditHeaderDialog(true)
+    const handleClickCloseEditHeaderDialog = async (shouldReload = false) => {
+        setOpenEditHeaderDialog(false)
         if (shouldReload) {
             await fetchItemsData(scope, searchSelectedHeader, search, page, pageSize, sort)
         }
@@ -266,10 +254,7 @@ export default function ProjectImportPage() {
     }
 
     const [rowData, setRowData] = useState<ItemResponse[]>([])
-    const [scopeHeaders, setScopeHeaders] = useState<GetScopeHeadersResponse>({
-        headers: [],
-        extraHeaders: []
-    })
+    const [scopeHeaders, setScopeHeaders] = useState<ScopeHeaderResponse[]>([])
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([])
 
     const handleClickInterruptScope = async () => await interruptScope({ projectId: projectId!, scopeId: scope })
@@ -492,13 +477,12 @@ export default function ProjectImportPage() {
                     </Stack>
                 </ConfirmationDialog>
             )}
-            {openAddHeaderDialog && <AddHeaderDialog open={openAddHeaderDialog} handleClickClose={handleClickCloseAddHeaderDialog} scopeId={scope} />}
-            {openRemoveHeaderDialog && (
-                <RemoveHeaderDialog
-                    open={openRemoveHeaderDialog}
-                    handleClickClose={handleClickCloseRemoveHeaderDialog}
+            {openEditHeaderDialog && (
+                <EditHeaderDialog
+                    open={openEditHeaderDialog}
+                    handleClickClose={handleClickCloseEditHeaderDialog}
                     scopeId={scope}
-                    extraHeaders={scopeHeaders.extraHeaders}
+                    scopeHeaders={scopeHeaders}
                 />
             )}
             {openBulkEditDialog && (
@@ -506,7 +490,7 @@ export default function ProjectImportPage() {
                     open={openBulkEditDialog}
                     handleClickClose={handleClickCloseBulkEditDialog}
                     itemIds={rowData.map(data => data.id)}
-                    headers={scopeHeaders.headers.concat(scopeHeaders.extraHeaders)}
+                    headers={GetScopeHeaders(scopeHeaders)}
                 />
             )}
             <Menu anchorEl={importAnchorEl} open={Boolean(importAnchorEl)} onClose={handleImportMenuClose}>
@@ -531,30 +515,6 @@ export default function ProjectImportPage() {
                         <Cloud fontSize="small" />
                     </ListItemIcon>
                     {"Import Large File >" + GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT")}
-                </MenuItem>
-            </Menu>
-            <Menu anchorEl={extraHeaderAnchorEl} open={Boolean(extraHeaderAnchorEl)} onClose={handleExtraHeaderMenuClose}>
-                <MenuItem
-                    onClick={() => {
-                        handleExtraHeaderMenuClose()
-                        handleClickOpenAddHeaderDialog()
-                    }}
-                >
-                    <ListItemIcon>
-                        <Add fontSize="small" />
-                    </ListItemIcon>
-                    {"Add Header"}
-                </MenuItem>
-                <MenuItem
-                    onClick={() => {
-                        handleExtraHeaderMenuClose()
-                        handleClickOpenRemoveHeaderDialog()
-                    }}
-                >
-                    <ListItemIcon>
-                        <Remove fontSize="small" />
-                    </ListItemIcon>
-                    {"Remove Header"}
                 </MenuItem>
             </Menu>
             <Stack spacing={3} width="100vw">
@@ -733,7 +693,7 @@ export default function ProjectImportPage() {
                                         <InputLabel>Header</InputLabel>
                                         <Select value={searchSelectedHeader} label="Mapping" onChange={handleSearchSelectedHeaderChange}>
                                             <MenuItem value="Free Text">{"Free Text"}</MenuItem>
-                                            {scopeHeaders.headers.concat(scopeHeaders.extraHeaders).map(scopeHeader => (
+                                            {GetScopeHeaders(scopeHeaders).map(scopeHeader => (
                                                 <MenuItem key={scopeHeader} value={scopeHeader}>
                                                     {scopeHeader}
                                                 </MenuItem>
@@ -791,8 +751,8 @@ export default function ProjectImportPage() {
                                 <Button
                                     color="warning"
                                     variant="contained"
-                                    endIcon={<ArrowDropDown />}
-                                    onClick={handleExtraHeaderMenuOpen}
+                                    endIcon={<Edit />}
+                                    onClick={handleClickOpenEditHeaderDialog}
                                     sx={{ color: theme.palette.common.white }}
                                 >
                                     {"Edit Header"}

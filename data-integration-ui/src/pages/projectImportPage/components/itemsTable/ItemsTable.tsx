@@ -1,8 +1,8 @@
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-alpine.css"
-import { AgGridReact } from "ag-grid-react"
-import { Stack } from "@mui/material"
-import { GetScopeHeadersResponse, ItemResponse } from "../../../../features/projects/projects.types"
+import {AgGridReact} from "ag-grid-react"
+import {Stack} from "@mui/material"
+import {ItemResponse, ScopeHeaderResponse} from "../../../../features/projects/projects.types"
 import {
     CellClassParams,
     CheckboxSelectionCallbackParams,
@@ -14,17 +14,18 @@ import {
     ValueGetterParams
 } from "ag-grid-community"
 import "./ItemsTable.css"
-import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect } from "react"
+import React, {ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect} from "react"
 import Pagination from "../../../../components/pagination/Pagination"
-import { ProjectsApi } from "../../../../features/projects/projects.api"
-import { useParams } from "react-router-dom"
-import { ValueSetterParams } from "ag-grid-community/dist/types/core/entities/colDef"
+import {ProjectsApi} from "../../../../features/projects/projects.api"
+import {useParams} from "react-router-dom"
+import {ValueSetterParams} from "ag-grid-community/dist/types/core/entities/colDef"
 import CheckboxTableHeader from "../../../../components/checkboxTableHeader/CheckboxTableHeader"
 import UndoCellRenderer from "../../../../components/undoCellRenderer/UndoCellRenderer"
+import GetScopeHeaders from "../../../../utils/GetScopeHeaders";
 
 interface ItemsTableProps {
     rowData: ItemResponse[]
-    scopeHeaders: GetScopeHeadersResponse
+    scopeHeaders: ScopeHeaderResponse[]
     columnDefs: ColDef[]
     setColumnDefs: Dispatch<SetStateAction<ColDef[]>>
     setSelectedItems: Dispatch<SetStateAction<string[]>>
@@ -57,8 +58,10 @@ export default function ItemsTable({
         [mapping]
     )
 
+    const headers = GetScopeHeaders(scopeHeaders);
+
     useEffect(() => {
-        if (rowData.length > 0) {
+        if (rowData.length > 0 && headers.length > 0) {
             const dynamicColumnDefs: ColDef[] = [
                 {
                     headerName: "",
@@ -79,7 +82,7 @@ export default function ItemsTable({
                     editable: false,
                     sortable: false
                 },
-                ...[...scopeHeaders.headers.concat(scopeHeaders.extraHeaders)].map(key => ({
+                ...[...headers].map(key => ({
                     headerName: key,
                     field: `properties.${key}.value`,
                     cellRenderer: UndoCellRenderer,
@@ -142,7 +145,7 @@ export default function ItemsTable({
             ]
             setColumnDefs(dynamicColumnDefs)
         }
-    }, [rowData, setColumnDefs, scopeHeaders, projectId, updateItemProperty, mapping, onCheck, setSelectedItems])
+    }, [rowData, setColumnDefs, headers, projectId, updateItemProperty, mapping, onCheck, setSelectedItems])
 
     const defaultColDef: ColDef = {
         filter: true,

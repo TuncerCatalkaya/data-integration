@@ -1,4 +1,4 @@
-import { SelectedDatabase } from "../hosts/hosts.types"
+import {SelectedDatabase} from "../hosts/hosts.types"
 
 export interface ProjectResponse {
     id: string
@@ -12,6 +12,11 @@ export interface ScopeResponse {
     id: string
     key: string
     createdDate: Date
+}
+
+export interface ScopeHeaderResponse {
+    name: string
+    hidden: boolean
 }
 
 export type Properties = { [key: string]: ItemPropertiesResponse }
@@ -71,12 +76,6 @@ export interface InterruptScopeRequest {
     scopeId: string
 }
 
-export interface AddExtraHeaderRequest {
-    projectId: string
-    scopeId: string
-    extraHeader: string
-}
-
 export interface ApplyMappingRequest {
     projectId: string
     mappingId: string
@@ -97,6 +96,12 @@ export interface CreateOrGetScopeRequest {
     projectId: string
     scopeKey: string
     external: boolean
+}
+
+export interface CreateOrUpdateScopeHeadersRequest {
+    projectId: string
+    scopeId: string
+    headers: ScopeHeaderResponse[]
 }
 
 export interface UpdateItemPropertyRequest {
@@ -143,13 +148,13 @@ export interface GetProjectsRequest {
     sort?: string
 }
 
-export interface GetScopeRequest {
-    projectId: string
-    scopeId: string
-}
-
 export interface GetScopesRequest {
     projectId: string
+}
+
+export interface GetScopeHeadersRequest {
+    projectId: string
+    scopeId: string
 }
 
 export interface GetItemsRequest {
@@ -196,20 +201,9 @@ export interface MarkMappingForDeletionRequest {
     mappingId: string
 }
 
-export interface RemoveExtraHeaderRequest {
-    projectId: string
-    scopeId: string
-    extraHeader: string
-}
-
 export interface GetProjectsResponse {
     content: ProjectResponse[]
     totalElements: number
-}
-
-export interface GetScopeHeadersResponse {
-    headers: string[]
-    extraHeaders: string[]
 }
 
 export interface GetItemsResponse {

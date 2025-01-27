@@ -1,7 +1,7 @@
 package org.dataintegration.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.ScopeNotFoundException;
+import org.dataintegration.exception.runtime.ScopeNotFoundException;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.model.CompletedPartModel;
 import org.dataintegration.service.ProjectsService;

@@ -1,7 +1,7 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.exception.ItemNotFoundException;
+import org.dataintegration.exception.runtime.ItemNotFoundException;
 import org.dataintegration.jpa.entity.ItemEntity;
 import org.dataintegration.jpa.repository.JpaItemRepository;
 import org.dataintegration.model.ItemPropertiesModel;
@@ -23,28 +23,28 @@ public class ItemsService {
 
     private final JpaItemRepository jpaItemRepository;
 
-    public Page<ItemEntity> getAll(UUID scopeId, UUID mappingId, boolean filterMappedItems, String header, String search,
+    public Page<ItemEntity> getAll(UUID scopeId, UUID mappingId, boolean filterMappedItems, String searchHeader, String searchText,
                                    Pageable pageable) {
         final Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "line_number")));
         if (filterMappedItems && mappingId != null) {
-            if (StringUtils.hasLength(search)) {
-                if (StringUtils.hasText(header)) {
+            if (StringUtils.hasLength(searchText)) {
+                if (StringUtils.hasText(searchHeader)) {
                     return jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItemsAndDynamicHeader(scopeId, mappingId,
-                            header, search, pageRequest);
+                            searchHeader, searchText, pageRequest);
                 } else {
                     return jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItemsWithFreeTextSearch(scopeId, mappingId,
-                            search, pageRequest);
+                            searchText, pageRequest);
                 }
             } else {
                 return jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItems(scopeId, mappingId, pageRequest);
             }
         } else {
-            if (StringUtils.hasLength(search)) {
-                if (StringUtils.hasText(header)) {
-                    return jpaItemRepository.findAllByScopeIdAndDynamicHeader(scopeId, header, search, pageRequest);
+            if (StringUtils.hasLength(searchText)) {
+                if (StringUtils.hasText(searchHeader)) {
+                    return jpaItemRepository.findAllByScopeIdAndDynamicHeader(scopeId, searchHeader, searchText, pageRequest);
                 } else {
-                    return jpaItemRepository.findAllByScopeIdWithFreeTextSearch(scopeId, search, pageRequest);
+                    return jpaItemRepository.findAllByScopeIdWithFreeTextSearch(scopeId, searchText, pageRequest);
                 }
             } else {
                 return jpaItemRepository.findAllByScopeId(scopeId, pageRequest);

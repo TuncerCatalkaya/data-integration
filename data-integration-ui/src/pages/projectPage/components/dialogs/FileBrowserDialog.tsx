@@ -280,8 +280,7 @@ export default function FileBrowserDialog({ open, handleClickClose, projectId, h
                         {fileBrowserObjects.length === 0 && <Typography variant="h6">No files uploaded yet for this project</Typography>}
                         {[...fileBrowserObjects]
                             .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
-                            .map(fileBrowserObject => {
-                                return (
+                            .map(fileBrowserObject =>
                                     <Paper key={fileBrowserObject.key} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
                                         <Stack spacing={1}>
                                             <Typography
@@ -335,8 +334,7 @@ export default function FileBrowserDialog({ open, handleClickClose, projectId, h
                                             </Stack>
                                         </Stack>
                                     </Paper>
-                                )
-                            })}
+                            )}
                     </Stack>
                 </DialogContent>
             </Dialog>

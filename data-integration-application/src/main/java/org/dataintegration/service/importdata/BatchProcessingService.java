@@ -1,8 +1,10 @@
 package org.dataintegration.service.importdata;
 
+import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.jpa.entity.ItemEntity;
 import org.dataintegration.jpa.entity.ScopeEntity;
+import org.dataintegration.model.HeaderModel;
 import org.dataintegration.service.ScopesService;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Service;
@@ -11,11 +13,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import static org.dataintegration.logger.BatchProcessingLogger.log;
 
@@ -46,7 +50,9 @@ class BatchProcessingService {
             final AtomicBoolean batchAlreadyProcessedCache = new AtomicBoolean(false);
 
             final String firstLine = reader.readLine();
-            final String[] headers = itemCreationService.getHeaders(firstLine, delimiter);
+            final LinkedHashSet<HeaderModel> headers = Splitter.on(delimiter).splitToStream(firstLine)
+                    .map(HeaderModel::new)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             if (itemCreationService.isHeaderValid(headers)) {
                 if (scopeEntity.getHeaders() == null) {
                     scopesService.updateHeaders(scopeId, headers);
