@@ -1,0 +1,102 @@
+{
+    "pages": {
+        "root": {
+            "error": {
+                "h2": "You are unauthorized or forbidden",
+                "h5": "Please make sure that you are logged in and have sufficient permissions"
+            }
+        },
+        "projectImport": {
+            "components": {
+                "dialogs": {
+                    "importDataDialog": {
+                        "title": "File Chooser"
+                    },
+                    "createMappingDialog": {
+                        "title": "Create Mapping"
+                    },
+                    "createOrEditHostDialog": {
+                        "create": {
+                            "title": "Create Host"
+                        },
+                        "edit": {
+                            "title": "Edit Host"
+                        }
+                    }
+                }
+            }
+        },
+        "project": {
+            "components": {
+                "dialogs": {
+                    "fileBrowserDialog": {
+                        "title": "File Browser"
+                    }
+                }
+            }
+        },
+        "projects": {
+            "components": {
+                "dialogs": {
+                    "createProjectDialog": {
+                        "title": "Create a new Project",
+                        "input": {
+                            "projectName": "Project name"
+                        },
+                        "actions": {
+                            "cancel": "Cancel",
+                            "submit": "Create"
+                        },
+                        "snackbar": {
+                            "success": "Created project",
+                            "error": "Something went wrong during project creation"
+                        }
+                    }
+                },
+                "projectsTable": {
+                    "columns": {
+                        "id": "ID",
+                        "projectName": "Project Name",
+                        "createdDate": "Created",
+                        "lastModifiedDate": "Last Modified"
+                    }
+                }
+            }
+        }
+    },
+    "features": {
+        "projects": {
+            "createProject": {
+                "busyText": "Creating Project..."
+            }
+        }
+    },
+    "components": {
+        "confirmationDialog": {
+            "title": "Confirmation",
+            "actions": {
+                "yes": "yes",
+                "no": "no"
+            }
+        },
+        "imageBox": {
+            "alt": "Image could not be loaded."
+        },
+        "pagination": {
+            "rowsPerPage": "Rows per page:",
+            "fromTo": "of",
+            "first": "Go to first page",
+            "previous": "Go to previous page",
+            "next": "Go to next page",
+            "last": "Go to last page"
+        },
+        "tokenForm": {
+            "placeholder": "Enter JWT access token",
+            "helperText": {
+                "emptyToken": "Please enter a token",
+                "invalidToken": "Token is invalid or expired"
+            },
+            "submitButton": "Set token"
+        }
+    }
+}

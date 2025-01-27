@@ -1,0 +1,99 @@
+@startuml
+skinparam linetype ortho
+
+entity project {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * delete : boolean
+    * created_by : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * last_modified_date : timestamp(6) without time zone
+}
+
+entity scope {
+    * id : uuid <<generated>>
+    --
+    * key : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * finished : boolean
+    * external : boolean
+    * delete : boolean
+    headers : jsonb
+    * project_id : uuid <<FK>>
+}
+
+entity item {
+    * id : uuid <<generated>>
+    --
+    * lineNumber : bigint
+    * properties : jsonb
+    * scope_id : uuid <<FK>>
+}
+
+entity checkpoint {
+    * id : uuid <<generated>>
+    --
+    * batch_size : integer
+    * total_batches : bigint
+    * scope_id : uuid <<FK>>
+}
+
+entity checkpoint_batch {
+    * id : uuid <<generated>>
+    --
+    * batch_index : bigint
+    * checkpoint_id : uuid <<FK>>
+}
+
+entity host {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * url : character varying(255)
+}
+
+entity mapping {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * finished : boolean
+    * processing : boolean
+    * delete : boolean
+    * last_processed_batch : bigint
+    * mapping : jsonb
+    * database_id : uuid <<FK>>
+    * scope_id : uuid <<FK>>
+}
+
+entity database {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * host_id : uuid <<FK>>
+}
+
+entity mapped_item {
+    * id : uuid <<generated>>
+    --
+    properties : jsonb
+    * status : character varying(255)
+    * mapping_id : uuid <<FK>>
+    * item_id : uuid <<FK>>
+}
+
+project ||..|{ scope
+scope ||..|{ item
+
+scope ||..|| checkpoint
+checkpoint ||..|{ checkpoint_batch
+
+database ||..|{ mapping
+host ||..|{ database
+scope ||..|{ mapping
+
+item ||..|{ mapped_item
+mapping ||..|{ mapped_item
+
+@enduml

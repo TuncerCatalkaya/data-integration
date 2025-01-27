@@ -1,0 +1,7 @@
+:doctype: book
+
+= Data Integration Documentation
+
+:imagesdir: ../../../data-integration-documentation/src/main
+
+include::../main/data-integration.adoc[]
