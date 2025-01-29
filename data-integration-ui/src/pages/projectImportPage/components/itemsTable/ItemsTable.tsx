@@ -58,9 +58,8 @@ export default function ItemsTable({
         [mapping]
     )
 
-    const headers = GetScopeHeaders(scopeHeaders);
-
     useEffect(() => {
+        const headers = GetScopeHeaders(scopeHeaders);
         if (rowData.length > 0 && headers.length > 0) {
             const dynamicColumnDefs: ColDef[] = [
                 {
@@ -144,8 +143,10 @@ export default function ItemsTable({
                 }))
             ]
             setColumnDefs(dynamicColumnDefs)
+        } else {
+            setColumnDefs([])
         }
-    }, [rowData, setColumnDefs, headers, projectId, updateItemProperty, mapping, onCheck, setSelectedItems])
+    }, [rowData, setColumnDefs, scopeHeaders, projectId, updateItemProperty, mapping, onCheck, setSelectedItems])
 
     const defaultColDef: ColDef = {
         filter: true,
