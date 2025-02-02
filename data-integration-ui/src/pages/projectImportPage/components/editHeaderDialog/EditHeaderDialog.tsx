@@ -19,7 +19,7 @@ import {useSnackbar} from "notistack"
 import theme from "../../../../theme"
 import {useParams} from "react-router-dom"
 import {ScopeHeaderResponse} from "../../../../features/projects/projects.types";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useMemo, useState} from "react";
 import useShake from "../../../../components/shake/hooks/useShake";
 import {ProjectsApi} from "../../../../features/projects/projects.api";
 
@@ -84,6 +84,36 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
         setHeaders(scopeHeaders)
     }, [scopeHeaders]);
 
+    const headerComponents = useMemo(() => (
+        headers.map(header => (
+            <Paper key={header.name} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
+                <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
+                    <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
+                        <Typography
+                            noWrap
+                            sx={{
+                                maxWidth: 500,
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                fontWeight: "bold"
+                            }}
+                        >
+                            {header.name}
+                        </Typography>
+                    </Tooltip>
+                    <Switch checked={!header.hidden} onChange={(_, checked) => {
+                        setHeaders(prevHeaders =>
+                            prevHeaders.map(h =>
+                                h.name === header.name ? { ...h, hidden: !checked } : h
+                            )
+                        );
+                    }} />
+                </Stack>
+            </Paper>
+        ))
+    ), [headers]);
+
     return (
         <Dialog
             open={open}
@@ -122,33 +152,7 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
             </DialogTitle>
             <DialogContent>
                 <Stack spacing={1} padding={2}>
-                    {headers.map(header => (
-                        <Paper key={header.name} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
-                            <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
-                                <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
-                                    <Typography
-                                        noWrap
-                                        sx={{
-                                            maxWidth: 500,
-                                            textOverflow: "ellipsis",
-                                            overflow: "hidden",
-                                            whiteSpace: "nowrap",
-                                            fontWeight: "bold"
-                                        }}
-                                    >
-                                        {header.name}
-                                    </Typography>
-                                </Tooltip>
-                                <Switch checked={!header.hidden} onChange={(_, checked) => {
-                                    setHeaders(prevHeaders =>
-                                        prevHeaders.map(h =>
-                                            h.name === header.name ? { ...h, hidden: !checked } : h
-                                        )
-                                    );
-                                }} />
-                            </Stack>
-                        </Paper>
-                    ))}
+                    {headerComponents}
                 </Stack>
             </DialogContent>
             <DialogActions>

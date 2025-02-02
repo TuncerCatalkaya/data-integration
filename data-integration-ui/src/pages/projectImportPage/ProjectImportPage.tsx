@@ -50,6 +50,7 @@ import ImportItemsSlice from "../../features/importItems/importItems.slice"
 import BulkEditDialog from "./components/bulkEditDialog/BulkEditDialog"
 import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog";
 import GetScopeHeaders from "../../utils/GetScopeHeaders";
+import parse from "filesize-parser";
 
 export default function ProjectImportPage() {
     const { projectId } = useParams()
@@ -191,6 +192,8 @@ export default function ProjectImportPage() {
                 e.target.value = ""
                 if (!file.name.toLowerCase().endsWith(".csv")) {
                     enqueueSnackbar("Please select a CSV file", { variant: "error" })
+                } else if(file.size > parse(GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT"))) {
+                    enqueueSnackbar("The file is too big for small file import", { variant: "error" })
                 } else {
                     const scopeKey = GenerateScopeKey(file)
                     const scopeResponse = await createOrGetScope({ projectId: projectId!, scopeKey, external: false }).unwrap()
@@ -198,7 +201,7 @@ export default function ProjectImportPage() {
                     setScope(scopeResponse.id)
                     dispatch(ImportItemsSlice.actions.putScope({ projectId: projectId!, scope: scopeResponse.id }))
                     setShouldStartTimer(true)
-                    await importDataFile({ projectId: projectId!, scopeId: scopeResponse.id, delimiter, file })
+                    await importDataFile({ projectId: projectId!, scopeId: scopeResponse.id, delimiter, file });
                     setMapping("select")
                     enqueueSnackbar("Started data import process", { variant: "success" })
                 }
@@ -521,9 +524,9 @@ export default function ProjectImportPage() {
                 <Stack spacing={2} justifyContent="space-between" direction="row">
                     <Stack direction="row" spacing={1}>
                         <Tooltip title={scopesResponse.find(s => s.id === scope)?.key} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
-                            <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: 425, maxWidth: 425, textAlign: "left" }}>
+                            <FormControl sx={{ minWidth: 425, maxWidth: 425, textAlign: "left" }}>
                                 <InputLabel>Scope</InputLabel>
-                                <Select value={scope} label="Scope" onChange={handleScopeChange}>
+                                <Select value={scope} label="Scope" onChange={handleScopeChange} sx={{ backgroundColor: theme.palette.common.white }}>
                                     <MenuItem value="select" disabled>
                                         {"Select a scope / import data"}
                                     </MenuItem>
