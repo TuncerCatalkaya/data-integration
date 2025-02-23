@@ -1,5 +1,6 @@
 package org.dataintegration.service.importdata;
 
+import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.cache.DataIntegrationCache;
 import org.dataintegration.exception.FileTypeNotSupportedException;
@@ -11,7 +12,6 @@ import org.dataintegration.service.ScopesService;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -27,8 +27,7 @@ class ImportDataServiceImpl implements ImportDataService {
     private final DataIntegrationCache dataIntegrationCache;
     private final BatchConfigModel batchConfig;
 
-    public boolean importData(Callable<InputStream> inputStreamCallable, UUID projectId, UUID scopeId, long lineCount,
-                              char delimiter) {
+    public boolean importData(Callable<CSVReader> csvReaderCallable, UUID projectId, UUID scopeId, long lineCount) {
         final ScopeEntity scopeEntity = scopesService.get(scopeId);
         final String scopeKey = scopeEntity.getKey();
         if (!scopeKey.toLowerCase().endsWith("csv".toLowerCase())) {
@@ -65,8 +64,8 @@ class ImportDataServiceImpl implements ImportDataService {
                 log(Level.INFO, scopeKey, scopeId, "Starting attempt " + attempt + " of " + batchRetryScopeMax + ".");
 
                 success =
-                        batchProcessingService.batchProcessing(inputStreamCallable, projectId, scopeEntity, batchSize, startTime,
-                                attempt, delimiter);
+                        batchProcessingService.batchProcessing(csvReaderCallable, projectId, scopeEntity, batchSize, startTime,
+                                attempt);
             }
 
             if (!success) {

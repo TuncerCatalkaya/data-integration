@@ -10,11 +10,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>data-integration-shared-model</artifactId>
-    <name>Data Integration Shared Model</name>
+    <artifactId>data-integration-model</artifactId>
+    <name>Data Integration Model</name>
 
     <properties>
         <checkstyle.path>../</checkstyle.path>
     </properties>
+
+    <dependencies>
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,6 +1,5 @@
 package org.dataintegration.utils;
 
-import com.google.common.base.Splitter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dataintegration.exception.InvalidDelimiterException;
@@ -22,14 +21,14 @@ public class DataIntegrationUtils {
 
     public static UUID getProjectIdFromS3Key(String key) {
         try {
-            return UUID.fromString(Splitter.on('/').splitToList(key).get(0));
+            return UUID.fromString(key.split("/")[0]);
         } catch (IllegalArgumentException ex) {
             throw new InvalidUUIDException("Provided key " + key + " does not have a valid UUID as base.");
         }
     }
 
     public static String getScopeKeyFromS3Key(String key) {
-        return Splitter.on('/').splitToList(key).get(1);
+        return key.split("/")[1];
     }
 
     public static char delimiterStringToCharMapper(String delimiter) {

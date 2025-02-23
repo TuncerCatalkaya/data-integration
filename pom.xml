@@ -61,7 +61,7 @@
         <module>data-integration-ui</module>
         <module>data-integration-application</module>
         <module>data-integration-documentation</module>
-        <module>data-integration-shared-model</module>
+        <module>data-integration-model</module>
     </modules>
 
     <profiles>
@@ -176,6 +176,12 @@
                 <artifactId>data-integration-ui</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>org.dataintegration</groupId>
+                <artifactId>data-integration-model</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
 
             <!-- spring boot -->
             <dependency>
