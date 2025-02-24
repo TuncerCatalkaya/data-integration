@@ -14,7 +14,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class DataIntegrationAPIModel {
 
-    private DataIntegrationValidationAPIModel dataIntegrationValidation;
-    private List<Map<String, DataIntegrationValidationResultAPIModel>> integrationResults;
+    private List<Map<String, DataIntegrationResultAPIModel>> integrationResults;
 
 }

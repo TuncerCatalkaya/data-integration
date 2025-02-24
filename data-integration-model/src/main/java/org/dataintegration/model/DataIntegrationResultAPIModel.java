@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class DataIntegrationResultAPIModel {
 
     private DataIntegrationStateAPIModel dataIntegrationState;
-    private String message;
+    private List<String> messages;
 
 }

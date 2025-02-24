@@ -2,7 +2,11 @@ package org.dataintegration.api;
 
 import org.dataintegration.model.DataIntegrationEndpointsAPIModel;
 
-@FunctionalInterface
 public interface DataIntegrationEndpointsAPI {
-    DataIntegrationEndpointsAPIModel listEndpoints();
+    default DataIntegrationEndpointsAPIModel listEndpoints(String getHeadersPath, String integrationPath) {
+        return DataIntegrationEndpointsAPIModel.builder()
+                .getHeadersPath(getHeadersPath)
+                .integrationPath(integrationPath)
+                .build();
+    }
 }

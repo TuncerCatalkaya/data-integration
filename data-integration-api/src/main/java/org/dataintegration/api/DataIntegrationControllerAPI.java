@@ -7,7 +7,6 @@ import org.dataintegration.model.DataIntegrationAPIModel;
 import org.dataintegration.model.DataIntegrationEndpointsAPIModel;
 import org.dataintegration.model.DataIntegrationHeaderAPIModel;
 import org.dataintegration.model.DataIntegrationInputAPIModel;
-import org.dataintegration.model.DataIntegrationValidationAPIModel;
 
 /**
  * API for data integration REST controller.
@@ -45,18 +44,12 @@ import org.dataintegration.model.DataIntegrationValidationAPIModel;
 public abstract class DataIntegrationControllerAPI {
 
     private final DataIntegrationEndpointsAPI dataIntegrationEndpointsAPI;
-    private final DataIntegrationValidationAPI dataIntegrationValidationAPI;
     private final DataIntegrationHeaderAPI dataIntegrationHeaderAPI;
     private final DataIntegrationAPI dataIntegrationAPI;
 
     public abstract DataIntegrationEndpointsAPIModel endpointsRestCall();
-    protected DataIntegrationEndpointsAPIModel defaultEndpointsRestCall() {
-        return dataIntegrationEndpointsAPI.listEndpoints();
-    }
-
-    public abstract DataIntegrationValidationAPIModel validateInputsRestCall(DataIntegrationInputAPIModel dataIntegrationInput);
-    protected DataIntegrationValidationAPIModel defaultValidateInputsRestCall(DataIntegrationInputAPIModel dataIntegrationInput) {
-        return dataIntegrationValidationAPI.validateInputs(dataIntegrationInput);
+    protected DataIntegrationEndpointsAPIModel defaultEndpointsRestCall(String getHeadersPath, String integrationPath) {
+        return dataIntegrationEndpointsAPI.listEndpoints(getHeadersPath, integrationPath);
     }
 
     public abstract DataIntegrationHeaderAPIModel getHeadersRestCall();

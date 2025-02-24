@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DataIntegrationEndpointsAPIModel {
 
-    private String validateInputsPath;
     private String getHeadersPath;
     private String integrationPath;
 
