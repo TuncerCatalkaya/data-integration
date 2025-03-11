@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.List;
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
-public class DataIntegrationResultAPIModel {
+public class DataIntegrationHeaderDataAPIModel {
 
     @NonNull
-    private UUID itemId;
+    private String id;
     @NonNull
-    private List<String> errorMessages;
+    private String display;
+    @NonNull
+    private String tooltip;
 
 }

@@ -4,5 +4,5 @@ import org.dataintegration.model.DataIntegrationHeaderAPIModel;
 
 @FunctionalInterface
 public interface DataIntegrationHeaderAPI {
-    DataIntegrationHeaderAPIModel getHeaders();
+    DataIntegrationHeaderAPIModel getHeaders(String language);
 }

@@ -5,5 +5,5 @@ import org.dataintegration.model.DataIntegrationInputAPIModel;
 
 @FunctionalInterface
 public interface DataIntegrationAPI {
-    DataIntegrationAPIModel doIntegration(String database, DataIntegrationInputAPIModel dataIntegrationInput);
+    DataIntegrationAPIModel doIntegration(String database, String language, DataIntegrationInputAPIModel dataIntegrationInput);
 }

@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.model.DataIntegrationAPIModel;
-import org.dataintegration.model.DataIntegrationEndpointsAPIModel;
 import org.dataintegration.model.DataIntegrationHeaderAPIModel;
 import org.dataintegration.model.DataIntegrationInputAPIModel;
 
@@ -43,23 +42,21 @@ import org.dataintegration.model.DataIntegrationInputAPIModel;
 @RequiredArgsConstructor
 public abstract class DataIntegrationControllerAPI {
 
-    private final DataIntegrationEndpointsAPI dataIntegrationEndpointsAPI;
     private final DataIntegrationHeaderAPI dataIntegrationHeaderAPI;
     private final DataIntegrationAPI dataIntegrationAPI;
 
-    public abstract DataIntegrationEndpointsAPIModel endpointsRestCall();
-    protected DataIntegrationEndpointsAPIModel defaultEndpointsRestCall(String getHeadersPath, String integrationPath) {
-        return dataIntegrationEndpointsAPI.listEndpoints(getHeadersPath, integrationPath);
+    public abstract DataIntegrationHeaderAPIModel getHeadersRestCall(String language);
+
+    protected DataIntegrationHeaderAPIModel defaultGetHeadersRestCall(String language) {
+        return dataIntegrationHeaderAPI.getHeaders(language);
     }
 
-    public abstract DataIntegrationHeaderAPIModel getHeadersRestCall();
-    protected DataIntegrationHeaderAPIModel defaultGetHeadersRestCall() {
-        return dataIntegrationHeaderAPI.getHeaders();
-    }
+    public abstract DataIntegrationAPIModel integrationRestCall(String database, String language,
+                                                                DataIntegrationInputAPIModel dataIntegrationInput);
 
-    public abstract DataIntegrationAPIModel integrationRestCall(String database, DataIntegrationInputAPIModel dataIntegrationInput);
-    protected DataIntegrationAPIModel defaultIntegrationRestCall(String database, DataIntegrationInputAPIModel dataIntegrationInput) {
-        return dataIntegrationAPI.doIntegration(database, dataIntegrationInput);
+    protected DataIntegrationAPIModel defaultIntegrationRestCall(String database, String language,
+                                                                 DataIntegrationInputAPIModel dataIntegrationInput) {
+        return dataIntegrationAPI.doIntegration(database, language, dataIntegrationInput);
     }
 
 }
