@@ -2,6 +2,7 @@ package org.dataintegration.usecase.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +24,17 @@ public class CreateOrUpdateHostsRequestModel {
     private String name;
 
     @NotBlank
-    private String url;
+    private String baseUrl;
+
+    @NotBlank
+    private String integrationPath;
+
+    @NotBlank
+    private String getHeadersPath;
 
     @Valid
     @Builder.Default
+    @NotEmpty
     private List<CreateOrUpdateDatabasesRequestModel> databases = new ArrayList<>();
 
 }

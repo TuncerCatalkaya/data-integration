@@ -39,7 +39,7 @@ class Mappings implements MappingsMethods {
     private final ScopesService scopesService;
     private final ItemsService itemsService;
     private final MappingsService mappingsService;
-    private final MappedItemsService mappingItemService;
+    private final MappedItemsService mappedItemsService;
     private final HostsService hostsService;
 
     public MappingModel createOrUpdateMapping(UUID projectId, UUID scopeId,
@@ -90,7 +90,7 @@ class Mappings implements MappingsMethods {
                         return mappedItemEntity;
                     })
                     .toList();
-            mappingItemService.applyMapping(mappedItemEntities);
+            mappedItemsService.applyMapping(mappedItemEntities);
         } catch (DataIntegrityViolationException ex) {
             throw new MappingValidationException(ex);
         }

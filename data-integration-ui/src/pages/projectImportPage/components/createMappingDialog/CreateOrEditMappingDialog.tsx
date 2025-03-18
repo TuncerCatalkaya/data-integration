@@ -67,7 +67,7 @@ interface MappingsValuesInput {
     value: string
 }
 
-export default function CreateMappingDialog({ open, handleClickClose, scopeId, mappingToEdit }: Readonly<CreateMappingDialogProps>) {
+export default function CreateOrEditMappingDialog({ open, handleClickClose, scopeId, mappingToEdit }: Readonly<CreateMappingDialogProps>) {
     const { projectId } = useParams()
     const [host, setHost] = useState("select")
     const [database, setDatabase] = useState("select")
@@ -167,7 +167,7 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
         }
     }
 
-    const submitButtonDisabled = host === "select" || database === "select" || mappingName.trim() === ""
+    const submitButtonDisabled = host === "select" || (selectedHost!.databases.length > 0 && database === "select") || mappingName.trim() === ""
 
     const fetchScopeHeadersData = useCallback(async () => {
         const getScopeHeadersResponse = await getScopeHeaders({ projectId: projectId!, scopeId }).unwrap()
@@ -303,7 +303,7 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
                                 {"Host name: "} <strong>{selectedHost!.name}</strong>
                             </Typography>
                             <Typography variant="body1">
-                                {"Host URL: "} <strong>{selectedHost!.url}</strong>
+                                {"Host Base URL: "} <strong>{selectedHost!.baseUrl}</strong>
                             </Typography>
                         </Stack>
                     </Stack>
@@ -359,7 +359,7 @@ export default function CreateMappingDialog({ open, handleClickClose, scopeId, m
                                                 </MenuItem>
                                                 {hostsResponse.map(host => (
                                                     <MenuItem key={host.id} value={host.id}>
-                                                        {host.name}
+                                                        {host.name + `(${host.baseUrl})`}
                                                     </MenuItem>
                                                 ))}
                                             </Select>

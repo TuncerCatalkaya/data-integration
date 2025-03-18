@@ -182,11 +182,6 @@
             <property name="countEmpty" value="false"/>
         </module>
 
-        <module name="ParameterNumber">
-            <property name="tokens" value="METHOD_DEF"/>
-            <property name="max" value="5"/>
-        </module>
-
         <module name="MethodParamPad"/>
 
 

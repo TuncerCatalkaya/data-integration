@@ -65,6 +65,13 @@ public class S3Config {
                 .build();
     }
 
+    /**
+     * On spring boot start-up.
+     * Check if "data-integration" bucket exists. If not then an exception will be thrown and the bucket will be created.
+     *
+     * @param s3Client s3 client
+     * @return {@link ApplicationRunner}
+     */
     @Bean
     ApplicationRunner initializeS3(S3Client s3Client) {
         return args -> {

@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class ProjectsService {
 
     public ProjectEntity getProject(UUID projectId, String createdBy) {
         return jpaProjectRepository.findByIdAndCreatedByAndDeleteFalse(projectId, createdBy)
-                .orElseThrow(getProjectNotFoundException(projectId));
+                .orElseThrow(() -> new ProjectNotFoundException("Project with id " + projectId + " not found."));
     }
 
     public void isPermitted(UUID projectId, String createdBy) {
@@ -50,7 +49,4 @@ public class ProjectsService {
         jpaProjectRepository.markForDeletion(projectId);
     }
 
-    private Supplier<ProjectNotFoundException> getProjectNotFoundException(UUID projectId) {
-        return () -> new ProjectNotFoundException("Project with id " + projectId + " not found.");
-    }
 }

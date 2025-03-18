@@ -26,7 +26,6 @@ public class HostsUsecase {
 
     public HostModel createOrUpdateHost(CreateOrUpdateHostsRequestModel createOrUpdateHostsRequest) {
         final HostEntity hostEntity = createOrUpdateHostsMapper.createOrUpdateHostsToHostEntity(createOrUpdateHostsRequest);
-        hostEntity.getDatabases().forEach(databaseEntity -> databaseEntity.setHost(hostEntity));
         return Optional.of(hostEntity)
                 .map(hostsService::createOrUpdate)
                 .map(hostMapper::hostEntityToHost)

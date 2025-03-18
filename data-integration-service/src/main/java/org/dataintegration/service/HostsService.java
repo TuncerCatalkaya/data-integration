@@ -2,7 +2,8 @@ package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.exception.runtime.DatabaseNotFoundException;
-import org.dataintegration.exception.runtime.DuplicateHostException;
+import org.dataintegration.exception.runtime.HostDomainNotValidException;
+import org.dataintegration.exception.runtime.HostNotValidException;
 import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
 import org.dataintegration.jpa.repository.JpaDatabaseRepository;
@@ -18,9 +19,16 @@ public class HostsService {
 
     private final JpaHostRepository jpaHostRepository;
     private final JpaDatabaseRepository jpaDatabaseRepository;
+    private final UrlService urlService;
 
     public HostEntity createOrUpdate(HostEntity hostEntity) {
-        checkDuplicateHostUrl(hostEntity);
+        if (hostEntity.getDatabases().isEmpty()) {
+            throw new HostNotValidException();
+        }
+        hostEntity.getDatabases().forEach(databaseEntity -> databaseEntity.setHost(hostEntity));
+        if (!urlService.isDomainValid(hostEntity.getBaseUrl())) {
+            throw new HostDomainNotValidException();
+        }
         return jpaHostRepository.save(hostEntity);
     }
 
@@ -37,15 +45,4 @@ public class HostsService {
         jpaHostRepository.deleteById(hostId);
     }
 
-    private void checkDuplicateHostUrl(HostEntity hostEntity) {
-        final boolean urlExistsAlready;
-        if (hostEntity.getId() == null) {
-            urlExistsAlready = jpaHostRepository.existsByUrl(hostEntity.getUrl());
-        } else {
-            urlExistsAlready = jpaHostRepository.existsByUrlWithCount(hostEntity.getUrl(), hostEntity.getId());
-        }
-        if (urlExistsAlready) {
-            throw new DuplicateHostException("Host url " + hostEntity.getUrl() + " already exists.");
-        }
-    }
 }

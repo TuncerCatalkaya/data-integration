@@ -16,10 +16,10 @@ import {
 } from "@mui/material"
 import Draggable from "react-draggable"
 import theme from "../../../../theme"
-import { useTranslation } from "react-i18next"
-import { FileOpen, InsertDriveFile } from "@mui/icons-material"
-import { VisuallyHiddenInput } from "../../../../components/visuallyHiddenInput/VisuallyHiddenInput"
-import { ChangeEvent, useState } from "react"
+import {useTranslation} from "react-i18next"
+import {FileOpen, InsertDriveFile} from "@mui/icons-material"
+import {VisuallyHiddenInput} from "../../../../components/visuallyHiddenInput/VisuallyHiddenInput"
+import {ChangeEvent, useState} from "react"
 
 interface FileBrowserDialogProps {
     open: boolean

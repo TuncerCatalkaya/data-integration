@@ -11,9 +11,12 @@ import java.util.UUID;
 
 public interface JpaCheckpointRepository extends JpaRepository<CheckpointEntity, UUID> {
 
+    @SuppressWarnings("checkstyle:MethodName")
     Optional<CheckpointEntity> findByScope_Id(@Param("scopeId") UUID scopeID);
 
     @Modifying
     @Transactional
+    @SuppressWarnings("checkstyle:MethodName")
     void deleteByScope_Id(UUID scopeId);
+
 }

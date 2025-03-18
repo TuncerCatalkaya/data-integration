@@ -45,12 +45,13 @@ import GenerateScopeKey from "../../utils/GenerateScopeKey"
 import GetFrontendEnvironment from "../../utils/GetFrontendEnvironment"
 import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
 import ImportDataDialog from "./components/importDataDialog/ImportDataDialog"
-import CreateMappingDialog from "./components/createMappingDialog/CreateMappingDialog"
+import CreateOrEditMappingDialog from "./components/createMappingDialog/CreateOrEditMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
 import BulkEditDialog from "./components/bulkEditDialog/BulkEditDialog"
 import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog";
 import GetScopeHeaders from "../../utils/GetScopeHeaders";
 import parse from "filesize-parser";
+import IsUnsupportedFileType from "../../utils/IsUnsupportedFileType";
 
 export default function ProjectImportPage() {
     const { projectId } = useParams()
@@ -190,7 +191,7 @@ export default function ProjectImportPage() {
             if (files) {
                 const file = files[0]
                 e.target.value = ""
-                if (!file.name.toLowerCase().endsWith(".csv")) {
+                if (IsUnsupportedFileType(file)) {
                     enqueueSnackbar("Please select a CSV file", { variant: "error" })
                 } else if(file.size > parse(GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT"))) {
                     enqueueSnackbar("The file is too big for small file import", { variant: "error" })
@@ -432,7 +433,7 @@ export default function ProjectImportPage() {
                 <ImportDataDialog open={openImportDataDialog} handleClickClose={handleClickCloseImportDataDialog} handleFileChange={handleFileChange} />
             )}
             {openCreateMappingDialog && (
-                <CreateMappingDialog
+                <CreateOrEditMappingDialog
                     open={openCreateMappingDialog}
                     handleClickClose={handleClickCloseCreateMappingDialog}
                     scopeId={scope}

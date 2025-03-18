@@ -31,7 +31,7 @@ import ConfirmationDialog from "../../components/confirmationDialog/Confirmation
 import MappedItemsTable from "./components/mappedItemsTable/MappedItemsTable"
 import {useAppDispatch, useAppSelector} from "../../store/store"
 import MappedItemsSlice from "../../features/mappedItems/mappedItems.slice"
-import CreateMappingDialog from "../projectImportPage/components/createMappingDialog/CreateMappingDialog"
+import CreateOrEditMappingDialog from "../projectImportPage/components/createMappingDialog/CreateOrEditMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
 
 export default function ProjectMappedItemsPage() {
@@ -202,7 +202,7 @@ export default function ProjectMappedItemsPage() {
     return (
         <>
             {openCreateMappingDialog && (
-                <CreateMappingDialog
+                <CreateOrEditMappingDialog
                     open={openCreateMappingDialog}
                     handleClickClose={handleClickCloseCreateMappingDialog}
                     scopeId={scope}

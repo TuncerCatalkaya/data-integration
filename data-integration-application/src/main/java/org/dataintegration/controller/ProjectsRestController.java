@@ -3,6 +3,8 @@ package org.dataintegration.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.exception.checked.ScopeHeaderValidationException;
+import org.dataintegration.model.DataIntegrationAPIModel;
+import org.dataintegration.model.DataIntegrationInputAPIModel;
 import org.dataintegration.model.HeaderModel;
 import org.dataintegration.model.ItemModel;
 import org.dataintegration.model.MappedItemModel;
@@ -99,6 +101,16 @@ public class ProjectsRestController {
     }
 
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PostMapping("/{projectId}/mappings/{mappingId}/mapped-items/integrate")
+    public DataIntegrationAPIModel integrate(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
+                                             @PathVariable UUID mappingId, @RequestParam String language,
+                                             @RequestBody DataIntegrationInputAPIModel dataIntegrationInputAPI) {
+        return projectsUsecase.getMappedItemsMethods()
+                .integrateMappedItems(projectId, mappingId, language, dataIntegrationInputAPI,
+                        DataIntegrationUtils.getJwtUserId(jwt), jwt.getTokenValue());
+    }
+
+    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @PutMapping
     public ProjectModel updateProject(@AuthenticationPrincipal Jwt jwt,
                                       @RequestBody UpdateProjectsRequestModel updateProjectsRequest) {
@@ -116,8 +128,8 @@ public class ProjectsRestController {
     @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
     @PutMapping("/{projectId}/scopes/{scopeId}/headers")
     public Set<HeaderModel> createOrUpdateScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
-                                                                 @PathVariable UUID scopeId, @RequestBody
-                                                                 CreateOrUpdateScopeHeadersRequestModel createOrUpdateScopeHeadersRequest)
+                                                       @PathVariable UUID scopeId, @RequestBody
+                                                       CreateOrUpdateScopeHeadersRequestModel createOrUpdateScopeHeadersRequest)
             throws ScopeHeaderValidationException {
         return projectsUsecase.getScopesMethods()
                 .createOrUpdateScopeHeaders(projectId, scopeId, createOrUpdateScopeHeadersRequest,

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 public interface JpaCheckpointBatchRepository extends JpaRepository<CheckpointBatchEntity, UUID> {
+
+    @SuppressWarnings("checkstyle:MethodName")
     boolean existsByCheckpoint_ScopeIdAndBatchIndex(UUID scopeId, Long batchIndex);
 
     @Query("""

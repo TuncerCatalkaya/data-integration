@@ -1,7 +1,9 @@
 export interface Host {
     id: string
     name: string
-    url: string
+    baseUrl: string
+    integrationPath: string
+    getHeadersPath: string
     inUse: boolean
     databases: Database[]
 }
@@ -27,7 +29,9 @@ export interface SelectedHost {
 export interface CreateOrUpdateHostsRequest {
     id: string
     name: string
-    url: string
+    baseUrl: string
+    integrationPath: string
+    getHeadersPath: string
     databases: CreateOrUpdateDatabasesRequest[]
 }
 

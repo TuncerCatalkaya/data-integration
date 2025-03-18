@@ -43,10 +43,13 @@ public interface JpaScopeRepository extends JpaRepository<ScopeEntity, UUID> {
     """)
     void updateHeaders(@Param("scopeId") UUID scopeId, @Param("headers") Set<HeaderModel> headers);
 
+    @SuppressWarnings("checkstyle:MethodName")
     List<ScopeEntity> findAllByProject_idAndDeleteFalse(UUID projectId, Sort sort);
 
+    @SuppressWarnings("checkstyle:MethodName")
     Optional<ScopeEntity> findByProject_IdAndKeyAndDeleteFalse(UUID projectId, String key);
 
+    @SuppressWarnings("checkstyle:MethodName")
     Optional<ScopeEntity> findByIdAndDeleteFalse(UUID scopeId);
 
 }

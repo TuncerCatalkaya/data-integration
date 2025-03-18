@@ -13,7 +13,7 @@ const theme = createTheme({
         },
         common: {
             black: "#404040",
-            white: "#ffffff"
+            white: "#ffffff",
         },
         background: {
             default: "#ffffff",
@@ -32,7 +32,8 @@ const theme = createTheme({
             main: "#F0AD4E"
         },
         info: {
-            main: "#0000cc"
+            main: "#0000cc",
+            light: "#cce6ff"
         },
         error: {
             main: "#FF0000"

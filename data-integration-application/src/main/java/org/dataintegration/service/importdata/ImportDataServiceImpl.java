@@ -3,7 +3,6 @@ package org.dataintegration.service.importdata;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.cache.DataIntegrationCache;
-import org.dataintegration.exception.FileTypeNotSupportedException;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.model.BatchConfigModel;
 import org.dataintegration.service.CheckpointsService;
@@ -31,7 +30,9 @@ class ImportDataServiceImpl implements ImportDataService {
         final ScopeEntity scopeEntity = scopesService.get(scopeId);
         final String scopeKey = scopeEntity.getKey();
         if (!scopeKey.toLowerCase().endsWith("csv".toLowerCase())) {
-            throw new FileTypeNotSupportedException("File type is not supported.");
+            scopesService.markForDeletion(scopeId);
+            log(Level.ERROR, scopeKey, scopeId, "File type is not supported.");
+            return false;
         }
         long startTime = System.currentTimeMillis();
 

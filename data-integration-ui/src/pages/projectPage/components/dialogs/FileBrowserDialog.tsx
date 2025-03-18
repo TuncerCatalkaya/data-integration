@@ -1,21 +1,33 @@
-import { Alert, AlertColor, Button, Dialog, DialogContent, DialogTitle, Paper, PaperProps, Stack, Typography } from "@mui/material"
+import {
+    Alert,
+    AlertColor,
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    PaperProps,
+    Stack,
+    Typography
+} from "@mui/material"
 import Draggable from "react-draggable"
-import { useSnackbar } from "notistack"
+import {useSnackbar} from "notistack"
 import theme from "../../../../theme"
-import { useTranslation } from "react-i18next"
-import { CloudDownload, CloudUpload, Delete, Storage } from "@mui/icons-material"
-import { ChangeEvent, useCallback, useEffect, useState } from "react"
+import {useTranslation} from "react-i18next"
+import {CloudDownload, CloudUpload, Delete, Storage} from "@mui/icons-material"
+import {ChangeEvent, useCallback, useEffect, useState} from "react"
 import DataIntegrationSpinner from "../../../../components/./dataIntegrationSpinner/DataIntegrationSpinner"
 import FormatDate from "../../../../utils/FormatDate"
-import { filesize } from "filesize"
+import {filesize} from "filesize"
 import useConfirmationDialog from "../../../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../../../components/confirmationDialog/ConfirmationDialog"
-import { S3Api } from "../../../../features/s3/s3.api"
-import { CompletedPart, S3ListResponse } from "../../../../features/s3/s3.types"
+import {S3Api} from "../../../../features/s3/s3.api"
+import {CompletedPart, S3ListResponse} from "../../../../features/s3/s3.types"
 import pLimit from "p-limit"
 import GetFrontendEnvironment from "../../../../utils/GetFrontendEnvironment"
 import GenerateScopeKey from "../../../../utils/GenerateScopeKey"
 import ImportDataDialog from "../../../projectImportPage/components/importDataDialog/ImportDataDialog"
+import IsUnsupportedFileType from "../../../../utils/IsUnsupportedFileType";
 
 interface FileBrowserDialogProps {
     open: boolean
@@ -71,8 +83,8 @@ export default function FileBrowserDialog({ open, handleClickClose, projectId, h
             if (files) {
                 const file = files[0]
                 e.target.value = ""
-                if (!file.name.toLowerCase().endsWith(".csv")) {
-                    enqueueSnackbar("Please upload a CSV file.", { variant: "error" })
+                if (IsUnsupportedFileType(file)) {
+                    enqueueSnackbar("Please select a CSV file", { variant: "error" })
                 } else if (isUploading) {
                     enqueueSnackbar("Another file is already uploading.", { variant: "warning" })
                 } else {

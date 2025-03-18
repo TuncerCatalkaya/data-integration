@@ -2,6 +2,7 @@ package org.dataintegration;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @EnableJpaRepositories
 @EnableJpaAuditing
+@EnableConfigurationProperties
 @SpringBootApplication
 @lombok.Generated // skip coverage
 public class DataIntegrationApplication {

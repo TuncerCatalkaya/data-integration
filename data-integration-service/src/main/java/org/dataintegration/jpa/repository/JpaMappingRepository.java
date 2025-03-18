@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface JpaMappingRepository extends JpaRepository<MappingEntity, UUID> {
+
     List<MappingEntity> findAllByDeleteFalse(Sort sort);
+
+    @SuppressWarnings("checkstyle:MethodName")
     List<MappingEntity> findAllByScope_IdAndDeleteFalse(UUID scopeId, Sort sort);
 
     @Modifying
@@ -23,4 +26,5 @@ public interface JpaMappingRepository extends JpaRepository<MappingEntity, UUID>
         WHERE id = :mappingId
     """)
     void markForDeletion(@Param("mappingId") UUID mappingId);
+
 }

@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface JpaMappedItemRepository extends JpaRepository<MappedItemEntity, UUID> {
+
+    @SuppressWarnings("checkstyle:MethodName")
     List<MappedItemEntity> findAllByItem_Id(UUID itemId);
+
+    @SuppressWarnings("checkstyle:MethodName")
     Page<MappedItemEntity> findAllByMapping_Id(UUID mappingId, Pageable pageable);
+    
 }

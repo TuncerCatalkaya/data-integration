@@ -17,7 +17,9 @@ public class HostModel {
 
     private UUID id;
     private String name;
-    private String url;
+    private String baseUrl;
+    private String integrationPath;
+    private String getHeadersPath;
     private boolean inUse;
 
     @Builder.Default

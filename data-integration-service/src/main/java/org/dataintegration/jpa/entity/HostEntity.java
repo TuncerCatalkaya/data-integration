@@ -40,8 +40,18 @@ public class HostEntity {
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false, unique = true)
-    private String url;
+    @Column(nullable = false)
+    private String baseUrl;
+
+    @NotBlank
+    @Size(max = 255)
+    @Column(nullable = false)
+    private String integrationPath;
+
+    @NotBlank
+    @Size(max = 255)
+    @Column(nullable = false)
+    private String getHeadersPath;
 
     @OneToMany(
             mappedBy = "host",

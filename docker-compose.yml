@@ -6,7 +6,7 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/data-integration
-      - VITE_S3_ENDPOINT=http://minio:9010
+      - VITE_S3_ENDPOINT=http://minio:9000
     depends_on:
       - db
       - minio
@@ -22,10 +22,10 @@ services:
       - ./data-integration.sql:/docker-entrypoint-initdb.d/data-integration.sql
 
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     ports:
-      - "9010:9000"
-      - "9011:9001"
+      - "9000:9000"
+      - "9001:9001"
     command: server /minio-data/ --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=minio

@@ -16,7 +16,7 @@ import java.util.UUID;
 public class DataIntegrationInputDataAPIModel {
 
     @NonNull
-    private UUID itemId;
+    private UUID mappedItemId;
     @NonNull
     private Map<String, String> data;
 
