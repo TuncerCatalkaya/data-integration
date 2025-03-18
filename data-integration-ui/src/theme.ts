@@ -13,7 +13,7 @@ const theme = createTheme({
         },
         common: {
             black: "#404040",
-            white: "#ffffff",
+            white: "#ffffff"
         },
         background: {
             default: "#ffffff",

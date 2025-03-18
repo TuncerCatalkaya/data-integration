@@ -1,4 +1,4 @@
-import {SelectedDatabase} from "../hosts/hosts.types"
+import { SelectedDatabase } from "../hosts/hosts.types"
 
 export interface ProjectResponse {
     id: string

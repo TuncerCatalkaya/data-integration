@@ -1,29 +1,18 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    PaperProps,
-    Stack,
-    TextField,
-    Typography
-} from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, PaperProps, Stack, TextField, Typography } from "@mui/material"
 import Draggable from "react-draggable"
 import theme from "../../../../theme"
-import {useTranslation} from "react-i18next"
-import {Add, Dns, Info} from "@mui/icons-material"
-import {ChangeEvent, useEffect, useState} from "react"
+import { useTranslation } from "react-i18next"
+import { Add, Dns, Info } from "@mui/icons-material"
+import { ChangeEvent, useEffect, useState } from "react"
 import AddableCard from "../../../../components/addableCard/AddableCard"
-import {InputField} from "../../../../components/addableCard/AddableCard.types"
-import {v4 as uuidv4} from "uuid"
-import {HostsApi} from "../../../../features/hosts/hosts.api"
-import {CreateOrUpdateHostsRequest, Host} from "../../../../features/hosts/hosts.types"
-import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
-import {useSnackbar} from "notistack";
-import InfoTooltip from "../../../../components/tooltip/InfoTooltip";
-import GetFrontendEnvironment from "../../../../utils/GetFrontendEnvironment";
+import { InputField } from "../../../../components/addableCard/AddableCard.types"
+import { v4 as uuidv4 } from "uuid"
+import { HostsApi } from "../../../../features/hosts/hosts.api"
+import { CreateOrUpdateHostsRequest, Host } from "../../../../features/hosts/hosts.types"
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import { useSnackbar } from "notistack"
+import InfoTooltip from "../../../../components/tooltip/InfoTooltip"
+import GetFrontendEnvironment from "../../../../utils/GetFrontendEnvironment"
 
 interface CreateOrEditHostDialogProps {
     open: boolean
@@ -39,7 +28,7 @@ function PaperComponent(props: PaperProps) {
     )
 }
 
-export default function CreateOrEditHostDialog({open, handleClickClose, hostToEdit}: Readonly<CreateOrEditHostDialogProps>) {
+export default function CreateOrEditHostDialog({ open, handleClickClose, hostToEdit }: Readonly<CreateOrEditHostDialogProps>) {
     const [hostName, setHostName] = useState("")
     const [hostBaseUrl, setHostBaseUrl] = useState("")
     const [hostIntegrationPath, setHostIntegrationPath] = useState("")
@@ -80,19 +69,23 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
     const handleDatabaseChange = (id: string, value: string): void => {
         const updatedDatabases = databases.map(database => {
             if (database.id === id) {
-                return {...database, value}
+                return { ...database, value }
             }
             return database
         })
         setDatabases(updatedDatabases)
     }
 
-    const addDatabase = (): void => setDatabases([...databases, {
-        id: uuidv4(),
-        dbId: "",
-        value: "",
-        removeDisabled: false
-    }])
+    const addDatabase = (): void =>
+        setDatabases([
+            ...databases,
+            {
+                id: uuidv4(),
+                dbId: "",
+                value: "",
+                removeDisabled: false
+            }
+        ])
     const removeDatabase = (id: string): void => setDatabases(databases.filter(field => field.id !== id))
 
     const handleClickSubmit = async () => {
@@ -122,14 +115,19 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
         }
     }
 
-    const submitButtonDisabled = hostName.trim() === "" || hostBaseUrl.trim() === "" || hostIntegrationPath.trim() === "" || hostGetHeadersPath.trim() === "" || databases.some(database => database.value === "")
+    const submitButtonDisabled =
+        hostName.trim() === "" ||
+        hostBaseUrl.trim() === "" ||
+        hostIntegrationPath.trim() === "" ||
+        hostGetHeadersPath.trim() === "" ||
+        databases.some(database => database.value === "")
 
     useEffect(() => {
         if (hostToEdit) {
             setHostName(hostToEdit.name)
             setHostBaseUrl(hostToEdit.baseUrl)
-            setHostIntegrationPath(hostToEdit.integrationPath);
-            setHostGetHeadersPath(hostToEdit.getHeadersPath);
+            setHostIntegrationPath(hostToEdit.integrationPath)
+            setHostGetHeadersPath(hostToEdit.getHeadersPath)
             setDatabases(
                 hostToEdit.databases.map(database => ({
                     id: database.id,
@@ -147,13 +145,13 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
             onClose={() => handleClickClose()}
             aria-labelledby="create-or-edit-mapping-dialog"
             PaperComponent={PaperComponent}
-            sx={{zIndex: theme.zIndex.modal}}
+            sx={{ zIndex: theme.zIndex.modal }}
         >
-            <DialogTitle sx={{cursor: "move"}}>
+            <DialogTitle sx={{ cursor: "move" }}>
                 <Stack spacing={1}>
                     <Stack direction="row" display="flex" justifyContent="space-between">
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <Dns/>
+                            <Dns />
                             {!hostToEdit && (
                                 <Typography variant="h6">
                                     {translation.t("pages.projectImport.components.dialogs.createOrEditHostDialog.create.title")}
@@ -170,14 +168,14 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
             </DialogTitle>
             <DialogContent>
                 <Stack spacing={2}>
-                    <Paper sx={{padding: "25px"}}>
+                    <Paper sx={{ padding: "25px" }}>
                         <Stack direction="row" alignItems="center" spacing="5px">
                             <Typography variant="h6">Host</Typography>
                             <InfoTooltip messages={["Valid Domains for URL:\n" + GetFrontendEnvironment("VITE_VALID_DOMAINS")]}>
                                 <Info color="info" />
                             </InfoTooltip>
                         </Stack>
-                        <Stack direction="row" alignItems="center" spacing={2} sx={{padding: "10px"}}>
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ padding: "10px" }}>
                             <TextField
                                 label="Name"
                                 placeholder={"Enter a name..."}
@@ -200,7 +198,7 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
                                 onChange={handleHostBaseUrlChange}
                             />
                         </Stack>
-                        <Stack direction="row" alignItems="center" spacing={2} sx={{padding: "10px"}}>
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ padding: "10px" }}>
                             <TextField
                                 label="Integration path"
                                 placeholder={"Enter the integration path..."}
@@ -229,9 +227,9 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
                             label={"Database"}
                             index={index + 1}
                             handleClickRemove={() => removeDatabase(database.id)}
-                            removeDisabled={database.removeDisabled ||databases.length == 1}
+                            removeDisabled={database.removeDisabled || databases.length == 1}
                         >
-                            <Stack direction="row" alignItems="center" spacing={2} sx={{padding: "10px"}}>
+                            <Stack direction="row" alignItems="center" spacing={2} sx={{ padding: "10px" }}>
                                 <TextField
                                     label="Name"
                                     placeholder={"Enter a name..."}
@@ -244,7 +242,7 @@ export default function CreateOrEditHostDialog({open, handleClickClose, hostToEd
                             </Stack>
                         </AddableCard>
                     ))}
-                    <Button variant="contained" startIcon={<Add/>} onClick={addDatabase}>
+                    <Button variant="contained" startIcon={<Add />} onClick={addDatabase}>
                         Add database
                     </Button>
                 </Stack>

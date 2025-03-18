@@ -24,22 +24,22 @@ import {
 } from "@mui/material"
 import Draggable from "react-draggable"
 import theme from "../../../../theme"
-import {useTranslation} from "react-i18next"
-import {FixedSizeList} from "react-window"
-import {Add, Delete, Edit, Input, Output, Transform} from "@mui/icons-material"
-import {ChangeEvent, CSSProperties, FC, useCallback, useEffect, useRef, useState} from "react"
+import { useTranslation } from "react-i18next"
+import { FixedSizeList } from "react-window"
+import { Add, Delete, Edit, Input, Output, Transform } from "@mui/icons-material"
+import { ChangeEvent, CSSProperties, FC, useCallback, useEffect, useRef, useState } from "react"
 import CreateOrEditHostDialog from ".././createOrEditHostDialog/CreateOrEditHostDialog"
-import {HostsApi} from "../../../../features/hosts/hosts.api"
-import {Host} from "../../../../features/hosts/hosts.types"
+import { HostsApi } from "../../../../features/hosts/hosts.api"
+import { Host } from "../../../../features/hosts/hosts.types"
 import useConfirmationDialog from "../../../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../../../components/confirmationDialog/ConfirmationDialog"
-import {ProjectsApi} from "../../../../features/projects/projects.api"
-import {useParams} from "react-router-dom"
-import {v4 as uuidv4} from "uuid"
-import {CreateOrUpdateMappingsRequest, MappingResponse} from "../../../../features/projects/projects.types"
-import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
-import {useSnackbar} from "notistack"
-import useShake from "../../../../components/shake/hooks/useShake";
+import { ProjectsApi } from "../../../../features/projects/projects.api"
+import { useParams } from "react-router-dom"
+import { v4 as uuidv4 } from "uuid"
+import { CreateOrUpdateMappingsRequest, MappingResponse } from "../../../../features/projects/projects.types"
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import { useSnackbar } from "notistack"
+import useShake from "../../../../components/shake/hooks/useShake"
 
 interface CreateMappingDialogProps {
     open: boolean
@@ -91,12 +91,12 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
 
     const { openConfirmationDialog, handleClickCloseConfirmationDialog, handleClickOpenConfirmationDialog } = useConfirmationDialog()
 
-    const { handleShakeClick, shakeSx } = useShake();
-    
+    const { handleShakeClick, shakeSx } = useShake()
+
     const { enqueueSnackbar } = useSnackbar()
 
     const translation = useTranslation()
-    
+
     const handleClickOpenCreateHostDialog = () => {
         setIsEditMode(false)
         setOpenCreateOrEditHostDialog(true)

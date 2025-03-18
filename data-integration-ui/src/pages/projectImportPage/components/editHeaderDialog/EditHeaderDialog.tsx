@@ -1,27 +1,13 @@
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    PaperProps,
-    Stack,
-    Switch,
-    TextField,
-    Tooltip,
-    Typography
-} from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, PaperProps, Stack, Switch, TextField, Tooltip, Typography } from "@mui/material"
 import Draggable from "react-draggable"
-import {Add, Edit} from "@mui/icons-material"
-import {useSnackbar} from "notistack"
+import { Add, Edit } from "@mui/icons-material"
+import { useSnackbar } from "notistack"
 import theme from "../../../../theme"
-import {useParams} from "react-router-dom"
-import {ScopeHeaderResponse} from "../../../../features/projects/projects.types";
-import {ChangeEvent, useEffect, useMemo, useState} from "react";
-import useShake from "../../../../components/shake/hooks/useShake";
-import {ProjectsApi} from "../../../../features/projects/projects.api";
+import { useParams } from "react-router-dom"
+import { ScopeHeaderResponse } from "../../../../features/projects/projects.types"
+import { ChangeEvent, useEffect, useMemo, useState } from "react"
+import useShake from "../../../../components/shake/hooks/useShake"
+import { ProjectsApi } from "../../../../features/projects/projects.api"
 
 interface EditHeaderDialogProps {
     open: boolean
@@ -41,12 +27,12 @@ function PaperComponent(props: PaperProps) {
 export default function EditHeaderDialog({ open, handleClickClose, scopeId, scopeHeaders }: Readonly<EditHeaderDialogProps>) {
     const [headerName, setHeaderName] = useState("")
     const [headers, setHeaders] = useState<ScopeHeaderResponse[]>([])
-    const [createOrUpdateScopeHeaders] = ProjectsApi.useCreateOrUpdateScopeHeadersMutation();
+    const [createOrUpdateScopeHeaders] = ProjectsApi.useCreateOrUpdateScopeHeadersMutation()
 
     const { projectId } = useParams()
     const { enqueueSnackbar } = useSnackbar()
 
-    const { handleShakeClick, shakeSx } = useShake();
+    const { handleShakeClick, shakeSx } = useShake()
 
     const handleHeaderNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newHeaderName = event.target.value
@@ -56,14 +42,17 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
     const handleClickAddHeader = () => {
         if (headers.some(header => header.name === headerName)) {
             enqueueSnackbar("Header name exists already.", { variant: "error" })
-            return;
+            return
         }
 
         setHeaderName("")
-        setHeaders([...headers, {
-            name: headerName,
-            hidden: false
-        }])
+        setHeaders([
+            ...headers,
+            {
+                name: headerName,
+                hidden: false
+            }
+        ])
         enqueueSnackbar("Header added at end of list.", { variant: "success" })
     }
 
@@ -82,46 +71,41 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
 
     useEffect(() => {
         setHeaders(scopeHeaders)
-    }, [scopeHeaders]);
+    }, [scopeHeaders])
 
-    const headerComponents = useMemo(() => (
-        headers.map(header => (
-            <Paper key={header.name} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
-                <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
-                    <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
-                        <Typography
-                            noWrap
-                            sx={{
-                                maxWidth: 500,
-                                textOverflow: "ellipsis",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                fontWeight: "bold"
+    const headerComponents = useMemo(
+        () =>
+            headers.map(header => (
+                <Paper key={header.name} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
+                    <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
+                        <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
+                            <Typography
+                                noWrap
+                                sx={{
+                                    maxWidth: 500,
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
+                                    whiteSpace: "nowrap",
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                {header.name}
+                            </Typography>
+                        </Tooltip>
+                        <Switch
+                            checked={!header.hidden}
+                            onChange={(_, checked) => {
+                                setHeaders(prevHeaders => prevHeaders.map(h => (h.name === header.name ? { ...h, hidden: !checked } : h)))
                             }}
-                        >
-                            {header.name}
-                        </Typography>
-                    </Tooltip>
-                    <Switch checked={!header.hidden} onChange={(_, checked) => {
-                        setHeaders(prevHeaders =>
-                            prevHeaders.map(h =>
-                                h.name === header.name ? { ...h, hidden: !checked } : h
-                            )
-                        );
-                    }} />
-                </Stack>
-            </Paper>
-        ))
-    ), [headers]);
+                        />
+                    </Stack>
+                </Paper>
+            )),
+        [headers]
+    )
 
     return (
-        <Dialog
-            open={open}
-            onClose={handleShakeClick}
-            aria-labelledby="edit-header-dialog"
-            PaperComponent={PaperComponent}
-            sx={{ zIndex: theme.zIndex.modal }}
-        >
+        <Dialog open={open} onClose={handleShakeClick} aria-labelledby="edit-header-dialog" PaperComponent={PaperComponent} sx={{ zIndex: theme.zIndex.modal }}>
             <DialogTitle sx={{ cursor: "move" }}>
                 <Stack spacing={1}>
                     <Stack direction="row" display="flex" justifyContent="space-between">

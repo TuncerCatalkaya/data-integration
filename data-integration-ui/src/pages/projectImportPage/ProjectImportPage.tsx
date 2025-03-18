@@ -21,37 +21,31 @@ import {
     Tooltip,
     Typography
 } from "@mui/material"
-import {useParams} from "react-router-dom"
-import React, {ChangeEvent, useCallback, useEffect, useState} from "react"
-import {ProjectsApi} from "../../features/projects/projects.api"
-import {useSnackbar} from "notistack"
+import { useParams } from "react-router-dom"
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react"
+import { ProjectsApi } from "../../features/projects/projects.api"
+import { useSnackbar } from "notistack"
 import FileBrowserDialog from "../projectPage/components/dialogs/FileBrowserDialog"
-import {Add, Bolt, Clear, Cloud, CloudDownload, Delete, Edit, FileDownload, Link, Search} from "@mui/icons-material"
-import {
-    GetCurrentCheckpointStatusResponse,
-    ItemResponse,
-    MappingResponse,
-    ScopeHeaderResponse,
-    ScopeResponse
-} from "../../features/projects/projects.types"
+import { Add, Bolt, Clear, Cloud, CloudDownload, Delete, Edit, FileDownload, Link, Search } from "@mui/icons-material"
+import { GetCurrentCheckpointStatusResponse, ItemResponse, MappingResponse, ScopeHeaderResponse, ScopeResponse } from "../../features/projects/projects.types"
 import usePagination from "../../components/pagination/hooks/usePagination"
 import ItemsTable from "./components/itemsTable/ItemsTable"
 import theme from "../../theme"
-import {ColDef} from "ag-grid-community"
+import { ColDef } from "ag-grid-community"
 import useConfirmationDialog from "../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../components/confirmationDialog/ConfirmationDialog"
-import {useAppDispatch, useAppSelector} from "../../store/store"
+import { useAppDispatch, useAppSelector } from "../../store/store"
 import GenerateScopeKey from "../../utils/GenerateScopeKey"
 import GetFrontendEnvironment from "../../utils/GetFrontendEnvironment"
-import {FetchBaseQueryError} from "@reduxjs/toolkit/query"
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import ImportDataDialog from "./components/importDataDialog/ImportDataDialog"
 import CreateOrEditMappingDialog from "./components/createMappingDialog/CreateOrEditMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
 import BulkEditDialog from "./components/bulkEditDialog/BulkEditDialog"
-import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog";
-import GetScopeHeaders from "../../utils/GetScopeHeaders";
-import parse from "filesize-parser";
-import IsUnsupportedFileType from "../../utils/IsUnsupportedFileType";
+import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog"
+import GetScopeHeaders from "../../utils/GetScopeHeaders"
+import parse from "filesize-parser"
+import IsUnsupportedFileType from "../../utils/IsUnsupportedFileType"
 
 export default function ProjectImportPage() {
     const { projectId } = useParams()
@@ -193,7 +187,7 @@ export default function ProjectImportPage() {
                 e.target.value = ""
                 if (IsUnsupportedFileType(file)) {
                     enqueueSnackbar("Please select a CSV file", { variant: "error" })
-                } else if(file.size > parse(GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT"))) {
+                } else if (file.size > parse(GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT"))) {
                     enqueueSnackbar("The file is too big for small file import", { variant: "error" })
                 } else {
                     const scopeKey = GenerateScopeKey(file)
@@ -202,7 +196,7 @@ export default function ProjectImportPage() {
                     setScope(scopeResponse.id)
                     dispatch(ImportItemsSlice.actions.putScope({ projectId: projectId!, scope: scopeResponse.id }))
                     setShouldStartTimer(true)
-                    await importDataFile({ projectId: projectId!, scopeId: scopeResponse.id, delimiter, file });
+                    await importDataFile({ projectId: projectId!, scopeId: scopeResponse.id, delimiter, file })
                     setMapping("select")
                     enqueueSnackbar("Started data import process", { variant: "success" })
                 }
@@ -482,12 +476,7 @@ export default function ProjectImportPage() {
                 </ConfirmationDialog>
             )}
             {openEditHeaderDialog && (
-                <EditHeaderDialog
-                    open={openEditHeaderDialog}
-                    handleClickClose={handleClickCloseEditHeaderDialog}
-                    scopeId={scope}
-                    scopeHeaders={scopeHeaders}
-                />
+                <EditHeaderDialog open={openEditHeaderDialog} handleClickClose={handleClickCloseEditHeaderDialog} scopeId={scope} scopeHeaders={scopeHeaders} />
             )}
             {openBulkEditDialog && (
                 <BulkEditDialog

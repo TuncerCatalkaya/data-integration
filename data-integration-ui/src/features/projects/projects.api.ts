@@ -1,5 +1,5 @@
-import {createApi} from "@reduxjs/toolkit/query/react"
-import {protectedBaseQuery} from "../../store/protectedBaseQuery"
+import { createApi } from "@reduxjs/toolkit/query/react"
+import { protectedBaseQuery } from "../../store/protectedBaseQuery"
 import {
     ApplyMappingRequest,
     ApplyUnmappingRequest,

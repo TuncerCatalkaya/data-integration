@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client"
+import {createRoot} from "react-dom/client"
 import App from "./App"
 
 interface DataIntegrationApp {
@@ -18,9 +18,7 @@ window.DataIntegrationApp = {
         const container = document.getElementById(containerId)
         if (container) {
             window.environments = new Map<string, string>()
-            const headers = new Headers()
-            // headers.set("Authorization", `Bearer ${token}`)
-            fetch(`${window.dataIntegrationBaseUrl}/data-integration/environments/frontend`, { headers }).then(response =>
+            fetch(`${window.dataIntegrationBaseUrl}/data-integration/environments/frontend`).then(response =>
                 response.json().then(data => {
                     const frontendEnvironments: Record<string, string> = data
                     for (const key in frontendEnvironments) {

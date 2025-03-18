@@ -12,24 +12,19 @@ import {
     Tooltip,
     Typography
 } from "@mui/material"
-import {useParams} from "react-router-dom"
-import {ChangeEvent, useCallback, useEffect, useState} from "react"
-import {ProjectsApi} from "../../features/projects/projects.api"
-import {useSnackbar} from "notistack"
-import {Add, Delete, Edit, LinkOff} from "@mui/icons-material"
-import {
-    MappedItemResponse,
-    MappingResponse,
-    ScopeHeaderResponse,
-    ScopeResponse
-} from "../../features/projects/projects.types"
+import { useParams } from "react-router-dom"
+import { ChangeEvent, useCallback, useEffect, useState } from "react"
+import { ProjectsApi } from "../../features/projects/projects.api"
+import { useSnackbar } from "notistack"
+import { Add, Delete, Edit, LinkOff } from "@mui/icons-material"
+import { MappedItemResponse, MappingResponse, ScopeHeaderResponse, ScopeResponse } from "../../features/projects/projects.types"
 import usePagination from "../../components/pagination/hooks/usePagination"
 import theme from "../../theme"
-import {ColDef} from "ag-grid-community"
+import { ColDef } from "ag-grid-community"
 import useConfirmationDialog from "../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../components/confirmationDialog/ConfirmationDialog"
 import MappedItemsTable from "./components/mappedItemsTable/MappedItemsTable"
-import {useAppDispatch, useAppSelector} from "../../store/store"
+import { useAppDispatch, useAppSelector } from "../../store/store"
 import MappedItemsSlice from "../../features/mappedItems/mappedItems.slice"
 import CreateOrEditMappingDialog from "../projectImportPage/components/createMappingDialog/CreateOrEditMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"

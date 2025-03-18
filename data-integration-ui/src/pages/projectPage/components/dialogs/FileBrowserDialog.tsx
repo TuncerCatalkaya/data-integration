@@ -1,33 +1,22 @@
-import {
-    Alert,
-    AlertColor,
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    PaperProps,
-    Stack,
-    Typography
-} from "@mui/material"
+import { Alert, AlertColor, Button, Dialog, DialogContent, DialogTitle, Paper, PaperProps, Stack, Typography } from "@mui/material"
 import Draggable from "react-draggable"
-import {useSnackbar} from "notistack"
+import { useSnackbar } from "notistack"
 import theme from "../../../../theme"
-import {useTranslation} from "react-i18next"
-import {CloudDownload, CloudUpload, Delete, Storage} from "@mui/icons-material"
-import {ChangeEvent, useCallback, useEffect, useState} from "react"
+import { useTranslation } from "react-i18next"
+import { CloudDownload, CloudUpload, Delete, Storage } from "@mui/icons-material"
+import { ChangeEvent, useCallback, useEffect, useState } from "react"
 import DataIntegrationSpinner from "../../../../components/./dataIntegrationSpinner/DataIntegrationSpinner"
 import FormatDate from "../../../../utils/FormatDate"
-import {filesize} from "filesize"
+import { filesize } from "filesize"
 import useConfirmationDialog from "../../../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../../../components/confirmationDialog/ConfirmationDialog"
-import {S3Api} from "../../../../features/s3/s3.api"
-import {CompletedPart, S3ListResponse} from "../../../../features/s3/s3.types"
+import { S3Api } from "../../../../features/s3/s3.api"
+import { CompletedPart, S3ListResponse } from "../../../../features/s3/s3.types"
 import pLimit from "p-limit"
 import GetFrontendEnvironment from "../../../../utils/GetFrontendEnvironment"
 import GenerateScopeKey from "../../../../utils/GenerateScopeKey"
 import ImportDataDialog from "../../../projectImportPage/components/importDataDialog/ImportDataDialog"
-import IsUnsupportedFileType from "../../../../utils/IsUnsupportedFileType";
+import IsUnsupportedFileType from "../../../../utils/IsUnsupportedFileType"
 
 interface FileBrowserDialogProps {
     open: boolean
@@ -292,61 +281,61 @@ export default function FileBrowserDialog({ open, handleClickClose, projectId, h
                         {fileBrowserObjects.length === 0 && <Typography variant="h6">No files uploaded yet for this project</Typography>}
                         {[...fileBrowserObjects]
                             .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
-                            .map(fileBrowserObject =>
-                                    <Paper key={fileBrowserObject.key} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
-                                        <Stack spacing={1}>
-                                            <Typography
-                                                noWrap
-                                                sx={{
-                                                    maxWidth: 500,
-                                                    textOverflow: "ellipsis",
-                                                    overflow: "hidden",
-                                                    whiteSpace: "nowrap",
-                                                    fontWeight: "bold"
-                                                }}
-                                            >
-                                                {fileBrowserObject.key.split("/")[1]}
-                                            </Typography>
-                                            <Typography>{filesize(fileBrowserObject.size, { standard: "iec" })}</Typography>
-                                            <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
-                                                <Typography sx={{ fontStyle: "italic" }}>{FormatDate(fileBrowserObject.lastModified)}</Typography>
-                                                <Stack direction="row" spacing={1}>
+                            .map(fileBrowserObject => (
+                                <Paper key={fileBrowserObject.key} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
+                                    <Stack spacing={1}>
+                                        <Typography
+                                            noWrap
+                                            sx={{
+                                                maxWidth: 500,
+                                                textOverflow: "ellipsis",
+                                                overflow: "hidden",
+                                                whiteSpace: "nowrap",
+                                                fontWeight: "bold"
+                                            }}
+                                        >
+                                            {fileBrowserObject.key.split("/")[1]}
+                                        </Typography>
+                                        <Typography>{filesize(fileBrowserObject.size, { standard: "iec" })}</Typography>
+                                        <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
+                                            <Typography sx={{ fontStyle: "italic" }}>{FormatDate(fileBrowserObject.lastModified)}</Typography>
+                                            <Stack direction="row" spacing={1}>
+                                                <Button
+                                                    color="error"
+                                                    variant="contained"
+                                                    endIcon={<Delete />}
+                                                    onClick={() => {
+                                                        setFileBrowserObjectToDelete(fileBrowserObject.key)
+                                                        handleClickOpenConfirmationDialog()
+                                                    }}
+                                                >
+                                                    Delete
+                                                </Button>
+                                                {!fileBrowserObject.checkpoint && (
                                                     <Button
-                                                        color="error"
                                                         variant="contained"
-                                                        endIcon={<Delete />}
-                                                        onClick={() => {
-                                                            setFileBrowserObjectToDelete(fileBrowserObject.key)
-                                                            handleClickOpenConfirmationDialog()
-                                                        }}
+                                                        endIcon={<CloudDownload />}
+                                                        onClick={async () => await handleClickStartImportS3(fileBrowserObject.key)}
                                                     >
-                                                        Delete
+                                                        {"Start Import"}
                                                     </Button>
-                                                    {!fileBrowserObject.checkpoint && (
-                                                        <Button
-                                                            variant="contained"
-                                                            endIcon={<CloudDownload />}
-                                                            onClick={async () => await handleClickStartImportS3(fileBrowserObject.key)}
-                                                        >
-                                                            {"Start Import"}
-                                                        </Button>
-                                                    )}
-                                                    {fileBrowserObject.checkpoint && (
-                                                        <Button
-                                                            variant="contained"
-                                                            color="warning"
-                                                            endIcon={<CloudDownload />}
-                                                            onClick={async () => await handleClickStartImportS3(fileBrowserObject.key)}
-                                                            sx={{ color: theme.palette.common.white }}
-                                                        >
-                                                            {"Restart Import"}
-                                                        </Button>
-                                                    )}
-                                                </Stack>
+                                                )}
+                                                {fileBrowserObject.checkpoint && (
+                                                    <Button
+                                                        variant="contained"
+                                                        color="warning"
+                                                        endIcon={<CloudDownload />}
+                                                        onClick={async () => await handleClickStartImportS3(fileBrowserObject.key)}
+                                                        sx={{ color: theme.palette.common.white }}
+                                                    >
+                                                        {"Restart Import"}
+                                                    </Button>
+                                                )}
                                             </Stack>
                                         </Stack>
-                                    </Paper>
-                            )}
+                                    </Stack>
+                                </Paper>
+                            ))}
                     </Stack>
                 </DialogContent>
             </Dialog>

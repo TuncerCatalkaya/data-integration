@@ -1,6 +1,6 @@
-import {useState} from "react"
-import {keyframes} from "@mui/material";
-import {SxProps} from "@mui/system/styleFunctionSx";
+import { useState } from "react"
+import { keyframes } from "@mui/material"
+import { SxProps } from "@mui/system/styleFunctionSx"
 
 const shakeAnimation = keyframes`
     0% { transform: translate(0, 0); }

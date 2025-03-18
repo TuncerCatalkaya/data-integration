@@ -19,13 +19,13 @@ import {
     Typography
 } from "@mui/material"
 import Draggable from "react-draggable"
-import {Edit, ViewColumn} from "@mui/icons-material"
-import {ChangeEvent, useState} from "react"
-import {ProjectsApi} from "../../../../features/projects/projects.api"
-import {useSnackbar} from "notistack"
+import { Edit, ViewColumn } from "@mui/icons-material"
+import { ChangeEvent, useState } from "react"
+import { ProjectsApi } from "../../../../features/projects/projects.api"
+import { useSnackbar } from "notistack"
 import theme from "../../../../theme"
-import {useParams} from "react-router-dom"
-import useShake from "../../../../components/shake/hooks/useShake";
+import { useParams } from "react-router-dom"
+import useShake from "../../../../components/shake/hooks/useShake"
 
 interface BulkEditDialogProps {
     open: boolean
@@ -49,7 +49,7 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
     const [updateItemProperties] = ProjectsApi.useUpdateItemPropertiesMutation()
     const { enqueueSnackbar } = useSnackbar()
 
-    const { handleShakeClick, shakeSx } = useShake();
+    const { handleShakeClick, shakeSx } = useShake()
 
     const closeDialog = (shouldReload = false) => {
         bulkEditDialogProps.handleClickClose(shouldReload)

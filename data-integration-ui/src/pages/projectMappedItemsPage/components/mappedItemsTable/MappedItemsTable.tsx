@@ -1,14 +1,8 @@
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-alpine.css"
-import {AgGridReact} from "ag-grid-react"
-import {Stack} from "@mui/material"
-import {
-    ItemStatusResponse,
-    MappedItemResponse,
-    MappingResponse,
-    ScopeHeaderResponse,
-    ScopeResponse
-} from "../../../../features/projects/projects.types"
+import { AgGridReact } from "ag-grid-react"
+import { Stack } from "@mui/material"
+import { ItemStatusResponse, MappedItemResponse, MappingResponse, ScopeHeaderResponse, ScopeResponse } from "../../../../features/projects/projects.types"
 import {
     CellClassParams,
     CheckboxSelectionCallbackParams,
@@ -20,14 +14,14 @@ import {
     ValueGetterParams
 } from "ag-grid-community"
 import "./MappedItemsTable.css"
-import React, {ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect} from "react"
+import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect } from "react"
 import Pagination from "../../../../components/pagination/Pagination"
-import {ProjectsApi} from "../../../../features/projects/projects.api"
-import {useParams} from "react-router-dom"
-import {ValueSetterParams} from "ag-grid-community/dist/types/core/entities/colDef"
+import { ProjectsApi } from "../../../../features/projects/projects.api"
+import { useParams } from "react-router-dom"
+import { ValueSetterParams } from "ag-grid-community/dist/types/core/entities/colDef"
 import CheckboxTableHeader from "../../../../components/checkboxTableHeader/CheckboxTableHeader"
 import UndoCellRenderer from "../../../../components/undoCellRenderer/UndoCellRenderer"
-import GetScopeHeaders from "../../../../utils/GetScopeHeaders";
+import GetScopeHeaders from "../../../../utils/GetScopeHeaders"
 
 interface ItemsTableProps {
     rowData: MappedItemResponse[]
