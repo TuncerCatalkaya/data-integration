@@ -26,8 +26,10 @@ import ConfirmationDialog from "../../components/confirmationDialog/Confirmation
 import MappedItemsTable from "./components/mappedItemsTable/MappedItemsTable"
 import { useAppDispatch, useAppSelector } from "../../store/store"
 import MappedItemsSlice from "../../features/mappedItems/mappedItems.slice"
-import CreateOrEditMappingDialog from "../projectImportPage/components/createMappingDialog/CreateOrEditMappingDialog"
+import CreateOrEditMappingDialog from "../../components/dialogs/createMappingDialog/CreateOrEditMappingDialog"
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
+import { HostsApi } from "../../features/hosts/hosts.api"
+import { DataIntegrationHeaderAPIResponse } from "../../features/hosts/hosts.types"
 
 export default function ProjectMappedItemsPage() {
     const { projectId } = useParams()
@@ -45,6 +47,10 @@ export default function ProjectMappedItemsPage() {
 
     const [mapping, setMapping] = useState(mappingsFromStore[projectId!] || "select")
     const [mappingsResponse, setMappingsResponse] = useState<MappingResponse[]>([])
+
+    const [getHostHeadersResponse, setGetHostHeadersResponse] = useState<DataIntegrationHeaderAPIResponse>({
+        headers: []
+    })
 
     const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -64,7 +70,7 @@ export default function ProjectMappedItemsPage() {
 
     const [getScopes] = ProjectsApi.useLazyGetScopesQuery()
     const [getScopeHeaders] = ProjectsApi.useLazyGetScopeHeadersQuery()
-    const [getItems] = ProjectsApi.useLazyGetItemsQuery()
+    const [getHostHeaders] = HostsApi.useLazyGetHostHeadersQuery()
     const [getMappings] = ProjectsApi.useLazyGetMappingsQuery()
     const [getMappedItems] = ProjectsApi.useLazyGetMappedItemsQuery()
     const [markMappingForDeletion] = ProjectsApi.useMarkMappingForDeletionMutation()
@@ -73,10 +79,12 @@ export default function ProjectMappedItemsPage() {
     const { enqueueSnackbar } = useSnackbar()
 
     const handleClickCloseCreateMappingDialog = async (shouldReload = false) => {
-        console.log(getItems)
         setOpenCreateMappingDialog(false)
         if (shouldReload) {
             const getMappingsResponse = await getMappings({ projectId: projectId!, scopeId: scope }).unwrap()
+            getMappingsResponse.map(mappingResponse => {
+                mappingResponse.mapping
+            })
             setMappingsResponse(getMappingsResponse)
         }
     }
@@ -193,6 +201,17 @@ export default function ProjectMappedItemsPage() {
             fetchMappingsData(selectedScope.id)
         }
     }, [selectedScope, fetchMappingsData])
+
+    const fetchHostHeadersData = useCallback(async () => {
+        const getHostHeadersResponse = await getHostHeaders({ hostId: selectedMapping!.database.host.id, language: "en" }).unwrap()
+        setGetHostHeadersResponse(getHostHeadersResponse)
+    }, [getHostHeaders, selectedMapping])
+
+    useEffect(() => {
+        if (selectedMapping) {
+            fetchHostHeadersData()
+        }
+    }, [fetchHostHeadersData, selectedMapping])
 
     return (
         <>
@@ -317,6 +336,7 @@ export default function ProjectMappedItemsPage() {
                     scopeHeaders={scopeHeaders}
                     selectedScope={selectedScope}
                     selectedMapping={selectedMapping}
+                    getHostHeadersResponse={getHostHeadersResponse}
                     columnDefs={columnDefs}
                     setColumnDefs={setColumnDefs}
                     setSelectedItems={setSelectedItems}

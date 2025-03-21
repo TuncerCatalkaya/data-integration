@@ -1,4 +1,4 @@
-import { SelectedDatabase } from "../hosts/hosts.types"
+import { SelectedDatabaseResponse } from "../hosts/hosts.types"
 
 export interface ProjectResponse {
     id: string
@@ -39,7 +39,7 @@ export interface MappingResponse {
     finished: boolean
     processing: boolean
     mapping: Mapping
-    database: SelectedDatabase
+    database: SelectedDatabaseResponse
 }
 
 export enum ItemStatusResponse {

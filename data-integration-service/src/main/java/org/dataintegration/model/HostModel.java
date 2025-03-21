@@ -19,7 +19,7 @@ public class HostModel {
     private String name;
     private String baseUrl;
     private String integrationPath;
-    private String getHeadersPath;
+    private String headerPath;
     private boolean inUse;
 
     @Builder.Default

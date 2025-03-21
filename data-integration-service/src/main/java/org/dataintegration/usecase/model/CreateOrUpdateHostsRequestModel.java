@@ -30,7 +30,7 @@ public class CreateOrUpdateHostsRequestModel {
     private String integrationPath;
 
     @NotBlank
-    private String getHeadersPath;
+    private String headerPath;
 
     @Valid
     @Builder.Default

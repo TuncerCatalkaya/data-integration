@@ -51,7 +51,7 @@ public class HostEntity {
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
-    private String getHeadersPath;
+    private String headerPath;
 
     @OneToMany(
             mappedBy = "host",

@@ -53,15 +53,15 @@ public class MappingsService {
 
     public void validateMapping(UUID mappingId, Map<String, String[]> mapping, Set<HeaderModel> headers) {
         final String errorPrefix = "Mapping with id " + mappingId + " ";
-        validateSources(errorPrefix, mapping, headers);
+//        validateSources(errorPrefix, mapping, headers); TODO: instead retrieve the target headers (headers param already there) and compare if all of them are there (size, contain check)
         validateTargets(errorPrefix, mapping);
     }
 
     private void validateSources(String errorPrefix, Map<String, String[]> mapping, Set<HeaderModel> headers) {
         final Set<String> sources = mapping.keySet();
-        if (sources.size() != headers.size()) {
-            throw new MappingValidationException(errorPrefix + "has a different size of source mappings than available headers.");
-        }
+//        if (sources.size() != headers.size()) {
+//            throw new MappingValidationException(errorPrefix + "has a different size of source mappings than available headers.");
+//        }
         for (HeaderModel header : headers) {
             if (!sources.contains(header.getName())) {
                 throw new MappingValidationException(errorPrefix + "has source mappings that are different to the original headers.");

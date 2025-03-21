@@ -8,26 +8,29 @@ import {
     CheckboxSelectionCallbackParams,
     ColDef,
     GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
     IRowNode,
     SelectionChangedEvent,
     SortChangedEvent,
     ValueGetterParams
 } from "ag-grid-community"
 import "./MappedItemsTable.css"
-import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect } from "react"
+import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
 import Pagination from "../../../../components/pagination/Pagination"
 import { ProjectsApi } from "../../../../features/projects/projects.api"
 import { useParams } from "react-router-dom"
 import { ValueSetterParams } from "ag-grid-community/dist/types/core/entities/colDef"
 import CheckboxTableHeader from "../../../../components/checkboxTableHeader/CheckboxTableHeader"
 import UndoCellRenderer from "../../../../components/undoCellRenderer/UndoCellRenderer"
-import GetScopeHeaders from "../../../../utils/GetScopeHeaders"
+import { DataIntegrationHeaderAPIResponse } from "../../../../features/hosts/hosts.types"
 
 interface ItemsTableProps {
     rowData: MappedItemResponse[]
     scopeHeaders: ScopeHeaderResponse[]
     selectedScope?: ScopeResponse
     selectedMapping?: MappingResponse
+    getHostHeadersResponse: DataIntegrationHeaderAPIResponse
     columnDefs: ColDef[]
     setColumnDefs: Dispatch<SetStateAction<ColDef[]>>
     setSelectedItems: Dispatch<SetStateAction<string[]>>
@@ -47,6 +50,7 @@ export default function MappedItemsTable({
     scopeHeaders,
     selectedScope,
     selectedMapping,
+    getHostHeadersResponse,
     columnDefs,
     setColumnDefs,
     setSelectedItems,
@@ -59,11 +63,11 @@ export default function MappedItemsTable({
     const [updateMappedItemProperty] = ProjectsApi.useUpdateMappedItemPropertyMutation()
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const getValue = (singleRowData: any, key: string, mappedKey: string) => {
-        if (singleRowData.properties?.[mappedKey] != null) {
-            return singleRowData.properties[mappedKey].value
+    const getValue = (singleRowData: any, sourceKey: string, targetKey: string) => {
+        if (singleRowData.properties?.[targetKey] != null) {
+            return singleRowData.properties[targetKey].value
         }
-        return singleRowData.item.properties[key]?.value
+        return singleRowData.item.properties[sourceKey]?.value
     }
 
     const onCheck = useCallback(
@@ -96,20 +100,43 @@ export default function MappedItemsTable({
                     editable: false,
                     sortable: false
                 },
-                ...[...GetScopeHeaders(scopeHeaders)].flatMap(key =>
-                    selectedMapping.mapping[key].map(mappedKey => ({
-                        colId: mappedKey,
-                        headerName: mappedKey,
-                        cellRenderer: UndoCellRenderer,
-                        cellRendererParams: (params: ValueGetterParams) => ({
-                            value: getValue(params.data, key, mappedKey),
-                            originalValue: params.data.properties?.[mappedKey]?.originalValue,
-                            onUndo: (originalValue: string) => {
+                ...[...getHostHeadersResponse.headers]
+                    .filter(target => selectedMapping.mapping[target.id])
+                    .flatMap(target =>
+                        selectedMapping.mapping[target.id].map(sourceKey => ({
+                            colId: target.id,
+                            headerName: target.display,
+                            headerTooltip: target.tooltip,
+                            cellRenderer: UndoCellRenderer,
+                            cellRendererParams: (params: ValueGetterParams) => ({
+                                value: getValue(params.data, sourceKey, target.id),
+                                originalValue: params.data.properties?.[target.id]?.originalValue,
+                                onUndo: (originalValue: string) => {
+                                    updateMappedItemProperty({
+                                        projectId: projectId!,
+                                        mappedItemId: params.data.id,
+                                        key: target.id,
+                                        newValue: originalValue
+                                    }).then(response => {
+                                        if (response) {
+                                            fetchMappedItemsData(
+                                                selectedScope.id,
+                                                selectedMapping.id,
+                                                itemsTableProps.page,
+                                                itemsTableProps.pageSize,
+                                                itemsTableProps.sort
+                                            )
+                                        }
+                                    })
+                                }
+                            }),
+                            valueGetter: (params: ValueGetterParams) => getValue(params.data, sourceKey, target.id),
+                            valueSetter: (params: ValueSetterParams) => {
                                 updateMappedItemProperty({
                                     projectId: projectId!,
                                     mappedItemId: params.data.id,
-                                    key: mappedKey,
-                                    newValue: originalValue
+                                    key: target.id,
+                                    newValue: params.newValue ?? ""
                                 }).then(response => {
                                     if (response) {
                                         fetchMappedItemsData(
@@ -121,42 +148,22 @@ export default function MappedItemsTable({
                                         )
                                     }
                                 })
-                            }
-                        }),
-                        valueGetter: (params: ValueGetterParams) => getValue(params.data, key, mappedKey),
-                        valueSetter: (params: ValueSetterParams) => {
-                            updateMappedItemProperty({
-                                projectId: projectId!,
-                                mappedItemId: params.data.id,
-                                key: mappedKey,
-                                newValue: params.newValue ?? ""
-                            }).then(response => {
-                                if (response) {
-                                    fetchMappedItemsData(
-                                        selectedScope.id,
-                                        selectedMapping.id,
-                                        itemsTableProps.page,
-                                        itemsTableProps.pageSize,
-                                        itemsTableProps.sort
-                                    )
+                                return true
+                            },
+                            cellStyle: (params: CellClassParams) => {
+                                if (params.data.properties == null) {
+                                    return { background: "inherit", zIndex: -1 }
                                 }
-                            })
-                            return true
-                        },
-                        cellStyle: (params: CellClassParams) => {
-                            if (params.data.properties == null) {
-                                return { background: "inherit", zIndex: -1 }
+                                const originalValue: string | undefined = params.data.properties[target.id]?.originalValue
+                                const edited = originalValue !== undefined && originalValue !== null
+                                if (edited) {
+                                    return { background: "#fff3cd", zIndex: -1 }
+                                } else {
+                                    return { background: "inherit", zIndex: -1 }
+                                }
                             }
-                            const originalValue: string | undefined = params.data.properties[mappedKey]?.originalValue
-                            const edited = originalValue !== undefined && originalValue !== null
-                            if (edited) {
-                                return { background: "#fff3cd", zIndex: -1 }
-                            } else {
-                                return { background: "inherit", zIndex: -1 }
-                            }
-                        }
-                    }))
-                )
+                        }))
+                    )
             ]
             setColumnDefs(dynamicColumnDefs)
         }
@@ -173,7 +180,8 @@ export default function MappedItemsTable({
         mapping,
         onCheck,
         selectedMapping,
-        selectedScope
+        selectedScope,
+        getHostHeadersResponse.headers
     ])
 
     const defaultColDef: ColDef = {
@@ -191,6 +199,18 @@ export default function MappedItemsTable({
         },
         [setSelectedItems]
     )
+
+    const gridApiRef = useRef<GridApi | null>(null)
+
+    useEffect(() => {
+        if (gridApiRef.current && columnDefs.length > 0) {
+            setTimeout(() => {
+                gridApiRef.current?.autoSizeAllColumns()
+            }, 1)
+        }
+    }, [columnDefs.length])
+
+    const onGridReady = (event: GridReadyEvent) => (gridApiRef.current = event.api)
 
     return (
         <Stack>
@@ -211,6 +231,7 @@ export default function MappedItemsTable({
                     suppressColumnMoveAnimation
                     suppressMovableColumns
                     onSelectionChanged={onSelectionChanged}
+                    onGridReady={onGridReady}
                 />
             </div>
             <Pagination {...itemsTableProps} />

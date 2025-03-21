@@ -4,18 +4,32 @@ import { ReactElement } from "react"
 
 interface InfoTooltipProps {
     messages: string[]
+    placement?:
+        | "bottom-end"
+        | "bottom-start"
+        | "bottom"
+        | "left-end"
+        | "left-start"
+        | "left"
+        | "right-end"
+        | "right-start"
+        | "right"
+        | "top-end"
+        | "top-start"
+        | "top"
+    maxWidth?: number
     children: ReactElement
 }
 
-export default function InfoTooltip({ messages, children }: Readonly<InfoTooltipProps>) {
+export default function InfoTooltip({ messages, placement, maxWidth, children }: Readonly<InfoTooltipProps>) {
     const tooltipContent = (
         <Box
             sx={{
-                maxHeight: 200,
+                maxHeight: 100,
                 overflowY: "auto"
             }}
         >
-            <List sx={{ listStyleType: "disc", pl: 2 }}>
+            <List sx={{ listStyleType: "disc", pl: messages.length > 1 ? 2 : 0 }}>
                 {messages.map((msg, id) => (
                     <ListItem key={msg + id} sx={{ display: "list-item", py: 0.5 }}>
                         <Typography key={msg + id} variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
@@ -30,7 +44,8 @@ export default function InfoTooltip({ messages, children }: Readonly<InfoTooltip
         <Tooltip
             color="info"
             title={tooltipContent}
-            PopperProps={{ style: { zIndex: theme.zIndex.modal }, disablePortal: true }}
+            placement={placement}
+            PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
             componentsProps={{
                 tooltip: {
                     sx: {
@@ -39,7 +54,8 @@ export default function InfoTooltip({ messages, children }: Readonly<InfoTooltip
                         borderRadius: "8px",
                         backgroundColor: theme.palette.info.light,
                         scrollbarColor: `${theme.palette.info.main} ${theme.palette.info.light}`,
-                        scrollbarWidth: "thin"
+                        scrollbarWidth: "thin",
+                        maxWidth: maxWidth ?? 500
                     }
                 }
             }}

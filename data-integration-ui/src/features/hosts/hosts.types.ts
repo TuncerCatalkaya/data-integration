@@ -1,29 +1,41 @@
-export interface Host {
+export interface HostResponse {
     id: string
     name: string
     baseUrl: string
     integrationPath: string
-    getHeadersPath: string
+    headerPath: string
     inUse: boolean
-    databases: Database[]
+    databases: DatabaseResponse[]
 }
 
-export interface Database {
+export interface DatabaseResponse {
     id: string
     name: string
     inUse: boolean
 }
 
-export interface SelectedDatabase {
-    id: string
-    name: string
-    host: SelectedHost
+export interface DataIntegrationHeaderAPIResponse {
+    headers: DataIntegrationHeaderDataAPIResponse[]
 }
 
-export interface SelectedHost {
+export interface DataIntegrationHeaderDataAPIResponse {
+    id: string
+    display: string
+    tooltip: string
+}
+
+export interface SelectedDatabaseResponse {
     id: string
     name: string
-    url: string
+    host: SelectedHostResponse
+}
+
+export interface SelectedHostResponse {
+    id: string
+    name: string
+    baseUrl: string
+    integrationPath: string
+    headerPath: string
 }
 
 export interface CreateOrUpdateHostsRequest {
@@ -31,13 +43,18 @@ export interface CreateOrUpdateHostsRequest {
     name: string
     baseUrl: string
     integrationPath: string
-    getHeadersPath: string
+    headerPath: string
     databases: CreateOrUpdateDatabasesRequest[]
 }
 
 export interface CreateOrUpdateDatabasesRequest {
     id: string
     name: string
+}
+
+export interface GetHostHeadersRequest {
+    hostId: string
+    language: string
 }
 
 export interface DeleteHostRequest {

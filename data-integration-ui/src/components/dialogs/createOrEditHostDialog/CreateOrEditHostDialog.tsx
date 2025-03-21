@@ -1,23 +1,23 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, PaperProps, Stack, TextField, Typography } from "@mui/material"
 import Draggable from "react-draggable"
-import theme from "../../../../theme"
+import theme from "../../../theme"
 import { useTranslation } from "react-i18next"
 import { Add, Dns, Info } from "@mui/icons-material"
 import { ChangeEvent, useEffect, useState } from "react"
-import AddableCard from "../../../../components/addableCard/AddableCard"
-import { InputField } from "../../../../components/addableCard/AddableCard.types"
+import AddableCard from "../../../components/addableCard/AddableCard"
+import { InputField } from "../../addableCard/AddableCard.types"
 import { v4 as uuidv4 } from "uuid"
-import { HostsApi } from "../../../../features/hosts/hosts.api"
-import { CreateOrUpdateHostsRequest, Host } from "../../../../features/hosts/hosts.types"
+import { HostsApi } from "../../../features/hosts/hosts.api"
+import { CreateOrUpdateHostsRequest, HostResponse } from "../../../features/hosts/hosts.types"
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import { useSnackbar } from "notistack"
-import InfoTooltip from "../../../../components/tooltip/InfoTooltip"
-import GetFrontendEnvironment from "../../../../utils/GetFrontendEnvironment"
+import InfoTooltip from "../../../components/tooltip/InfoTooltip"
+import GetFrontendEnvironment from "../../../utils/GetFrontendEnvironment"
 
 interface CreateOrEditHostDialogProps {
     open: boolean
     handleClickClose: (shouldReload?: boolean) => void
-    hostToEdit?: Host
+    hostToEdit?: HostResponse
 }
 
 function PaperComponent(props: PaperProps) {
@@ -32,7 +32,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
     const [hostName, setHostName] = useState("")
     const [hostBaseUrl, setHostBaseUrl] = useState("")
     const [hostIntegrationPath, setHostIntegrationPath] = useState("")
-    const [hostGetHeadersPath, setHostGetHeadersPath] = useState("")
+    const [hostHeaderPath, setHostHeaderPath] = useState("")
     const [databases, setDatabases] = useState<InputField[]>([
         {
             id: uuidv4(),
@@ -63,8 +63,8 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
         setHostIntegrationPath(newHostIntegrationPath)
     }
     const handleHostGetHeaderPathChange = async (event: ChangeEvent<HTMLInputElement>) => {
-        const newHostGetHeadersPath = event.target.value
-        setHostGetHeadersPath(newHostGetHeadersPath)
+        const newHostHeaderPath = event.target.value
+        setHostHeaderPath(newHostHeaderPath)
     }
     const handleDatabaseChange = (id: string, value: string): void => {
         const updatedDatabases = databases.map(database => {
@@ -94,7 +94,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
             name: hostName,
             baseUrl: hostBaseUrl,
             integrationPath: hostIntegrationPath,
-            getHeadersPath: hostGetHeadersPath,
+            headerPath: hostHeaderPath,
             databases: databases.map(database => {
                 return {
                     id: database.dbId,
@@ -119,7 +119,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
         hostName.trim() === "" ||
         hostBaseUrl.trim() === "" ||
         hostIntegrationPath.trim() === "" ||
-        hostGetHeadersPath.trim() === "" ||
+        hostHeaderPath.trim() === "" ||
         databases.some(database => database.value === "")
 
     useEffect(() => {
@@ -127,7 +127,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
             setHostName(hostToEdit.name)
             setHostBaseUrl(hostToEdit.baseUrl)
             setHostIntegrationPath(hostToEdit.integrationPath)
-            setHostGetHeadersPath(hostToEdit.getHeadersPath)
+            setHostHeaderPath(hostToEdit.headerPath)
             setDatabases(
                 hostToEdit.databases.map(database => ({
                     id: database.id,
@@ -210,9 +210,9 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
                                 onChange={handleHostIntegrationPathChange}
                             />
                             <TextField
-                                label="Get headers path"
-                                placeholder={"Enter the get headers path..."}
-                                value={hostGetHeadersPath}
+                                label="Header path"
+                                placeholder={"Enter the header path..."}
+                                value={hostHeaderPath}
                                 helperText={" "}
                                 InputLabelProps={{
                                     shrink: true

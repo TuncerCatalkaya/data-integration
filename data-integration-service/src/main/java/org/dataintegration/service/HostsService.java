@@ -3,6 +3,7 @@ package org.dataintegration.service;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.exception.runtime.DatabaseNotFoundException;
 import org.dataintegration.exception.runtime.HostDomainNotValidException;
+import org.dataintegration.exception.runtime.HostNotFoundException;
 import org.dataintegration.exception.runtime.HostNotValidException;
 import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
@@ -39,6 +40,11 @@ public class HostsService {
 
     public List<HostEntity> getAll() {
         return jpaHostRepository.findAll();
+    }
+
+    public HostEntity getHost(UUID hostid) {
+        return jpaHostRepository.findById(hostid)
+                .orElseThrow(() -> new HostNotFoundException("Host with id " + hostid + " not found."));
     }
 
     public void delete(UUID hostId) {

@@ -23,6 +23,7 @@ import org.dataintegration.usecase.model.CreateOrUpdateMappingsRequestModel;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,16 @@ class Mappings implements MappingsMethods {
         projectsService.isPermitted(projectId, createdBy);
         return mappingsService.getAll(scopeId).stream()
                 .map(mappingMapper::mappingEntityToMapping)
+                .map(mappingModel -> {
+                    final Map<String, String[]> mapping = new HashMap<>();
+                    mappingModel.getMapping().forEach((source, targets) -> {
+                        for (String target : targets) {
+                            mapping.put(target, new String[]{source});
+                        }
+                    });
+                    mappingModel.setMapping(mapping);
+                    return mappingModel;
+                })
                 .toList();
     }
 

@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.dataintegration.jpa.entity.HostEntity;
 import org.dataintegration.mapper.CreateOrUpdateHostsMapper;
 import org.dataintegration.mapper.HostMapper;
+import org.dataintegration.model.DataIntegrationHeaderAPIModel;
 import org.dataintegration.model.HostModel;
 import org.dataintegration.service.HostsService;
 import org.dataintegration.usecase.model.CreateOrUpdateHostsRequestModel;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +38,22 @@ public class HostsUsecase {
         return hostsService.getAll().stream()
                 .map(hostMapper::hostEntityToHost)
                 .collect(Collectors.toSet());
+    }
+
+    public DataIntegrationHeaderAPIModel getHostHeaders(UUID hostId, String language, String token) {
+        final HostEntity host = hostsService.getHost(hostId);
+        final WebClient webClient = WebClient.builder()
+                .baseUrl(host.getBaseUrl())
+                .build();
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(host.getHeaderPath())
+                        .queryParam("language", language)
+                        .build()
+                )
+                .headers(header -> header.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(DataIntegrationHeaderAPIModel.class)
+                .block();
     }
 
     public void deleteHost(UUID hostId) {

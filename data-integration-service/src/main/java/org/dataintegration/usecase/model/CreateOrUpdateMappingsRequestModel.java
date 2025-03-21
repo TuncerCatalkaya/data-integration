@@ -17,6 +17,6 @@ public class CreateOrUpdateMappingsRequestModel {
     private UUID mappingId;
     private UUID databaseId;
     private String mappingName;
-    private Map<String, String[]> mapping;
+    private Map<String, String[]> mapping; // 1:n
 
 }

@@ -8,13 +8,15 @@ import {
     CheckboxSelectionCallbackParams,
     ColDef,
     GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
     IRowNode,
     SelectionChangedEvent,
     SortChangedEvent,
     ValueGetterParams
 } from "ag-grid-community"
 import "./ItemsTable.css"
-import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect } from "react"
+import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
 import Pagination from "../../../../components/pagination/Pagination"
 import { ProjectsApi } from "../../../../features/projects/projects.api"
 import { useParams } from "react-router-dom"
@@ -164,6 +166,18 @@ export default function ItemsTable({
         [setSelectedItems]
     )
 
+    const gridApiRef = useRef<GridApi | null>(null)
+
+    useEffect(() => {
+        if (gridApiRef.current && columnDefs.length > 0) {
+            setTimeout(() => {
+                gridApiRef.current?.autoSizeAllColumns()
+            }, 1)
+        }
+    }, [columnDefs.length])
+
+    const onGridReady = (event: GridReadyEvent) => (gridApiRef.current = event.api)
+
     return (
         <Stack>
             <div className="ag-theme-alpine" style={{ height: 488, textAlign: "left" }}>
@@ -183,6 +197,7 @@ export default function ItemsTable({
                     suppressColumnMoveAnimation
                     suppressMovableColumns
                     onSelectionChanged={onSelectionChanged}
+                    onGridReady={onGridReady}
                 />
             </div>
             <Pagination {...itemsTableProps} />
