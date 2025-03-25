@@ -15,7 +15,7 @@ export interface ScopeResponse {
 }
 
 export interface ScopeHeaderResponse {
-    name: string
+    id: string
     display: string
     hidden: boolean
 }

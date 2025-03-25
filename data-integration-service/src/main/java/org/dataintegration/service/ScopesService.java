@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,17 +73,18 @@ public class ScopesService {
 
     public void updateHeaders(UUID scopeId, Set<HeaderModel> headers) {
         final ScopeEntity scope = get(scopeId);
-        final Set<HeaderModel> updatedHeaders = new LinkedHashSet<>(scope.getHeaders());
+        final Set<HeaderModel> updatedHeaders = new LinkedHashSet<>(scope.getHeaders() == null ? Collections.emptyList() : scope.getHeaders());
 
         final Map<String, HeaderModel> existingHeadersMap = updatedHeaders.stream()
-                .collect(Collectors.toMap(HeaderModel::getName, header -> header));
+                .collect(Collectors.toMap(HeaderModel::getId, header -> header));
 
         for (HeaderModel header : headers) {
-            if (existingHeadersMap.containsKey(header.getName())) {
-                HeaderModel existingHeader = existingHeadersMap.get(header.getName());
+            if (existingHeadersMap.containsKey(header.getId())) {
+                HeaderModel existingHeader = existingHeadersMap.get(header.getId());
                 existingHeader.setDisplay(header.getDisplay());
+                existingHeader.setHidden(header.isHidden());
             } else {
-                header.setName(header.getName().trim());
+                header.setId(header.getId().trim());
                 updatedHeaders.add(header);
             }
         }
@@ -96,8 +98,8 @@ public class ScopesService {
         }
 
         for (HeaderModel header : headers) {
-            if (!StringUtils.hasText(header.getName())) {
-                throw new ScopeHeaderValidationException("Header '" + header.getName() + "' has no text.");
+            if (!StringUtils.hasText(header.getId())) {
+                throw new ScopeHeaderValidationException("Header '" + header.getId() + "' has no text.");
             }
         }
     }

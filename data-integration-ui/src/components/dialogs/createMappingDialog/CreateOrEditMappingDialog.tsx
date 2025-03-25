@@ -223,7 +223,7 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
         if (getScopeHeadersResponse.error) {
             setSourceHeaders([])
         } else if (getScopeHeadersResponse.data) {
-            const scopeHeaders = getScopeHeadersResponse.data.filter(scopeHeader => !scopeHeader.hidden).map(scopeHeader => scopeHeader.name)
+            const scopeHeaders = getScopeHeadersResponse.data.filter(scopeHeader => !scopeHeader.hidden).map(scopeHeader => scopeHeader.id)
             setSourceHeaders(scopeHeaders)
         }
     }, [getHostHeaders, getScopeHeaders, projectId, scopeId, selectedHost])
@@ -435,7 +435,7 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
                                                         value={mappings.get(targetHeader.id)}
                                                         multiple
                                                         disableClearable
-                                                        options={["", ...sourceHeaders]}
+                                                        options={sourceHeaders}
                                                         onChange={(_, value) => {
                                                             if (value) {
                                                                 setMappings(prevMappings => {

@@ -691,7 +691,7 @@ export default function ProjectImportPage() {
                                         <Select value={searchSelectedHeader} label="Mapping" onChange={handleSearchSelectedHeaderChange}>
                                             <MenuItem value=" ">{"Free Text"}</MenuItem>
                                             {GetScopeHeaders(scopeHeaders).map(scopeHeader => (
-                                                <MenuItem key={scopeHeader.name} value={scopeHeader.name}>
+                                                <MenuItem key={scopeHeader.id} value={scopeHeader.id}>
                                                     {scopeHeader.display}
                                                 </MenuItem>
                                             ))}

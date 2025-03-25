@@ -40,7 +40,7 @@ class ItemCreationService {
         final Map<String, ItemPropertiesModel> properties = new WeakHashMap<>(headers.size());
         int i = 0;
         for (HeaderModel header : headers) {
-            properties.put(header.getName(), ItemPropertiesModel.builder()
+            properties.put(header.getId(), ItemPropertiesModel.builder()
                     .value(line[i++])
                     .build());
         }

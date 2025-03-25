@@ -13,13 +13,13 @@ import java.util.Objects;
 @AllArgsConstructor
 public class HeaderModel {
 
-    private String name;
+    private String id;
     private String display;
     private boolean hidden;
 
-    public HeaderModel(String name) {
-        this.name = name;
-        this.display = name;
+    public HeaderModel(String id) {
+        this.id = id;
+        this.display = id;
         hidden = false;
     }
 
@@ -34,11 +34,11 @@ public class HeaderModel {
 
         HeaderModel that = (HeaderModel) o;
 
-        return Objects.equals(name, that.name);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

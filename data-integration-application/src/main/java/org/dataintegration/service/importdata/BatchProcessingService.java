@@ -89,7 +89,7 @@ class BatchProcessingService {
             }
 
         } catch (Exception ex) {
-            log(Level.ERROR, scopeKey, scopeId, "Attempt " + attempt + " failed: " + ex.getMessage());
+            log(Level.ERROR, scopeKey, scopeId, "Attempt " + attempt + " failed: " + Arrays.toString(ex.getStackTrace()));
             batchWaitingService.scopeRetryDelay(attempt);
         }
         return false;

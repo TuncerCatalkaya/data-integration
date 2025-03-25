@@ -215,7 +215,7 @@ export default function MappedItemsTable({
         <Stack>
             <div className="ag-theme-alpine" style={{ height: 488, textAlign: "left" }}>
                 <AgGridReact
-                    rowData={Object.entries(selectedMapping?.mapping ?? []).length > 0 ? rowData : []}
+                    rowData={selectedScope && selectedMapping && columnDefs.length === 1 ? [] : rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}
@@ -231,6 +231,12 @@ export default function MappedItemsTable({
                     suppressMovableColumns
                     onSelectionChanged={onSelectionChanged}
                     onGridReady={onGridReady}
+                    localeText={{
+                        noRowsToShow:
+                            selectedScope && selectedMapping && columnDefs.length === 1
+                                ? "No columns available to display, are they not mapped? Edit the mapping and make sure that the targets are mapped to one source."
+                                : "No rows to show"
+                    }}
                 />
             </div>
             <Pagination {...itemsTableProps} />

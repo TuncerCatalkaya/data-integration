@@ -63,8 +63,8 @@ class Items implements ItemsMethods {
                 .map(itemMapper::itemEntityToItem)
                 .map(item -> {
                     for (HeaderModel header : headers) {
-                        if (item.getProperties().get(header.getName()) == null) {
-                            item.getProperties().put(header.getName(), ItemPropertiesModel.builder()
+                        if (item.getProperties().get(header.getId()) == null) {
+                            item.getProperties().put(header.getId(), ItemPropertiesModel.builder()
                                     .value("")
                                     .build());
                         }

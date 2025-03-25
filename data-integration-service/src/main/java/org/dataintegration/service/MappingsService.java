@@ -27,10 +27,6 @@ public class MappingsService {
         return jpaMappingRepository.save(mappingEntity);
     }
 
-    public List<MappingEntity> getAll() {
-        return jpaMappingRepository.findAllByDeleteFalse(Sort.by(Sort.Direction.ASC, "createdDate"));
-    }
-
     public List<MappingEntity> getAll(UUID scopeId) {
         return jpaMappingRepository.findAllByScope_IdAndDeleteFalse(scopeId, Sort.by(Sort.Direction.ASC, "createdDate"));
     }
@@ -63,7 +59,7 @@ public class MappingsService {
 //            throw new MappingValidationException(errorPrefix + "has a different size of source mappings than available headers.");
 //        }
         for (HeaderModel header : headers) {
-            if (!sources.contains(header.getName())) {
+            if (!sources.contains(header.getId())) {
                 throw new MappingValidationException(errorPrefix + "has source mappings that are different to the original headers.");
             }
         }

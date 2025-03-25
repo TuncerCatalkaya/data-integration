@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public interface JpaMappingRepository extends JpaRepository<MappingEntity, UUID> {
 
-    List<MappingEntity> findAllByDeleteFalse(Sort sort);
-
     @SuppressWarnings("checkstyle:MethodName")
     List<MappingEntity> findAllByScope_IdAndDeleteFalse(UUID scopeId, Sort sort);
 

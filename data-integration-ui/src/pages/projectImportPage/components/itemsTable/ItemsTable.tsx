@@ -85,30 +85,30 @@ export default function ItemsTable({
                     sortable: false
                 },
                 ...[...headers].map(key => ({
-                    colId: key.name,
+                    colId: key.id,
                     headerName: key.display,
-                    headerTooltip: key.name,
-                    field: `properties.${key.name}.value`,
+                    headerTooltip: key.id,
+                    field: `properties.${key.id}.value`,
                     cellRenderer: UndoCellRenderer,
                     cellRendererParams: (params: ValueGetterParams) => ({
-                        value: params.data.properties[key.name]?.value,
-                        originalValue: params.data.properties[key.name]?.originalValue,
+                        value: params.data.properties[key.id]?.value,
+                        originalValue: params.data.properties[key.id]?.originalValue,
                         onUndo: () => {
                             updateItemProperty({
                                 projectId: projectId!,
                                 itemId: params.data.id,
-                                key: key.name,
-                                newValue: params.data.properties[key.name]?.originalValue
+                                key: key.id,
+                                newValue: params.data.properties[key.id]?.originalValue
                             }).then(response => {
                                 if (response.data) {
                                     const newData = {
                                         ...params.data,
                                         properties: {
                                             ...params.data.properties,
-                                            [key.name]: {
-                                                ...params.data.properties[key.name],
-                                                value: response.data.properties[key.name].value,
-                                                originalValue: response.data.properties[key.name].originalValue
+                                            [key.id]: {
+                                                ...params.data.properties[key.id],
+                                                value: response.data.properties[key.id].value,
+                                                originalValue: response.data.properties[key.id].originalValue
                                             }
                                         }
                                     }
@@ -118,22 +118,22 @@ export default function ItemsTable({
                         }
                     }),
                     tooltipValueGetter: (params: ITooltipParams) => {
-                        const originalValue = params.data?.properties?.[key.name]?.originalValue
+                        const originalValue = params.data?.properties?.[key.id]?.originalValue
                         if (originalValue) {
-                            return "original: " + params.data?.properties?.[key.name]?.originalValue ?? ""
+                            return "original: " + params.data?.properties?.[key.id]?.originalValue
                         }
                     },
                     valueSetter: (params: ValueSetterParams) => {
-                        updateItemProperty({ projectId: projectId!, itemId: params.data.id, key: key.name, newValue: params.newValue ?? "" }).then(response => {
+                        updateItemProperty({ projectId: projectId!, itemId: params.data.id, key: key.id, newValue: params.newValue ?? "" }).then(response => {
                             if (response.data) {
                                 const newData = {
                                     ...params.data,
                                     properties: {
                                         ...params.data.properties,
-                                        [key.name]: {
-                                            ...params.data.properties[key.name],
-                                            value: response.data.properties[key.name].value,
-                                            originalValue: response.data.properties[key.name].originalValue
+                                        [key.id]: {
+                                            ...params.data.properties[key.id],
+                                            value: response.data.properties[key.id].value,
+                                            originalValue: response.data.properties[key.id].originalValue
                                         }
                                     }
                                 }
@@ -143,7 +143,7 @@ export default function ItemsTable({
                         return true
                     },
                     cellStyle: (params: CellClassParams) => {
-                        const originalValue: string | undefined = params.data?.properties?.[key.name]?.originalValue
+                        const originalValue: string | undefined = params.data?.properties?.[key.id]?.originalValue
                         const edited = originalValue !== undefined && originalValue !== null
                         if (edited) {
                             return { background: "#fff3cd", zIndex: -1 }
@@ -191,7 +191,7 @@ export default function ItemsTable({
         <Stack>
             <div className="ag-theme-alpine" style={{ height: 488, textAlign: "left" }}>
                 <AgGridReact
-                    rowData={rowData}
+                    rowData={columnDefs.length === 0 ? [] : rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}
@@ -207,6 +207,12 @@ export default function ItemsTable({
                     suppressMovableColumns
                     onSelectionChanged={onSelectionChanged}
                     onGridReady={onGridReady}
+                    localeText={{
+                        noRowsToShow:
+                            columnDefs.length === 0
+                                ? "No columns available to display, are they all hidden? Navigate to the edit header dialog."
+                                : "No rows to show"
+                    }}
                 />
             </div>
             <Pagination {...itemsTableProps} />

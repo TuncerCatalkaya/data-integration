@@ -11,6 +11,7 @@ import org.dataintegration.service.ScopesService;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -86,7 +87,7 @@ class ImportDataServiceImpl implements ImportDataService {
 
             return success;
         } catch (Exception ex) {
-            log(Level.ERROR, scopeKey, scopeId, "Error occurred: " + ex.getMessage());
+            log(Level.ERROR, scopeKey, scopeId, "Error occurred: " + Arrays.toString(ex.getStackTrace()));
             return false;
         } finally {
             dataIntegrationCache.getProcessingScopes().remove(scopeId);
