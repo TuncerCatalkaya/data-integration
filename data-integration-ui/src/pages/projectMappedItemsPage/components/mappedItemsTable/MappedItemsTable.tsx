@@ -111,12 +111,11 @@ export default function MappedItemsTable({
                             cellRendererParams: (params: ValueGetterParams) => ({
                                 value: getValue(params.data, sourceKey, target.id),
                                 originalValue: params.data.properties?.[target.id]?.originalValue,
-                                onUndo: (originalValue: string) => {
+                                onUndo: () => {
                                     updateMappedItemProperty({
                                         projectId: projectId!,
                                         mappedItemId: params.data.id,
-                                        key: target.id,
-                                        newValue: originalValue
+                                        key: target.id
                                     }).then(response => {
                                         if (response) {
                                             fetchMappedItemsData(
@@ -216,7 +215,7 @@ export default function MappedItemsTable({
         <Stack>
             <div className="ag-theme-alpine" style={{ height: 488, textAlign: "left" }}>
                 <AgGridReact
-                    rowData={rowData}
+                    rowData={Object.entries(selectedMapping?.mapping ?? []).length > 0 ? rowData : []}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}

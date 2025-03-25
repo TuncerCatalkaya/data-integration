@@ -86,11 +86,11 @@ export default function CreateProjectDialog(createProjectDialogProps: Readonly<C
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" color="error" onClick={() => closeDialog()} startIcon={<Close />}>
-                    {translation.t("pages.projects.components.dialogs.createProjectDialog.actions.cancel")}
-                </Button>
                 <Button variant="contained" disabled={!projectName} onClick={handleClickCreateProject} endIcon={<Add />}>
                     {translation.t("pages.projects.components.dialogs.createProjectDialog.actions.submit")}
+                </Button>
+                <Button variant="contained" color="error" onClick={() => closeDialog()} startIcon={<Close />}>
+                    {translation.t("pages.projects.components.dialogs.createProjectDialog.actions.cancel")}
                 </Button>
             </DialogActions>
         </Dialog>

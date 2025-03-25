@@ -5,7 +5,11 @@ import { HostResponse } from "../../../../../../features/hosts/hosts.types"
 
 export default function useTargetSystemSection() {
     const [host, setHost] = useState("select")
+    const [hostError, setHostError] = useState(false)
+
     const [database, setDatabase] = useState("select")
+    const [databaseError, setDatabaseError] = useState(false)
+
     const [hostsResponse, setHostsResponse] = useState<HostResponse[]>([])
 
     const [openCreateOrEditHostDialog, setOpenCreateOrEditHostDialog] = useState(false)
@@ -18,10 +22,13 @@ export default function useTargetSystemSection() {
         const newHost = event.target.value
         setHost(newHost)
         setDatabase("select")
+        setHostError(false)
+        setDatabaseError(false)
     }
     const handleDatabaseChange = (event: SelectChangeEvent) => {
         const newDatabase = event.target.value
         setDatabase(newDatabase)
+        setDatabaseError(false)
     }
 
     const selectedHost = hostsResponse.find(h => h.id === host)
@@ -60,9 +67,13 @@ export default function useTargetSystemSection() {
     return {
         host,
         setHost,
+        hostError,
+        setHostError,
         handleHostChange,
         database,
         setDatabase,
+        databaseError,
+        setDatabaseError,
         handleDatabaseChange,
         hostsResponse,
         isEditMode,

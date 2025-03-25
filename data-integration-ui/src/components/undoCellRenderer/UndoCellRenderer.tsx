@@ -4,7 +4,7 @@ import { CustomCellRendererProps } from "ag-grid-react"
 
 interface UndoCellRendererProps extends CustomCellRendererProps {
     originalValue: string | undefined
-    onUndo: (originalValue: string) => void
+    onUndo: () => void
 }
 
 export default function UndoCellRenderer({ value, originalValue, onUndo }: Readonly<UndoCellRendererProps>) {
@@ -14,7 +14,7 @@ export default function UndoCellRenderer({ value, originalValue, onUndo }: Reado
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span>{value}</span>
             {isEdited && (
-                <IconButton size="small" color="default" onClick={() => onUndo(originalValue)}>
+                <IconButton size="small" color="default" onClick={onUndo}>
                     <Undo fontSize="small" />
                 </IconButton>
             )}

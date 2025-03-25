@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,5 +20,7 @@ public class DataIntegrationHeaderDataAPIModel {
     private String display;
     @NonNull
     private String tooltip;
+    @NonNull
+    private List<String> alternatives;
 
 }

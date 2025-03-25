@@ -44,7 +44,7 @@ class BatchProcessingService {
             final AtomicBoolean failed = new AtomicBoolean(false);
 
             final LinkedHashSet<HeaderModel> headers = Arrays.stream(csvReader.readNext())
-                    .map(HeaderModel::new)
+                    .map(header -> new HeaderModel(header.trim()))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
             if (itemCreationService.isHeaderValid(headers)) {
                 if (scopeEntity.getHeaders() == null) {

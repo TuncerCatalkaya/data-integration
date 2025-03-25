@@ -22,6 +22,7 @@ export interface DataIntegrationHeaderDataAPIResponse {
     id: string
     display: string
     tooltip: string
+    alternatives: string[]
 }
 
 export interface SelectedDatabaseResponse {

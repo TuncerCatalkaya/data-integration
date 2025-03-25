@@ -1,24 +1,27 @@
 import { Paper, TextField, Typography } from "@mui/material"
-import { ChangeEvent } from "react"
+import { MutableRefObject } from "react"
 
 interface MappingNameProps {
-    mappingNameKey: string
-    mappingName: string
-    handleMappingNameChange: (event: ChangeEvent<HTMLInputElement>) => void
+    mappingNameRef: MutableRefObject<HTMLInputElement | undefined>
+    defaultValue: string
+    mappingNameError: boolean
+    handleMappingNameChange: () => void
 }
 
-export default function MappingNameSection({ mappingNameKey, mappingName, handleMappingNameChange }: Readonly<MappingNameProps>) {
+export default function MappingNameSection({ mappingNameRef, defaultValue, mappingNameError, handleMappingNameChange }: Readonly<MappingNameProps>) {
     return (
         <Paper sx={{ padding: "25px" }}>
             <Typography variant="h6" sx={{ paddingBottom: "15px" }}>
                 Decide a name for the mapping
             </Typography>
             <TextField
-                key={mappingNameKey}
+                key={defaultValue}
+                inputRef={mappingNameRef}
                 fullWidth
                 label={"Name"}
                 placeholder={"Enter a name..."}
-                defaultValue={mappingName}
+                defaultValue={defaultValue}
+                error={mappingNameError}
                 InputLabelProps={{
                     shrink: true
                 }}

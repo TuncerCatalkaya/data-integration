@@ -11,6 +11,8 @@ interface TargetSystemProps {
     handleClickCloseCreateOrEditHostDialog: (shouldReload?: boolean) => Promise<void>
     host: string
     database: string
+    hostError: boolean
+    databaseError: boolean
     hostsResponse: HostResponse[]
     handleHostChange: (event: SelectChangeEvent) => void
     handleDatabaseChange: (event: SelectChangeEvent) => void
@@ -26,6 +28,8 @@ export default function TargetSystemSection({
     handleClickCloseCreateOrEditHostDialog,
     host,
     database,
+    hostError,
+    databaseError,
     hostsResponse,
     handleHostChange,
     handleDatabaseChange,
@@ -67,7 +71,7 @@ export default function TargetSystemSection({
                 <Stack direction="row" alignItems="center" spacing={2} sx={{ padding: "5px" }}>
                     <Stack spacing={2}>
                         <Stack direction="row" spacing={2}>
-                            <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: "200px", maxWidth: "200px" }}>
+                            <FormControl error={hostError} sx={{ backgroundColor: theme.palette.common.white, minWidth: "200px", maxWidth: "200px" }}>
                                 <InputLabel>Host</InputLabel>
                                 <Select value={host} label="host" onChange={handleHostChange}>
                                     <MenuItem value="select" disabled>
@@ -108,7 +112,7 @@ export default function TargetSystemSection({
                                 </Button>
                             </Stack>
                         </Stack>
-                        <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: "200px", maxWidth: "200px" }}>
+                        <FormControl error={databaseError} sx={{ backgroundColor: theme.palette.common.white, minWidth: "200px", maxWidth: "200px" }}>
                             <InputLabel>Database</InputLabel>
                             <Select value={database} label="database" onChange={handleDatabaseChange}>
                                 <MenuItem value="select" disabled>

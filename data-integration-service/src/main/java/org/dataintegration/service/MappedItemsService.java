@@ -51,13 +51,10 @@ public class MappedItemsService {
         final MappedItemEntity mappedItemEntity = getMappedItem(mappedItemId);
         final Map<String, ItemPropertiesModel> mappedItemProperties =
                 createOrGetProperties(mappedItemEntity, mappedKey, newValue);
-        final String originalValueInDatabase = Optional.ofNullable(mappedItemProperties.get(mappedKey).getOriginalValue())
-                .orElseGet(() -> mappedItemProperties.get(mappedKey).getValue());
-        final boolean edited = !originalValueInDatabase.equals(newValue);
-        mappedItemProperties.put(mappedKey, mappedItemProperties.get(mappedKey).toBuilder()
+        final ItemPropertiesModel itemProperties = newValue != null ? mappedItemProperties.get(mappedKey).toBuilder()
                 .value(newValue)
-                .originalValue(edited ? originalValueInDatabase : null)
-                .build());
+                .build() : null;
+        mappedItemProperties.put(mappedKey, itemProperties);
         mappedItemEntity.setProperties(mappedItemProperties);
         return jpaMappedItemRepository.save(mappedItemEntity);
     }

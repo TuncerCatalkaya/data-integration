@@ -8,6 +8,7 @@ import { ScopeHeaderResponse } from "../../../../features/projects/projects.type
 import { ChangeEvent, useEffect, useMemo, useState } from "react"
 import useShake from "../../../../components/shake/hooks/useShake"
 import { ProjectsApi } from "../../../../features/projects/projects.api"
+import VirtualizedList from "../../../../components/virtualizedList/VirtualizedList"
 
 interface EditHeaderDialogProps {
     open: boolean
@@ -50,6 +51,7 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
             ...headers,
             {
                 name: headerName,
+                display: headerName,
                 hidden: false
             }
         ])
@@ -74,34 +76,32 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
     }, [scopeHeaders])
 
     const headerComponents = useMemo(
-        () =>
-            headers.map(header => (
-                <Paper key={header.name} elevation={5} sx={{ minWidth: 500, padding: 2, borderRadius: 5 }}>
-                    <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
-                        <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
-                            <Typography
-                                noWrap
-                                sx={{
-                                    maxWidth: 500,
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden",
-                                    whiteSpace: "nowrap",
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                {header.name}
-                            </Typography>
-                        </Tooltip>
-                        <Switch
-                            checked={!header.hidden}
-                            onChange={(_, checked) => {
-                                setHeaders(prevHeaders => prevHeaders.map(h => (h.name === header.name ? { ...h, hidden: !checked } : h)))
+        () => (header: ScopeHeaderResponse) => (
+            <Paper key={header.name} elevation={5} sx={{ margin: 2, padding: 2, borderRadius: 5 }}>
+                <Stack direction="row" display="flex" justifyContent="space-between" alignItems="center" spacing={1}>
+                    <Tooltip title={header.name} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
+                        <Typography
+                            noWrap
+                            sx={{
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                fontWeight: "bold"
                             }}
-                        />
-                    </Stack>
-                </Paper>
-            )),
-        [headers]
+                        >
+                            {header.display}
+                        </Typography>
+                    </Tooltip>
+                    <Switch
+                        checked={!header.hidden}
+                        onChange={(_, checked) => {
+                            setHeaders(prevHeaders => prevHeaders.map(h => (h.name === header.name ? { ...h, hidden: !checked } : h)))
+                        }}
+                    />
+                </Stack>
+            </Paper>
+        ),
+        []
     )
 
     return (
@@ -135,9 +135,22 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
                 </Stack>
             </DialogTitle>
             <DialogContent>
-                <Stack spacing={1} padding={2}>
+                <VirtualizedList
+                    fixedSizeListProps={{
+                        width: 500,
+                        height: 600,
+                        itemSize: 80,
+                        itemCount: headers.length,
+                        style: {
+                            overflow: "auto",
+                            borderRadius: "8px",
+                            padding: 10
+                        }
+                    }}
+                    items={headers}
+                >
                     {headerComponents}
-                </Stack>
+                </VirtualizedList>
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" onClick={handleClickSubmit}>

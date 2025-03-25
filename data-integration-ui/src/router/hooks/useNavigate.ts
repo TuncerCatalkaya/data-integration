@@ -10,7 +10,7 @@ export default function useNavigate() {
             toProject: (projectId: string) => navigate(generatePath(RouterPaths.PROJECT, { projectId })),
             toProjectDetails: (projectId: string) => navigate(generatePath(RouterPaths.PROJECT_DETAILS, { projectId })),
             toProjectImport: (projectId: string) => navigate(generatePath(RouterPaths.PROJECT_IMPORT, { projectId })),
-            toProjectMappedItems: (projectId: string) => navigate(generatePath(RouterPaths.PROJECT_MAPPED_ITEMS, { projectId }))
+            toProjectMappedItems: (projectId: string) => navigate(generatePath(RouterPaths.PROJECT_MAPPING, { projectId }))
         }),
         [navigate]
     )

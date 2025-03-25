@@ -72,7 +72,7 @@ export default function ProjectImportPage() {
     const [mapping, setMapping] = useState(mappingsFromStore[projectId!] || "select")
     const [mappingsResponse, setMappingsResponse] = useState<MappingResponse[]>([])
 
-    const [searchSelectedHeader, setSearchSelectedHeader] = useState("Free Text")
+    const [searchSelectedHeader, setSearchSelectedHeader] = useState(" ")
 
     const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -300,7 +300,7 @@ export default function ProjectImportPage() {
                 scopeId,
                 mappingId: mapping === "select" ? undefined : mapping,
                 filterMappedItems: checkedFilterMappedItems,
-                header: searchSelectedHeader === "Free Text" ? "" : searchSelectedHeader,
+                header: searchSelectedHeader === " " ? "" : searchSelectedHeader,
                 search,
                 page,
                 size: pageSize,
@@ -364,7 +364,7 @@ export default function ProjectImportPage() {
             scope !== "select" &&
             (currentCheckpointStatus?.processing || currentCheckpointStatus?.batchesProcessed === -1 || shouldStartTimer)
         ) {
-            intervalId = setInterval(async () => {
+            intervalId = window.setInterval(async () => {
                 const statusResponse = await getCurrentCheckpointStatus({ projectId: projectId!, scopeId: scope })
                 if (statusResponse.error) {
                     const statusResponseError = statusResponse.error as FetchBaseQueryError
@@ -483,7 +483,7 @@ export default function ProjectImportPage() {
                     open={openBulkEditDialog}
                     handleClickClose={handleClickCloseBulkEditDialog}
                     itemIds={rowData.map(data => data.id)}
-                    headers={GetScopeHeaders(scopeHeaders)}
+                    headers={GetScopeHeaders(scopeHeaders).map(header => header.display)}
                 />
             )}
             <Menu anchorEl={importAnchorEl} open={Boolean(importAnchorEl)} onClose={handleImportMenuClose}>
@@ -678,17 +678,21 @@ export default function ProjectImportPage() {
                 </Stack>
                 <Divider />
                 <Stack spacing={2} justifyContent="space-between" direction="row" alignItems="center">
-                    <Stack direction="row" spacing={0.5} alignItems="center">
-                        {currentCheckpointStatus?.finished && (
-                            <>
-                                <Tooltip title={searchSelectedHeader} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
+                    {currentCheckpointStatus?.finished && (
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                            <Stack direction="row">
+                                <Tooltip
+                                    title={searchSelectedHeader === " " ? "" : searchSelectedHeader}
+                                    arrow
+                                    PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                                >
                                     <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: 150, maxWidth: 150, textAlign: "left" }}>
                                         <InputLabel>Header</InputLabel>
                                         <Select value={searchSelectedHeader} label="Mapping" onChange={handleSearchSelectedHeaderChange}>
-                                            <MenuItem value="Free Text">{"Free Text"}</MenuItem>
+                                            <MenuItem value=" ">{"Free Text"}</MenuItem>
                                             {GetScopeHeaders(scopeHeaders).map(scopeHeader => (
-                                                <MenuItem key={scopeHeader} value={scopeHeader}>
-                                                    {scopeHeader}
+                                                <MenuItem key={scopeHeader.name} value={scopeHeader.name}>
+                                                    {scopeHeader.display}
                                                 </MenuItem>
                                             ))}
                                         </Select>
@@ -730,14 +734,14 @@ export default function ProjectImportPage() {
                                         sx={{ backgroundColor: theme.palette.common.white, minWidth: 250, maxWidth: 250 }}
                                     />
                                 </Box>
-                                <FormControlLabel
-                                    disabled={mapping === "select"}
-                                    control={<Checkbox checked={checkedFilterMappedItems} onChange={handleFilterMappedItemsChange} color="primary" />}
-                                    label="Hide mapped items"
-                                />
-                            </>
-                        )}
-                    </Stack>
+                            </Stack>
+                            <FormControlLabel
+                                disabled={mapping === "select"}
+                                control={<Checkbox checked={checkedFilterMappedItems} onChange={handleFilterMappedItemsChange} color="primary" />}
+                                label="Hide mapped items"
+                            />
+                        </Stack>
+                    )}
                     <Stack direction="row" spacing={3} alignItems="center">
                         {currentCheckpointStatus?.finished && (
                             <>

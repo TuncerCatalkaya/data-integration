@@ -157,7 +157,7 @@ public class ProjectsRestController {
     @PutMapping("/{projectId}/mapped-items/{mappedItemId}/properties/{key}")
     public MappedItemModel updateMappedItemProperty(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                                     @PathVariable UUID mappedItemId, @PathVariable String key,
-                                                    @RequestParam String newValue) {
+                                                    @RequestParam(required = false) String newValue) {
         return projectsUsecase.getMappedItemsMethods()
                 .updateMappedItemProperty(projectId, mappedItemId, key, newValue, DataIntegrationUtils.getJwtUserId(jwt));
     }

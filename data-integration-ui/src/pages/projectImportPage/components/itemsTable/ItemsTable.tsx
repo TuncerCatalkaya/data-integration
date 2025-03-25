@@ -11,6 +11,7 @@ import {
     GridApi,
     GridReadyEvent,
     IRowNode,
+    ITooltipParams,
     SelectionChangedEvent,
     SortChangedEvent,
     ValueGetterParams
@@ -84,28 +85,30 @@ export default function ItemsTable({
                     sortable: false
                 },
                 ...[...headers].map(key => ({
-                    headerName: key,
-                    field: `properties.${key}.value`,
+                    colId: key.name,
+                    headerName: key.display,
+                    headerTooltip: key.name,
+                    field: `properties.${key.name}.value`,
                     cellRenderer: UndoCellRenderer,
                     cellRendererParams: (params: ValueGetterParams) => ({
-                        value: params.data.properties[key]?.value,
-                        originalValue: params.data.properties[key]?.originalValue,
-                        onUndo: (originalValue: string) => {
+                        value: params.data.properties[key.name]?.value,
+                        originalValue: params.data.properties[key.name]?.originalValue,
+                        onUndo: () => {
                             updateItemProperty({
                                 projectId: projectId!,
                                 itemId: params.data.id,
-                                key,
-                                newValue: originalValue
+                                key: key.name,
+                                newValue: params.data.properties[key.name]?.originalValue
                             }).then(response => {
                                 if (response.data) {
                                     const newData = {
                                         ...params.data,
                                         properties: {
                                             ...params.data.properties,
-                                            [key]: {
-                                                ...params.data.properties[key],
-                                                value: response.data.properties[key].value,
-                                                originalValue: response.data.properties[key].originalValue
+                                            [key.name]: {
+                                                ...params.data.properties[key.name],
+                                                value: response.data.properties[key.name].value,
+                                                originalValue: response.data.properties[key.name].originalValue
                                             }
                                         }
                                     }
@@ -114,17 +117,23 @@ export default function ItemsTable({
                             })
                         }
                     }),
+                    tooltipValueGetter: (params: ITooltipParams) => {
+                        const originalValue = params.data?.properties?.[key.name]?.originalValue
+                        if (originalValue) {
+                            return "original: " + params.data?.properties?.[key.name]?.originalValue ?? ""
+                        }
+                    },
                     valueSetter: (params: ValueSetterParams) => {
-                        updateItemProperty({ projectId: projectId!, itemId: params.data.id, key, newValue: params.newValue ?? "" }).then(response => {
+                        updateItemProperty({ projectId: projectId!, itemId: params.data.id, key: key.name, newValue: params.newValue ?? "" }).then(response => {
                             if (response.data) {
                                 const newData = {
                                     ...params.data,
                                     properties: {
                                         ...params.data.properties,
-                                        [key]: {
-                                            ...params.data.properties[key],
-                                            value: response.data.properties[key].value,
-                                            originalValue: response.data.properties[key].originalValue
+                                        [key.name]: {
+                                            ...params.data.properties[key.name],
+                                            value: response.data.properties[key.name].value,
+                                            originalValue: response.data.properties[key.name].originalValue
                                         }
                                     }
                                 }
@@ -134,7 +143,7 @@ export default function ItemsTable({
                         return true
                     },
                     cellStyle: (params: CellClassParams) => {
-                        const originalValue: string | undefined = params.data.properties[key]?.originalValue
+                        const originalValue: string | undefined = params.data?.properties?.[key.name]?.originalValue
                         const edited = originalValue !== undefined && originalValue !== null
                         if (edited) {
                             return { background: "#fff3cd", zIndex: -1 }

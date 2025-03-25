@@ -8,3 +8,8 @@ export interface MappingsValuesInput {
     id: string
     value: string
 }
+
+export interface SourceInput {
+    id: string
+    value: string
+}

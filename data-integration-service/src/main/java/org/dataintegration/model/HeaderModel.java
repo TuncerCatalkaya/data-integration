@@ -14,10 +14,12 @@ import java.util.Objects;
 public class HeaderModel {
 
     private String name;
+    private String display;
     private boolean hidden;
 
     public HeaderModel(String name) {
         this.name = name;
+        this.display = name;
         hidden = false;
     }
 

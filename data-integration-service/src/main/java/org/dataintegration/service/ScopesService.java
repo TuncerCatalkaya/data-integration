@@ -14,10 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +71,23 @@ public class ScopesService {
     }
 
     public void updateHeaders(UUID scopeId, Set<HeaderModel> headers) {
-        jpaScopeRepository.updateHeaders(scopeId, headers);
+        final ScopeEntity scope = get(scopeId);
+        final Set<HeaderModel> updatedHeaders = new LinkedHashSet<>(scope.getHeaders());
+
+        final Map<String, HeaderModel> existingHeadersMap = updatedHeaders.stream()
+                .collect(Collectors.toMap(HeaderModel::getName, header -> header));
+
+        for (HeaderModel header : headers) {
+            if (existingHeadersMap.containsKey(header.getName())) {
+                HeaderModel existingHeader = existingHeadersMap.get(header.getName());
+                existingHeader.setDisplay(header.getDisplay());
+            } else {
+                header.setName(header.getName().trim());
+                updatedHeaders.add(header);
+            }
+        }
+
+        jpaScopeRepository.updateHeaders(scopeId, updatedHeaders);
     }
 
     public void validateHeaders(Set<HeaderModel> headers) throws ScopeHeaderValidationException {

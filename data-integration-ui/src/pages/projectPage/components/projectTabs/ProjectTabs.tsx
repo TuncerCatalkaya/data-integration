@@ -42,7 +42,7 @@ export default function ProjectTabs() {
         () => [
             generatePath(RouterPaths.PROJECT_DETAILS, { projectId }),
             generatePath(RouterPaths.PROJECT_IMPORT, { projectId }),
-            generatePath(RouterPaths.PROJECT_MAPPED_ITEMS, { projectId })
+            generatePath(RouterPaths.PROJECT_MAPPING, { projectId })
         ],
         [projectId]
     )
@@ -70,9 +70,9 @@ export default function ProjectTabs() {
             }}
             sx={ProjectTabsStyles.tabs}
         >
-            <CustomTab value={allowedTabs[0]} label={"Project Details"} onClick={handleClickToProjectDetailsTab} disableRipple />
+            <CustomTab value={allowedTabs[0]} label={"Details"} onClick={handleClickToProjectDetailsTab} disableRipple />
             <CustomTab value={allowedTabs[1]} label={"Import"} onClick={handleClickToProjectImportTab} disableRipple />
-            <CustomTab value={allowedTabs[2]} label={"Mapped items"} onClick={handleClickToProjectMappedItemsTab} disableRipple />
+            <CustomTab value={allowedTabs[2]} label={"Mapping"} onClick={handleClickToProjectMappedItemsTab} disableRipple />
         </CustomTabs>
     )
 }

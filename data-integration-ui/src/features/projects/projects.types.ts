@@ -16,6 +16,7 @@ export interface ScopeResponse {
 
 export interface ScopeHeaderResponse {
     name: string
+    display: string
     hidden: boolean
 }
 
@@ -122,7 +123,7 @@ export interface UpdateMappedItemPropertyRequest {
     projectId: string
     mappedItemId: string
     key: string
-    newValue: string
+    newValue?: string
 }
 
 export interface CreateOrUpdateMappingsRequest {

@@ -4,6 +4,8 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.dataintegration.model.DelimiterModel;
 import org.dataintegration.service.ImportDataService;
 import org.dataintegration.service.ProjectsService;
@@ -34,7 +36,11 @@ public class ImportDataUsecase {
         projectsService.isPermitted(projectId, createdBy);
         final Callable<CSVReader> csvReaderCallable = () -> {
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            final BOMInputStream bomInputStream = BOMInputStream.builder()
+                    .setInputStream(inputStream)
+                    .setInclude(false).setByteOrderMarks(ByteOrderMark.UTF_8)
+                    .get();
+            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream);
             return new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(new CSVParserBuilder()
                             .withSeparator(delimiter)
@@ -58,7 +64,11 @@ public class ImportDataUsecase {
                 DelimiterModel.toCharacter(DelimiterModel.valueOf(s3Service.getS3ObjectTag(bucket, key, "delimiter")));
         final Callable<CSVReader> csvReaderCallable = () -> {
             final ResponseInputStream<GetObjectResponse> inputStream = s3Service.getS3Object(bucket, key);
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            final BOMInputStream bomInputStream = BOMInputStream.builder()
+                    .setInputStream(inputStream)
+                    .setInclude(false).setByteOrderMarks(ByteOrderMark.UTF_8)
+                    .get();
+            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream);
             return new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(new CSVParserBuilder()
                             .withSeparator(delimiter)

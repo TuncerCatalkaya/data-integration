@@ -26,7 +26,7 @@ export default function Router() {
                     <Route index element={<ProjectRedirect />} />
                     <Route path={RouterPaths.PROJECT_DETAILS} element={<ProjectDetailsPage />} />
                     <Route path={RouterPaths.PROJECT_IMPORT} element={<ProjectImportPage />} />
-                    <Route path={RouterPaths.PROJECT_MAPPED_ITEMS} element={<ProjectMappedItemsPage />} />
+                    <Route path={RouterPaths.PROJECT_MAPPING} element={<ProjectMappedItemsPage />} />
                 </Route>
             </Route>
 

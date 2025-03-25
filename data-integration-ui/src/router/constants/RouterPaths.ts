@@ -4,8 +4,8 @@ const RouterPaths = {
     PROJECTS: "/data-integration-ui/projects",
     PROJECT: "/data-integration-ui/projects/:projectId",
     PROJECT_DETAILS: "/data-integration-ui/projects/:projectId/details",
-    PROJECT_IMPORT: "/data-integration-ui/projects/:projectId/imported",
-    PROJECT_MAPPED_ITEMS: "/data-integration-ui/projects/:projectId/mapped"
+    PROJECT_IMPORT: "/data-integration-ui/projects/:projectId/import",
+    PROJECT_MAPPING: "/data-integration-ui/projects/:projectId/mapping"
 }
 
 export default RouterPaths
