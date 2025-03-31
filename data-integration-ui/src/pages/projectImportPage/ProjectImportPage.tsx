@@ -46,6 +46,7 @@ import EditHeaderDialog from "./components/editHeaderDialog/EditHeaderDialog"
 import GetScopeHeaders from "../../utils/GetScopeHeaders"
 import parse from "filesize-parser"
 import IsUnsupportedFileType from "../../utils/IsUnsupportedFileType"
+import MappedItemsSlice from "../../features/mappedItems/mappedItems.slice"
 
 export default function ProjectImportPage() {
     const { projectId } = useParams()
@@ -149,6 +150,7 @@ export default function ProjectImportPage() {
         if (shouldReload) {
             const getMappingsResponse = await getMappings({ projectId: projectId!, scopeId: scope }).unwrap()
             setMappingsResponse(getMappingsResponse)
+            await fetchItemsData(scope, searchSelectedHeader, search, page, pageSize, sort)
         }
     }
 
@@ -265,6 +267,8 @@ export default function ProjectImportPage() {
         setRowData([])
         setTotalElements(0)
         setCurrentCheckpointStatus(undefined)
+        dispatch(ImportItemsSlice.actions.putScope({ projectId: projectId!, scope: "select" }))
+        dispatch(MappedItemsSlice.actions.putScope({ projectId: projectId!, scope: "select" }))
         enqueueSnackbar("Deleted scope", { variant: "success" })
     }
 
@@ -272,6 +276,8 @@ export default function ProjectImportPage() {
         await markMappingForDeletion({ projectId: projectId!, mappingId: mapping })
         await fetchMappingsData(scope)
         setMapping("select")
+        dispatch(ImportItemsSlice.actions.putMapping({ projectId: projectId!, mapping: "select" }))
+        dispatch(MappedItemsSlice.actions.putMapping({ projectId: projectId!, mapping: "select" }))
         enqueueSnackbar("Deleted mapping", { variant: "success" })
     }
 
@@ -676,28 +682,22 @@ export default function ProjectImportPage() {
                         </Stack>
                     )}
                 </Stack>
-                <Divider />
+                {currentCheckpointStatus?.finished && <Divider />}
                 <Stack spacing={2} justifyContent="space-between" direction="row" alignItems="center">
                     {currentCheckpointStatus?.finished && (
                         <Stack direction="row" spacing={0.5} alignItems="center">
                             <Stack direction="row">
-                                <Tooltip
-                                    title={searchSelectedHeader === " " ? "" : searchSelectedHeader}
-                                    arrow
-                                    PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
-                                >
-                                    <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: 150, maxWidth: 150, textAlign: "left" }}>
-                                        <InputLabel>Header</InputLabel>
-                                        <Select value={searchSelectedHeader} label="Mapping" onChange={handleSearchSelectedHeaderChange}>
-                                            <MenuItem value=" ">{"Free Text"}</MenuItem>
-                                            {GetScopeHeaders(scopeHeaders).map(scopeHeader => (
-                                                <MenuItem key={scopeHeader.id} value={scopeHeader.id}>
-                                                    {scopeHeader.display}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Tooltip>
+                                <FormControl sx={{ backgroundColor: theme.palette.common.white, minWidth: 150, maxWidth: 150, textAlign: "left" }}>
+                                    <InputLabel>Header</InputLabel>
+                                    <Select value={searchSelectedHeader} label="Mapping" onChange={handleSearchSelectedHeaderChange}>
+                                        <MenuItem value=" ">{"Free Text"}</MenuItem>
+                                        {GetScopeHeaders(scopeHeaders).map(scopeHeader => (
+                                            <MenuItem key={scopeHeader.id} value={scopeHeader.id}>
+                                                {scopeHeader.display}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                                 <Box component="form" noValidate autoComplete="off">
                                     <TextField
                                         value={search}
@@ -737,7 +737,7 @@ export default function ProjectImportPage() {
                             </Stack>
                             <FormControlLabel
                                 disabled={mapping === "select"}
-                                control={<Checkbox checked={checkedFilterMappedItems} onChange={handleFilterMappedItemsChange} color="primary" />}
+                                control={<Checkbox color="info" checked={checkedFilterMappedItems} onChange={handleFilterMappedItemsChange} />}
                                 label="Hide mapped items"
                             />
                         </Stack>

@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -38,9 +39,10 @@ public class ImportDataUsecase {
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
             final BOMInputStream bomInputStream = BOMInputStream.builder()
                     .setInputStream(inputStream)
-                    .setInclude(false).setByteOrderMarks(ByteOrderMark.UTF_8)
+                    .setInclude(false)
+                    .setByteOrderMarks(ByteOrderMark.UTF_8)
                     .get();
-            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream);
+            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream, StandardCharsets.UTF_8);
             return new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(new CSVParserBuilder()
                             .withSeparator(delimiter)
@@ -66,9 +68,10 @@ public class ImportDataUsecase {
             final ResponseInputStream<GetObjectResponse> inputStream = s3Service.getS3Object(bucket, key);
             final BOMInputStream bomInputStream = BOMInputStream.builder()
                     .setInputStream(inputStream)
-                    .setInclude(false).setByteOrderMarks(ByteOrderMark.UTF_8)
+                    .setInclude(false)
+                    .setByteOrderMarks(ByteOrderMark.UTF_8)
                     .get();
-            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream);
+            final InputStreamReader inputStreamReader = new InputStreamReader(bomInputStream, StandardCharsets.UTF_8);
             return new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(new CSVParserBuilder()
                             .withSeparator(delimiter)

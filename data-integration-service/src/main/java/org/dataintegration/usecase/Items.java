@@ -55,7 +55,7 @@ class Items implements ItemsMethods {
                 itemsService.getAll(scopeId, mappingId, filterMappedItems, searchHeader, searchText, pageable);
 
         final Map<UUID, List<UUID>> itemToMappingsMap =
-                mappedItemsService.getItemWithMappings(itemEntityPage.stream()
+                mappedItemsService.getItemsWithMappings(itemEntityPage.stream()
                         .map(ItemEntity::getId)
                         .toList());
 

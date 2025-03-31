@@ -7,16 +7,18 @@ import {
     CellClassParams,
     CheckboxSelectionCallbackParams,
     ColDef,
+    EditableCallbackParams,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
+    ICellRendererParams,
     IRowNode,
     SelectionChangedEvent,
     SortChangedEvent,
     ValueGetterParams
 } from "ag-grid-community"
 import "./MappedItemsTable.css"
-import React, { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
+import React, { ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo } from "react"
 import Pagination from "../../../../components/pagination/Pagination"
 import { ProjectsApi } from "../../../../features/projects/projects.api"
 import { useParams } from "react-router-dom"
@@ -24,8 +26,11 @@ import { ValueSetterParams } from "ag-grid-community/dist/types/core/entities/co
 import CheckboxTableHeader from "../../../../components/checkboxTableHeader/CheckboxTableHeader"
 import UndoCellRenderer from "../../../../components/undoCellRenderer/UndoCellRenderer"
 import { DataIntegrationHeaderAPIResponse } from "../../../../features/hosts/hosts.types"
+import ColorTooltip from "../../../../components/tooltip/ColorTooltip"
+import CellStatusIcon from "../../../../components/cellStatusIcon/CellStatusIcon"
 
 interface ItemsTableProps {
+    gridApiRef: MutableRefObject<GridApi | null>
     rowData: MappedItemResponse[]
     scopeHeaders: ScopeHeaderResponse[]
     selectedScope?: ScopeResponse
@@ -45,7 +50,10 @@ interface ItemsTableProps {
     onSortChangeHandler: (e: SortChangedEvent) => void
 }
 
+const NUMBER_OF_ROWS_WITHOUT_DYNAMIC_DATA = 2
+
 export default function MappedItemsTable({
+    gridApiRef,
     rowData,
     scopeHeaders,
     selectedScope,
@@ -98,18 +106,43 @@ export default function MappedItemsTable({
                     lockPosition: true,
                     filter: false,
                     editable: false,
-                    sortable: false
+                    sortable: false,
+                    pinned: "left"
+                },
+                {
+                    colId: "status",
+                    headerName: "Status",
+                    maxWidth: 200,
+                    resizable: false,
+                    lockPosition: true,
+                    filter: false,
+                    editable: false,
+                    sortable: false,
+                    pinned: "left",
+                    cellRenderer: (params: ICellRendererParams) => {
+                        const status = params.data.status
+                        const errorMessages = params.data.errorMessages
+                        return <CellStatusIcon status={status} errorMessages={errorMessages} />
+                    }
                 },
                 ...[...getHostHeadersResponse.headers]
                     .filter(target => selectedMapping.mapping[target.id])
                     .flatMap(target =>
                         selectedMapping.mapping[target.id].map(sourceKey => ({
-                            colId: target.id,
+                            colId: "dynamic_" + target.id,
                             headerName: target.display,
                             headerTooltip: target.tooltip,
+                            tooltipComponent: ColorTooltip,
+                            tooltipComponentParams: {
+                                color: "info",
+                                messages: [target.tooltip],
+                                maxHeight: 150
+                            },
+                            editable: (params: EditableCallbackParams) => params.data.status !== ItemStatusResponse.INTEGRATED,
                             cellRenderer: UndoCellRenderer,
                             cellRendererParams: (params: ValueGetterParams) => ({
                                 value: getValue(params.data, sourceKey, target.id),
+                                freeze: params.data.status === ItemStatusResponse.INTEGRATED,
                                 originalValue: params.data.properties?.[target.id]?.originalValue,
                                 onUndo: () => {
                                     updateMappedItemProperty({
@@ -117,14 +150,15 @@ export default function MappedItemsTable({
                                         mappedItemId: params.data.id,
                                         key: target.id
                                     }).then(response => {
-                                        if (response) {
-                                            fetchMappedItemsData(
-                                                selectedScope.id,
-                                                selectedMapping.id,
-                                                itemsTableProps.page,
-                                                itemsTableProps.pageSize,
-                                                itemsTableProps.sort
-                                            )
+                                        if (response.data) {
+                                            const revertedData = {
+                                                ...params.data,
+                                                properties: {
+                                                    ...params.data.properties,
+                                                    [target.id]: undefined
+                                                }
+                                            }
+                                            params.api.applyTransaction({ update: [revertedData] })
                                         }
                                     })
                                 }
@@ -137,19 +171,27 @@ export default function MappedItemsTable({
                                     key: target.id,
                                     newValue: params.newValue ?? ""
                                 }).then(response => {
-                                    if (response) {
-                                        fetchMappedItemsData(
-                                            selectedScope.id,
-                                            selectedMapping.id,
-                                            itemsTableProps.page,
-                                            itemsTableProps.pageSize,
-                                            itemsTableProps.sort
-                                        )
+                                    if (response.data) {
+                                        const newData = {
+                                            ...params.data,
+                                            properties: {
+                                                ...params.data.properties,
+                                                [target.id]: {
+                                                    ...params.data.properties[target.id],
+                                                    value: response.data.properties[target.id].value,
+                                                    originalValue: response.data.properties[target.id].originalValue
+                                                }
+                                            }
+                                        }
+                                        params.api.applyTransaction({ update: [newData] })
                                     }
                                 })
                                 return true
                             },
                             cellStyle: (params: CellClassParams) => {
+                                if (params.data.status === ItemStatusResponse.INTEGRATED) {
+                                    return { background: "#ddefdd", zIndex: -1 }
+                                }
                                 if (params.data.properties == null) {
                                     return { background: "inherit", zIndex: -1 }
                                 }
@@ -180,7 +222,8 @@ export default function MappedItemsTable({
         onCheck,
         selectedMapping,
         selectedScope,
-        getHostHeadersResponse.headers
+        getHostHeadersResponse.headers,
+        gridApiRef
     ])
 
     const defaultColDef: ColDef = {
@@ -195,11 +238,10 @@ export default function MappedItemsTable({
             const selectedNodes = e.api.getSelectedNodes()
             const itemIds = selectedNodes.map(node => node.id!)
             setSelectedItems(itemIds)
+            e.api.clearFocusedCell()
         },
         [setSelectedItems]
     )
-
-    const gridApiRef = useRef<GridApi | null>(null)
 
     useEffect(() => {
         if (gridApiRef.current && columnDefs.length > 0) {
@@ -207,15 +249,30 @@ export default function MappedItemsTable({
                 gridApiRef.current?.autoSizeAllColumns()
             }, 1)
         }
-    }, [columnDefs.length])
+    }, [gridApiRef, columnDefs.length])
 
     const onGridReady = (event: GridReadyEvent) => (gridApiRef.current = event.api)
+
+    const noRowsMessage = useMemo(() => {
+        if (selectedScope && selectedMapping && columnDefs.length === 2) {
+            return "No columns available to display, are they not mapped? Edit the mapping and make sure that the targets are mapped to one source."
+        } else if (selectedScope && selectedMapping) {
+            return "No rows to show"
+        } else if (selectedScope) {
+            return "Select a mapping to show data"
+        } else {
+            return "Select a scope"
+        }
+    }, [selectedScope, selectedMapping, columnDefs.length])
+
+    const gridKey = `${selectedScope?.id}-${selectedMapping?.id}-${columnDefs.length}`
 
     return (
         <Stack>
             <div className="ag-theme-alpine" style={{ height: 488, textAlign: "left" }}>
                 <AgGridReact
-                    rowData={selectedScope && selectedMapping && columnDefs.length === 1 ? [] : rowData}
+                    key={gridKey}
+                    rowData={selectedScope && selectedMapping && columnDefs.length === NUMBER_OF_ROWS_WITHOUT_DYNAMIC_DATA ? [] : rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}
@@ -231,12 +288,7 @@ export default function MappedItemsTable({
                     suppressMovableColumns
                     onSelectionChanged={onSelectionChanged}
                     onGridReady={onGridReady}
-                    localeText={{
-                        noRowsToShow:
-                            selectedScope && selectedMapping && columnDefs.length === 1
-                                ? "No columns available to display, are they not mapped? Edit the mapping and make sure that the targets are mapped to one source."
-                                : "No rows to show"
-                    }}
+                    localeText={{ noRowsToShow: noRowsMessage }}
                 />
             </div>
             <Pagination {...itemsTableProps} />

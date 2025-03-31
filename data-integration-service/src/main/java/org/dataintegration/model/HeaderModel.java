@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Data
 @Builder(toBuilder = true)
@@ -18,7 +19,7 @@ public class HeaderModel {
     private boolean hidden;
 
     public HeaderModel(String id) {
-        this.id = id;
+        this.id = id + "_" + UUID.randomUUID();
         this.display = id;
         hidden = false;
     }

@@ -28,11 +28,11 @@ class ItemCreationService {
         return true;
     }
 
-    ItemEntity createItemEntity(String[] line, ScopeEntity scopeEntity, LinkedHashSet<HeaderModel> headers, long lineNumber) {
+    ItemEntity createItemEntity(String[] line, ScopeEntity scopeEntity, long lineNumber) {
         final ItemEntity itemEntity = new ItemEntity();
         itemEntity.setScope(scopeEntity);
         itemEntity.setLineNumber(lineNumber);
-        itemEntity.setProperties(getProperties(line, headers));
+        itemEntity.setProperties(getProperties(line, scopeEntity.getHeaders()));
         return itemEntity;
     }
 

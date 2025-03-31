@@ -11,6 +11,7 @@ import org.dataintegration.usecase.model.CreateOrUpdateHostsRequestModel;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.Set;
@@ -52,6 +53,9 @@ public class HostsUsecase {
                 )
                 .headers(header -> header.setBearerAuth(token))
                 .retrieve()
+                .onStatus(httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(body -> Mono.error(new RuntimeException(body))))
                 .bodyToMono(DataIntegrationHeaderAPIModel.class)
                 .block();
     }

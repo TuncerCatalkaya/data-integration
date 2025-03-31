@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dataintegration.exception.checked.ScopeHeaderValidationException;
 import org.dataintegration.model.DataIntegrationAPIModel;
-import org.dataintegration.model.DataIntegrationInputAPIModel;
 import org.dataintegration.model.HeaderModel;
 import org.dataintegration.model.ItemModel;
 import org.dataintegration.model.MappedItemModel;
@@ -19,6 +18,7 @@ import org.dataintegration.usecase.model.CreateOrUpdateMappingsRequestModel;
 import org.dataintegration.usecase.model.CreateOrUpdateScopeHeadersRequestModel;
 import org.dataintegration.usecase.model.CreateProjectsRequestModel;
 import org.dataintegration.usecase.model.CurrentCheckpointStatusResponseModel;
+import org.dataintegration.usecase.model.IntegrateRequestModel;
 import org.dataintegration.usecase.model.UpdateItemPropertiesRequestModel;
 import org.dataintegration.usecase.model.UpdateProjectsRequestModel;
 import org.dataintegration.utils.DataIntegrationUtils;
@@ -54,13 +54,13 @@ public class ProjectsRestController {
     private final ProjectsUsecase projectsUsecase;
     private final ImportDataUsecase importDataUsecase;
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping
     public ProjectModel createProject(@RequestBody CreateProjectsRequestModel createProjectsRequest) {
         return projectsUsecase.getProjectsMethods().createNewProject(createProjectsRequest);
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping(value = "/import-data-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void importDataFile(@AuthenticationPrincipal Jwt jwt,
                                @RequestParam UUID projectId,
@@ -71,20 +71,20 @@ public class ProjectsRestController {
                 DataIntegrationUtils.delimiterStringToCharMapper(delimiter), DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/import-data-s3")
     public void importDataS3(@AuthenticationPrincipal Jwt jwt, @RequestParam UUID scopeId,
                              @RequestParam String bucket, @RequestParam String key) {
         importDataUsecase.importFromS3(scopeId, bucket, key, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/import-data-interrupt")
     public void interruptScope(@AuthenticationPrincipal Jwt jwt, @RequestParam UUID projectId, @RequestParam UUID scopeId) {
         projectsUsecase.getScopesMethods().interruptScope(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/{projectId}/mappings/apply-map")
     public void applyMapping(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                              @RequestBody ApplyMappingRequestModel applyMappingRequest) {
@@ -92,7 +92,7 @@ public class ProjectsRestController {
                 .applyMapping(projectId, applyMappingRequest, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/{projectId}/mapped-items/apply-unmap")
     public void applyUnmapping(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                @RequestBody ApplyUnmappingRequestModel applyUnmappingRequest) {
@@ -100,24 +100,24 @@ public class ProjectsRestController {
                 .deleteMappedItems(projectId, applyUnmappingRequest, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/{projectId}/mappings/{mappingId}/mapped-items/integrate")
     public DataIntegrationAPIModel integrate(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                              @PathVariable UUID mappingId, @RequestParam String language,
-                                             @RequestBody DataIntegrationInputAPIModel dataIntegrationInputAPI) {
+                                             @RequestBody IntegrateRequestModel integrateRequest) {
         return projectsUsecase.getMappedItemsMethods()
-                .integrateMappedItems(projectId, mappingId, language, dataIntegrationInputAPI,
+                .integrateMappedItems(projectId, mappingId, language, integrateRequest,
                         DataIntegrationUtils.getJwtUserId(jwt), jwt.getTokenValue());
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping
     public ProjectModel updateProject(@AuthenticationPrincipal Jwt jwt,
                                       @RequestBody UpdateProjectsRequestModel updateProjectsRequest) {
         return projectsUsecase.getProjectsMethods().updateProject(updateProjectsRequest, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/scopes")
     public ScopeModel createOrGetScope(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                        @RequestParam String scopeKey, @RequestParam boolean external) {
@@ -125,7 +125,7 @@ public class ProjectsRestController {
                 .createOrGetScope(projectId, scopeKey, external, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/scopes/{scopeId}/headers")
     public Set<HeaderModel> createOrUpdateScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                                        @PathVariable UUID scopeId, @RequestBody
@@ -136,7 +136,7 @@ public class ProjectsRestController {
                         DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/items/{itemId}/properties/{key}")
     public ItemModel updateItemProperty(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                         @PathVariable UUID itemId, @PathVariable String key, @RequestParam String newValue) {
@@ -144,7 +144,7 @@ public class ProjectsRestController {
                 .updateItemProperty(projectId, itemId, key, newValue, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/items/bulk/properties/{key}")
     public void updateItemProperties(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                      @RequestBody UpdateItemPropertiesRequestModel updateItemPropertiesRequest,
@@ -153,7 +153,7 @@ public class ProjectsRestController {
                 DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/mapped-items/{mappedItemId}/properties/{key}")
     public MappedItemModel updateMappedItemProperty(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                                     @PathVariable UUID mappedItemId, @PathVariable String key,
@@ -162,7 +162,7 @@ public class ProjectsRestController {
                 .updateMappedItemProperty(projectId, mappedItemId, key, newValue, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping("/{projectId}/scopes/{scopeId}/mappings")
     public MappingModel createOrUpdateMapping(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                               @PathVariable UUID scopeId,
@@ -171,38 +171,38 @@ public class ProjectsRestController {
                 .createOrUpdateMapping(projectId, scopeId, createMappingsRequest, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/permitted")
     public void isProjectPermitted(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId) {
         projectsUsecase.getProjectsMethods().isProjectPermitted(projectId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}")
     public ProjectModel getProject(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId) {
         return projectsUsecase.getProjectsMethods().getProject(projectId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping
     public Page<ProjectModel> getProjects(@AuthenticationPrincipal Jwt jwt, @ParameterObject Pageable pageable) {
         return projectsUsecase.getProjectsMethods().getAllProjects(DataIntegrationUtils.getJwtUserId(jwt), pageable);
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes")
     public List<ScopeModel> getScopes(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId) {
         return projectsUsecase.getScopesMethods().getAllScopes(projectId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes/{scopeId}/headers")
     public Set<HeaderModel> getScopeHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                             @PathVariable UUID scopeId) {
         return projectsUsecase.getScopesMethods().getScopeHeaders(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes/{scopeId}/items")
     public Page<ItemModel> getItems(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId, @PathVariable UUID scopeId,
                                     @RequestParam(required = false) UUID mappingId, @RequestParam boolean filterMappedItems,
@@ -212,23 +212,23 @@ public class ProjectsRestController {
                 DataIntegrationUtils.getJwtUserId(jwt), pageable);
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes/{scopeId}/mappings")
     public List<MappingModel> getMappings(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                           @PathVariable UUID scopeId) {
         return projectsUsecase.getMappingsMethods().getAllMappings(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/mappings/{mappingId}/mapped-items")
-    public Page<MappedItemModel> getMappedItems(@AuthenticationPrincipal Jwt jwt,
-                                                @PathVariable UUID projectId, @PathVariable UUID mappingId,
+    public Page<MappedItemModel> getMappedItems(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
+                                                @PathVariable UUID mappingId, @RequestParam boolean filterIntegratedItems,
                                                 @ParameterObject Pageable pageable) {
         return projectsUsecase.getMappedItemsMethods()
-                .getAllMappedItems(projectId, mappingId, DataIntegrationUtils.getJwtUserId(jwt), pageable);
+                .getAllMappedItems(projectId, mappingId, filterIntegratedItems, DataIntegrationUtils.getJwtUserId(jwt), pageable);
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes/{scopeId}/checkpoints/status")
     public CurrentCheckpointStatusResponseModel getCheckpointsStatus(@AuthenticationPrincipal Jwt jwt,
                                                                      @PathVariable UUID projectId,
@@ -237,19 +237,19 @@ public class ProjectsRestController {
                 .getCurrentCheckpointStatus(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @DeleteMapping("/{projectId}/mark")
     public void markProjectForDeletion(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId) {
         projectsUsecase.getProjectsMethods().markProjectForDeletion(projectId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @DeleteMapping("/{projectId}/scopes/{scopeId}/mark")
     public void markScopeForDeletion(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId, @PathVariable UUID scopeId) {
         projectsUsecase.getScopesMethods().markScopeForDeletion(projectId, scopeId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @DeleteMapping("/{projectId}/mappings/{mappingId}/mark")
     public void markMappingForDeletion(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId,
                                        @PathVariable UUID mappingId) {

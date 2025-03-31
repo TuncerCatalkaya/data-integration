@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Paper
 import Draggable from "react-draggable"
 import theme from "../../../theme"
 import { useTranslation } from "react-i18next"
-import { Add, Dns, Info } from "@mui/icons-material"
+import { Add, Dns } from "@mui/icons-material"
 import { ChangeEvent, useEffect, useState } from "react"
 import AddableCard from "../../../components/addableCard/AddableCard"
 import { InputField } from "../../addableCard/AddableCard.types"
@@ -11,7 +11,7 @@ import { HostsApi } from "../../../features/hosts/hosts.api"
 import { CreateOrUpdateHostsRequest, HostResponse } from "../../../features/hosts/hosts.types"
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import { useSnackbar } from "notistack"
-import InfoTooltip from "../../../components/tooltip/InfoTooltip"
+import IconTooltip from "../../tooltip/IconTooltip"
 import GetFrontendEnvironment from "../../../utils/GetFrontendEnvironment"
 
 interface CreateOrEditHostDialogProps {
@@ -171,9 +171,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
                     <Paper sx={{ padding: "25px" }}>
                         <Stack direction="row" alignItems="center" spacing="5px">
                             <Typography variant="h6">Host</Typography>
-                            <InfoTooltip messages={["Valid Domains for URL:\n" + GetFrontendEnvironment("VITE_VALID_DOMAINS")]}>
-                                <Info color="info" />
-                            </InfoTooltip>
+                            <IconTooltip color="info" messages={["Valid Domains for URL:\n" + GetFrontendEnvironment("VITE_VALID_DOMAINS")]} />
                         </Stack>
                         <Stack direction="row" alignItems="center" spacing={2} sx={{ padding: "10px" }}>
                             <TextField

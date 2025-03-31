@@ -30,25 +30,25 @@ public class HostsRestController {
 
     private final HostsUsecase hostsUsecase;
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PutMapping
     public HostModel createOrUpdateHost(@RequestBody @Valid CreateOrUpdateHostsRequestModel createOrUpdateHostsRequest) {
         return hostsUsecase.createOrUpdateHost(createOrUpdateHostsRequest);
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping
     public Set<HostModel> getHosts() {
         return hostsUsecase.getAllHosts();
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{hostId}/headers")
     public DataIntegrationHeaderAPIModel getHostHeaders(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID hostId, @RequestParam String language) {
         return hostsUsecase.getHostHeaders(hostId, language, jwt.getTokenValue());
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @DeleteMapping("/{hostId}")
     public void deleteHost(@PathVariable UUID hostId) {
         hostsUsecase.deleteHost(hostId);

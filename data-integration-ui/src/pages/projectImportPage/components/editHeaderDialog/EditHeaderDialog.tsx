@@ -7,6 +7,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControlLabel,
+    IconButton,
     ListItem,
     Paper,
     PaperProps,
@@ -15,12 +16,12 @@ import {
     Typography
 } from "@mui/material"
 import Draggable from "react-draggable"
-import { Add, Edit } from "@mui/icons-material"
+import { Add, ArrowDownward, ArrowUpward, Edit } from "@mui/icons-material"
 import { useSnackbar } from "notistack"
 import theme from "../../../../theme"
 import { useParams } from "react-router-dom"
 import { ScopeHeaderResponse } from "../../../../features/projects/projects.types"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import useShake from "../../../../components/shake/hooks/useShake"
 import { ProjectsApi } from "../../../../features/projects/projects.api"
 
@@ -41,13 +42,22 @@ function PaperComponent(props: PaperProps) {
 
 export default function EditHeaderDialog({ open, handleClickClose, scopeId, scopeHeaders }: Readonly<EditHeaderDialogProps>) {
     const headerNameRef = useRef<HTMLInputElement | undefined>()
+    const headerRefs = useRef<Record<string, HTMLInputElement | null>>({})
     const [headers, setHeaders] = useState<ScopeHeaderResponse[]>([])
+
     const [createOrUpdateScopeHeaders] = ProjectsApi.useCreateOrUpdateScopeHeadersMutation()
 
     const { projectId } = useParams()
     const { enqueueSnackbar } = useSnackbar()
 
     const { handleShakeClick, shakeSx } = useShake()
+
+    const handleAddHeaderKeyPress = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            event.preventDefault()
+            handleClickAddHeader()
+        }
+    }
 
     const handleClickAddHeader = () => {
         const trimmedHeaderName = headerNameRef.current!.value.trim()
@@ -72,8 +82,18 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
     }
 
     const handleClickSubmit = async () => {
-        const createOrUpdateScopeHeadersResponse = await createOrUpdateScopeHeaders({ projectId: projectId!, scopeId, headers })
-        if (createOrUpdateScopeHeadersResponse.data) {
+        const updatedHeaders = headers.map(header => {
+            const refValue = headerRefs.current[header.id]!.value.trim()
+            return {
+                ...header,
+                display: refValue
+            }
+        })
+
+        const createOrUpdateScopeHeadersResponse = await createOrUpdateScopeHeaders({ projectId: projectId!, scopeId, headers: updatedHeaders })
+        if (createOrUpdateScopeHeadersResponse.error) {
+            enqueueSnackbar("Error occurred during header creation.", { variant: "error" })
+        } else if (createOrUpdateScopeHeadersResponse.data) {
             handleClickClose(true)
             enqueueSnackbar("Header edited.", { variant: "success" })
         }
@@ -92,6 +112,22 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
                 hidden: !checked
             }))
         )
+    }
+
+    const moveHeader = (index: number, direction: "up" | "down") => {
+        const newHeaders = [...headers]
+
+        if (direction === "up" && index > 0) {
+            const temp = newHeaders[index - 1]
+            newHeaders[index - 1] = newHeaders[index]
+            newHeaders[index] = temp
+        } else if (direction === "down" && index < newHeaders.length - 1) {
+            const temp = newHeaders[index + 1]
+            newHeaders[index + 1] = newHeaders[index]
+            newHeaders[index] = temp
+        }
+
+        setHeaders(newHeaders)
     }
 
     const allChecked = headers.every(header => !header.hidden)
@@ -113,6 +149,7 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
                                 inputRef={headerNameRef}
                                 label="Header Name"
                                 placeholder={"Enter a header name..."}
+                                onKeyDown={handleAddHeaderKeyPress}
                                 InputLabelProps={{
                                     shrink: true
                                 }}
@@ -132,7 +169,7 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
                     label="Select All"
                     sx={{ marginBottom: 2 }}
                 />
-                {headers.map(header => (
+                {headers.map((header, index) => (
                     <ListItem key={header.id}>
                         <Checkbox
                             checked={!header.hidden}
@@ -140,17 +177,31 @@ export default function EditHeaderDialog({ open, handleClickClose, scopeId, scop
                                 setHeaders(prevHeaders => prevHeaders.map(h => (h.id === header.id ? { ...h, hidden: !checked } : h)))
                             }}
                         />
-                        <Typography
-                            noWrap
-                            sx={{
-                                textOverflow: "ellipsis",
-                                overflow: "hidden",
-                                whiteSpace: "nowrap",
-                                fontWeight: "bold"
+                        <TextField
+                            key={header.id}
+                            defaultValue={header.display}
+                            inputRef={el => {
+                                if (el) headerRefs.current[header.id] = el
                             }}
-                        >
-                            {header.display}
-                        </Typography>
+                            variant="standard"
+                            fullWidth
+                            InputProps={{
+                                sx: {
+                                    fontWeight: "bold",
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
+                                    whiteSpace: "nowrap"
+                                }
+                            }}
+                        />
+                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <IconButton size="small" onClick={() => moveHeader(index, "up")} disabled={index === 0}>
+                                <ArrowUpward fontSize="small" />{" "}
+                            </IconButton>
+                            <IconButton size="small" onClick={() => moveHeader(index, "down")} disabled={index === headers.length - 1}>
+                                <ArrowDownward fontSize="small" />{" "}
+                            </IconButton>
+                        </Box>
                     </ListItem>
                 ))}
             </DialogContent>

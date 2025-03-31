@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class ScopesService {
         jpaScopeRepository.finish(scopeId);
     }
 
-    public void updateHeaders(UUID scopeId, Set<HeaderModel> headers) {
+    public LinkedHashSet<HeaderModel> updateHeaders(UUID scopeId, Set<HeaderModel> headers) {
         final ScopeEntity scope = get(scopeId);
         final Set<HeaderModel> updatedHeaders = new LinkedHashSet<>(scope.getHeaders() == null ? Collections.emptyList() : scope.getHeaders());
 
@@ -84,12 +85,26 @@ public class ScopesService {
                 existingHeader.setDisplay(header.getDisplay());
                 existingHeader.setHidden(header.isHidden());
             } else {
-                header.setId(header.getId().trim());
-                updatedHeaders.add(header);
+                final HeaderModel newHeader = new HeaderModel(header.getId());
+                updatedHeaders.add(newHeader);
             }
         }
 
-        jpaScopeRepository.updateHeaders(scopeId, updatedHeaders);
+        final Set<HeaderModel> sortedUpdatedHeaders = updatedHeaders.stream()
+                .sorted(Comparator.comparingInt(header -> {
+                    int index = 0;
+                    for (HeaderModel referenceHeader : headers) {
+                        if (referenceHeader.getId().equals(header.getId())) {
+                            return index;
+                        }
+                        index++;
+                    }
+                    return Integer.MAX_VALUE;
+                }))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        jpaScopeRepository.updateHeaders(scopeId, sortedUpdatedHeaders);
+        return get(scopeId).getHeaders();
     }
 
     public void validateHeaders(Set<HeaderModel> headers) throws ScopeHeaderValidationException {

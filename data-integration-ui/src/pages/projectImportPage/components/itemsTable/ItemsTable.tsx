@@ -66,6 +66,7 @@ export default function ItemsTable({
         if (rowData.length > 0 && headers.length > 0) {
             const dynamicColumnDefs: ColDef[] = [
                 {
+                    colId: "checkboxSelection",
                     headerName: "",
                     field: "checkboxSelection",
                     maxWidth: 50,
@@ -82,13 +83,13 @@ export default function ItemsTable({
                     lockPosition: true,
                     filter: false,
                     editable: false,
-                    sortable: false
+                    sortable: false,
+                    pinned: "left"
                 },
                 ...[...headers].map(key => ({
-                    colId: key.id,
+                    colId: "dynamic_" + key.id,
                     headerName: key.display,
-                    headerTooltip: key.id,
-                    field: `properties.${key.id}.value`,
+                    headerTooltip: key.display,
                     cellRenderer: UndoCellRenderer,
                     cellRendererParams: (params: ValueGetterParams) => ({
                         value: params.data.properties[key.id]?.value,
@@ -122,6 +123,9 @@ export default function ItemsTable({
                         if (originalValue) {
                             return "original: " + params.data?.properties?.[key.id]?.originalValue
                         }
+                    },
+                    valueGetter: (params: ValueGetterParams) => {
+                        return params.data?.properties?.[key.id]?.value || ""
                     },
                     valueSetter: (params: ValueSetterParams) => {
                         updateItemProperty({ projectId: projectId!, itemId: params.data.id, key: key.id, newValue: params.newValue ?? "" }).then(response => {
@@ -209,7 +213,7 @@ export default function ItemsTable({
                     onGridReady={onGridReady}
                     localeText={{
                         noRowsToShow:
-                            columnDefs.length === 0
+                            rowData.length > 0 && columnDefs.length === 0
                                 ? "No columns available to display, are they all hidden? Navigate to the edit header dialog."
                                 : "No rows to show"
                     }}

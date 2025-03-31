@@ -88,6 +88,13 @@ export interface ApplyUnmappingRequest {
     mappedItemIds: string[]
 }
 
+export interface IntegrateRequest {
+    projectId: string
+    mappingId: string
+    language: string
+    mappedItemIds: string[]
+}
+
 export interface UpdateProjectRequest {
     projectId: string
     projectName: string
@@ -178,6 +185,7 @@ export interface GetMappingsRequest {
 export interface GetMappedItemsRequest {
     projectId: string
     mappingId: string
+    filterIntegratedItems: boolean
     page: number
     size: number
     sort?: string

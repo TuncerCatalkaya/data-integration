@@ -27,9 +27,10 @@ public class ProjectsUsecase {
     private final ItemsService itemsService;
     private final CheckpointsService checkpointsService;
     private final MappingsService mappingsService;
-    private final MappedItemsService mappingItemService;
+    private final MappedItemsService mappedItemsService;
     private final HostsService hostsService;
     private final DataIntegrationCache dataIntegrationCache;
+    private final HostsUsecase hostsUsecase;
 
     @Getter(lazy = true)
     private final ProjectsMethods projectsMethods = new Projects(projectsService, scopesService, mappingsService);
@@ -38,15 +39,16 @@ public class ProjectsUsecase {
     private final ScopesMethods scopesMethods = new Scopes(projectsService, scopesService, mappingsService, dataIntegrationCache);
 
     @Getter(lazy = true)
-    private final ItemsMethods itemsMethods = new Items(projectsService, scopesService, itemsService, mappingItemService);
+    private final ItemsMethods itemsMethods = new Items(projectsService, scopesService, itemsService, mappedItemsService);
 
     @Getter(lazy = true)
     private final CheckpointsMethods checkpointsMethods = new Checkpoints(projectsService, scopesService, checkpointsService);
 
     @Getter(lazy = true)
     private final MappingsMethods mappingsMethods =
-            new Mappings(projectsService, scopesService, itemsService, mappingsService, mappingItemService, hostsService);
+            new Mappings(projectsService, scopesService, itemsService, mappingsService, mappedItemsService, hostsService);
 
     @Getter(lazy = true)
-    private final MappedItemsMethods mappedItemsMethods = new MappedItems(projectsService, mappingItemService);
+    private final MappedItemsMethods mappedItemsMethods =
+            new MappedItems(projectsService, mappingsService, mappedItemsService, hostsUsecase);
 }

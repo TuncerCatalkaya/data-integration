@@ -21,6 +21,7 @@ import {
     GetScopesRequest,
     ImportDataFileRequest,
     ImportDataS3Request,
+    IntegrateRequest,
     InterruptScopeRequest,
     IsProjectPermittedRequest,
     ItemResponse,
@@ -105,6 +106,18 @@ export const ProjectsApi = createApi({
             query: ({ projectId, mappedItemIds }) => ({
                 url: GetFrontendEnvironment("VITE_BASE_URL_ROOT_PATH") + projectsUrl + `/${projectId}/mapped-items/apply-unmap`,
                 method: "POST",
+                body: {
+                    mappedItemIds
+                }
+            })
+        }),
+        integrate: builder.mutation<void, IntegrateRequest>({
+            query: ({ projectId, mappingId, language, mappedItemIds }) => ({
+                url: GetFrontendEnvironment("VITE_BASE_URL_ROOT_PATH") + projectsUrl + `/${projectId}/mappings/${mappingId}/mapped-items/integrate`,
+                method: "POST",
+                params: {
+                    language
+                },
                 body: {
                     mappedItemIds
                 }
@@ -237,10 +250,11 @@ export const ProjectsApi = createApi({
             })
         }),
         getMappedItems: builder.query<GetMappedItemsByMappingResponse, GetMappedItemsRequest>({
-            query: ({ projectId, mappingId, page, size, sort }) => ({
+            query: ({ projectId, mappingId, filterIntegratedItems, page, size, sort }) => ({
                 url: GetFrontendEnvironment("VITE_BASE_URL_ROOT_PATH") + projectsUrl + `/${projectId}/mappings/${mappingId}/mapped-items`,
                 method: "GET",
                 params: {
+                    filterIntegratedItems,
                     page,
                     size,
                     sort

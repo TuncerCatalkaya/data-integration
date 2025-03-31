@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class DataIntegrationResultAPIModel {
 
     @NonNull
-    private UUID itemId;
+    private DataIntegrationInputDataAPIModel input;
     @NonNull
     private List<String> errorMessages;
 

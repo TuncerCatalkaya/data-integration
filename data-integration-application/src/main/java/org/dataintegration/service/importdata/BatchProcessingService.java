@@ -44,12 +44,15 @@ class BatchProcessingService {
             final AtomicBoolean failed = new AtomicBoolean(false);
 
             final LinkedHashSet<HeaderModel> headers = Arrays.stream(csvReader.readNext())
-                    .map(header -> new HeaderModel(header.trim()))
+                    .map(header -> HeaderModel.builder()
+                            .id(header)
+                            .display(header)
+                            .hidden(false)
+                            .build())
                     .collect(Collectors.toCollection(LinkedHashSet::new));
             if (itemCreationService.isHeaderValid(headers)) {
                 if (scopeEntity.getHeaders() == null) {
-                    scopesService.updateHeaders(scopeId, headers);
-                    scopeEntity.setHeaders(headers);
+                    scopeEntity.setHeaders(scopesService.updateHeaders(scopeId, headers));
                 }
                 log(Level.INFO, scopeKey, scopeId, "Starting to process.");
             } else {
@@ -70,9 +73,8 @@ class BatchProcessingService {
                     continue;
                 }
 
-                final ItemEntity itemEntity =
-                        itemCreationService.createItemEntity(line, scopeEntity, headers, lineCounter.get());
-                batch.add(itemEntity);
+                final ItemEntity item = itemCreationService.createItemEntity(line, scopeEntity, lineCounter.get());
+                batch.add(item);
 
                 handleBatchService.handleFullBatch(projectId, batch, batchSize, scopeEntity, batchIndex, failed,
                         activeBatchesScope);

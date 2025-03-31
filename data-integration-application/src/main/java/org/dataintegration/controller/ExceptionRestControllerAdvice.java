@@ -17,6 +17,7 @@ import org.dataintegration.exception.runtime.HostDomainNotValidException;
 import org.dataintegration.exception.runtime.HostNotFoundException;
 import org.dataintegration.exception.runtime.HostNotValidException;
 import org.dataintegration.exception.runtime.ItemNotFoundException;
+import org.dataintegration.exception.runtime.MappedItemFrozenException;
 import org.dataintegration.exception.runtime.MappedItemNotFoundException;
 import org.dataintegration.exception.runtime.MappingNotFoundException;
 import org.dataintegration.exception.runtime.MappingValidationException;
@@ -68,7 +69,10 @@ public class ExceptionRestControllerAdvice {
                     ScopeValidationException.class,
                     MappingValidationException.class
             ), HttpStatus.CONFLICT,
-            List.of(HostDomainNotValidException.class), HttpStatus.UNPROCESSABLE_ENTITY
+            List.of(
+                    HostDomainNotValidException.class,
+                    MappedItemFrozenException.class
+            ), HttpStatus.UNPROCESSABLE_ENTITY
     );
 
     private static final Map<List<Class<? extends DataIntegrationCheckedException>>, HttpStatus>

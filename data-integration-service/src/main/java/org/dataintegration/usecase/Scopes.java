@@ -42,8 +42,7 @@ class Scopes implements ScopesMethods {
                                                                  String createdBy) throws ScopeHeaderValidationException {
         projectsService.isPermitted(projectId, createdBy);
         scopesService.validateHeaders(createOrUpdateScopeHeadersRequest.getHeaders());
-        scopesService.updateHeaders(scopeId, createOrUpdateScopeHeadersRequest.getHeaders());
-        return scopesService.get(scopeId).getHeaders();
+        return scopesService.updateHeaders(scopeId, createOrUpdateScopeHeadersRequest.getHeaders());
     }
 
     public void interruptScope(UUID projectId, UUID scopeId, String createdBy) {

@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Checkbox,
@@ -13,14 +14,14 @@ import {
     Typography
 } from "@mui/material"
 import { useParams } from "react-router-dom"
-import { ChangeEvent, useCallback, useEffect, useState } from "react"
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react"
 import { ProjectsApi } from "../../features/projects/projects.api"
 import { useSnackbar } from "notistack"
-import { Add, Delete, Edit, LinkOff } from "@mui/icons-material"
+import { Add, CompareArrows, Delete, Edit, LinkOff } from "@mui/icons-material"
 import { MappedItemResponse, MappingResponse, ScopeHeaderResponse, ScopeResponse } from "../../features/projects/projects.types"
 import usePagination from "../../components/pagination/hooks/usePagination"
 import theme from "../../theme"
-import { ColDef } from "ag-grid-community"
+import { ColDef, GridApi } from "ag-grid-community"
 import useConfirmationDialog from "../../components/confirmationDialog/hooks/useConfirmationDialog"
 import ConfirmationDialog from "../../components/confirmationDialog/ConfirmationDialog"
 import MappedItemsTable from "./components/mappedItemsTable/MappedItemsTable"
@@ -30,9 +31,11 @@ import CreateOrEditMappingDialog from "../../components/dialogs/createMappingDia
 import ImportItemsSlice from "../../features/importItems/importItems.slice"
 import { HostsApi } from "../../features/hosts/hosts.api"
 import { DataIntegrationHeaderAPIResponse } from "../../features/hosts/hosts.types"
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 
 export default function ProjectMappedItemsPage() {
     const { projectId } = useParams()
+    const gridApiRef = useRef<GridApi | null>(null)
     const scopesFromStore = useAppSelector<Record<string, string>>(state => state.mappedItems.scopes)
     const mappingsFromStore = useAppSelector<Record<string, string>>(state => state.mappedItems.mappings)
     const importMappingsFromStore = useAppSelector<Record<string, string>>(state => state.importItems.mappings)
@@ -62,6 +65,18 @@ export default function ProjectMappedItemsPage() {
         handleClickOpenConfirmationDialog: handleClickOpenMappingDeleteConfirmationDialog
     } = useConfirmationDialog()
 
+    const {
+        openConfirmationDialog: openUnmapSelectedConfirmationDialog,
+        handleClickCloseConfirmationDialog: handleClickCloseUnmapSelectedConfirmationDialog,
+        handleClickOpenConfirmationDialog: handleClickOpenUnmapSelectedConfirmationDialog
+    } = useConfirmationDialog()
+
+    const {
+        openConfirmationDialog: openIntegrateSelectedConfirmationDialog,
+        handleClickCloseConfirmationDialog: handleClickCloseIntegrateSelectedConfirmationDialog,
+        handleClickOpenConfirmationDialog: handleClickOpenIntegrateSelectedConfirmationDialog
+    } = useConfirmationDialog()
+
     const pagination = usePagination()
     const page = pagination.page
     const pageSize = pagination.pageSize
@@ -75,6 +90,7 @@ export default function ProjectMappedItemsPage() {
     const [getMappedItems] = ProjectsApi.useLazyGetMappedItemsQuery()
     const [markMappingForDeletion] = ProjectsApi.useMarkMappingForDeletionMutation()
     const [applyUnmapping] = ProjectsApi.useApplyUnmappingMutation()
+    const [integrate] = ProjectsApi.useIntegrateMutation()
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -82,9 +98,6 @@ export default function ProjectMappedItemsPage() {
         setOpenCreateMappingDialog(false)
         if (shouldReload) {
             const getMappingsResponse = await getMappings({ projectId: projectId!, scopeId: scope }).unwrap()
-            getMappingsResponse.map(mappingResponse => {
-                mappingResponse.mapping
-            })
             setMappingsResponse(getMappingsResponse)
         }
     }
@@ -146,13 +159,31 @@ export default function ProjectMappedItemsPage() {
         enqueueSnackbar("Deleted mapping", { variant: "success" })
     }
 
-    const handleClickApplyUnmapping = async () => {
+    const handleClickUnmapSelected = async () => {
         const applyMappingResponse = await applyUnmapping({ projectId: projectId!, mappedItemIds: selectedItems })
         if (applyMappingResponse.error) {
             enqueueSnackbar("Error occurred during unmapping", { variant: "error" })
         } else {
             await fetchMappedItemsData(scope, mapping, page, pageSize, sort)
             enqueueSnackbar("Applied unmapping", { variant: "success" })
+        }
+    }
+
+    const handleClickIntegrateSelected = async () => {
+        const integrateResponse = await integrate({ projectId: projectId!, mappingId: selectedMapping!.id, language: "en", mappedItemIds: selectedItems })
+        if (integrateResponse.error) {
+            const integrateResponseError = integrateResponse.error as FetchBaseQueryError
+            if (integrateResponseError.status === 401 || integrateResponseError.status === 403) {
+                enqueueSnackbar("You dont have permissions. Check database of mapping or contact an administrator.", { variant: "error" })
+            } else {
+                enqueueSnackbar("Error occurred during integration", { variant: "error" })
+            }
+        } else {
+            await fetchMappedItemsData(scope, mapping, page, pageSize, sort)
+            if (gridApiRef.current) {
+                gridApiRef.current?.deselectAll()
+            }
+            enqueueSnackbar("Integration completed, please look at each result", { variant: "warning" })
         }
     }
 
@@ -163,6 +194,7 @@ export default function ProjectMappedItemsPage() {
             const getMappedItemsResponse = await getMappedItems({
                 projectId: projectId!,
                 mappingId: mappingId,
+                filterIntegratedItems: checkedFilterIntegratedItems,
                 page,
                 size: pageSize,
                 sort
@@ -170,7 +202,7 @@ export default function ProjectMappedItemsPage() {
             setRowData(getMappedItemsResponse.content)
             setTotalElements(getMappedItemsResponse.totalElements)
         },
-        [setTotalElements, projectId, getScopeHeaders, getMappedItems]
+        [getScopeHeaders, projectId, getMappedItems, checkedFilterIntegratedItems, setTotalElements]
     )
 
     useEffect(() => {
@@ -213,6 +245,8 @@ export default function ProjectMappedItemsPage() {
         }
     }, [fetchHostHeadersData, selectedMapping])
 
+    const missingHeaders = getHostHeadersResponse.headers.map(header => header.id).filter(headerId => !selectedMapping?.mapping[headerId])
+
     return (
         <>
             {openCreateMappingDialog && (
@@ -231,6 +265,28 @@ export default function ProjectMappedItemsPage() {
                 >
                     <Stack spacing={2}>
                         <Typography variant="body1">Are you sure you want to delete the mapping?</Typography>
+                    </Stack>
+                </ConfirmationDialog>
+            )}
+            {openUnmapSelectedConfirmationDialog && (
+                <ConfirmationDialog
+                    open={openUnmapSelectedConfirmationDialog}
+                    handleClickClose={handleClickCloseUnmapSelectedConfirmationDialog}
+                    handleClickYes={handleClickUnmapSelected}
+                >
+                    <Stack spacing={2}>
+                        <Typography variant="body1">Are you sure you want to unmap the selected mapped items?</Typography>
+                    </Stack>
+                </ConfirmationDialog>
+            )}
+            {openIntegrateSelectedConfirmationDialog && (
+                <ConfirmationDialog
+                    open={openIntegrateSelectedConfirmationDialog}
+                    handleClickClose={handleClickCloseIntegrateSelectedConfirmationDialog}
+                    handleClickYes={handleClickIntegrateSelected}
+                >
+                    <Stack spacing={2}>
+                        <Typography variant="body1">Are you sure you want to integrate the selected mapped items?</Typography>
                     </Stack>
                 </ConfirmationDialog>
             )}
@@ -309,11 +365,11 @@ export default function ProjectMappedItemsPage() {
                         </Box>
                     </Stack>
                 </Stack>
-                <Stack spacing={2} justifyContent="space-between" direction="row" alignItems="center">
+                <Stack spacing={2} justifyContent="space-between" direction="row">
                     <Stack direction="row">
                         <FormControlLabel
                             disabled={!selectedMapping}
-                            control={<Checkbox checked={checkedFilterIntegratedItems} onChange={handleFilterMappedItemsChange} color="primary" />}
+                            control={<Checkbox color="info" checked={checkedFilterIntegratedItems} onChange={handleFilterMappedItemsChange} />}
                             label="Hide integrated items"
                         />
                         <Tooltip title={"Apply unmapping of selected items"} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
@@ -321,7 +377,7 @@ export default function ProjectMappedItemsPage() {
                                 disabled={selectedItems.length <= 0 || mapping === "select"}
                                 color="info"
                                 variant="contained"
-                                onClick={handleClickApplyUnmapping}
+                                onClick={handleClickOpenUnmapSelectedConfirmationDialog}
                             >
                                 <Stack direction="row" spacing={2}>
                                     <Typography>Unmap selected</Typography>
@@ -330,8 +386,43 @@ export default function ProjectMappedItemsPage() {
                             </Button>
                         </Tooltip>
                     </Stack>
+                    <Stack direction="row" spacing={3}>
+                        {rowData.length > 0 && missingHeaders.length > 0 && (
+                            <Tooltip
+                                title={
+                                    <div>
+                                        <div>{"Edit mapping and map these missing headers:"}</div>
+                                        {missingHeaders.map(header => (
+                                            <div key={header}>{header}</div>
+                                        ))}
+                                    </div>
+                                }
+                                arrow
+                                PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                            >
+                                <Alert severity="warning" sx={{ cursor: "help" }}>
+                                    {"Headers missing for integration. Hover here to see."}
+                                </Alert>
+                            </Tooltip>
+                        )}
+                        <Tooltip title={"Integrate selected items"} arrow PopperProps={{ style: { zIndex: theme.zIndex.modal } }}>
+                            <Button
+                                disabled={selectedItems.length <= 0 || mapping === "select" || missingHeaders.length > 0}
+                                color="error"
+                                variant="contained"
+                                onClick={handleClickOpenIntegrateSelectedConfirmationDialog}
+                                sx={{ color: theme.palette.common.white, backgroundColor: "#C72E49" }}
+                            >
+                                <Stack direction="row" spacing={2}>
+                                    <Typography>Integrate selected</Typography>
+                                    <CompareArrows />
+                                </Stack>
+                            </Button>
+                        </Tooltip>
+                    </Stack>
                 </Stack>
                 <MappedItemsTable
+                    gridApiRef={gridApiRef}
                     rowData={rowData}
                     scopeHeaders={scopeHeaders}
                     selectedScope={selectedScope}

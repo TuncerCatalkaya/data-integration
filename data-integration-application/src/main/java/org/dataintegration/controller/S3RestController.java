@@ -29,14 +29,14 @@ public class S3RestController {
 
     private final S3Usecase s3Usecase;
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/multipart-upload/initiate")
     public InitiateMultipartUploadRequestModel initiateMultipartUpload(@AuthenticationPrincipal Jwt jwt,
                                                                        @RequestParam String bucket, @RequestParam String key) {
         return s3Usecase.initiateMultipartUpload(bucket, key, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/multipart-upload/complete")
     public void completeMultipartUpload(@AuthenticationPrincipal Jwt jwt, @RequestParam String bucket, @RequestParam String key,
                                         @RequestParam String uploadId, @RequestParam long lineCount,
@@ -45,14 +45,14 @@ public class S3RestController {
                 DataIntegrationUtils.delimiterStringToCharMapper(delimiter), completedParts, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @PostMapping("/multipart-upload/abort")
     public void abortMultipartUpload(@AuthenticationPrincipal Jwt jwt, @RequestParam String bucket, @RequestParam String key,
                                      @RequestParam String uploadId) {
         s3Usecase.abortMultipartUpload(bucket, key, uploadId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/multipart-upload/presigned-url")
     public GeneratePresignedUrlResponseModel generatePresignedUrlMultiPartUpload(@AuthenticationPrincipal Jwt jwt,
                                                                                  @RequestParam String bucket,
@@ -63,14 +63,14 @@ public class S3RestController {
                 DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/objects")
     public List<S3ListResponseModel> listObjectsV2(@AuthenticationPrincipal Jwt jwt, @RequestParam String bucket,
                                                    @RequestParam String projectId) {
         return s3Usecase.listObjectsV2(bucket, projectId, DataIntegrationUtils.getJwtUserId(jwt));
     }
 
-    @PreAuthorize("containsAnyAuthority('ROLE_SUPER_USER')")
+    @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @DeleteMapping("/objects")
     public void deleteObject(@AuthenticationPrincipal Jwt jwt, @RequestParam String bucket, @RequestParam String key) {
         s3Usecase.deleteObject(bucket, key, DataIntegrationUtils.getJwtUserId(jwt));

@@ -49,7 +49,8 @@ public class MappingsService {
 
     public void validateMapping(UUID mappingId, Map<String, String[]> mapping, Set<HeaderModel> headers) {
         final String errorPrefix = "Mapping with id " + mappingId + " ";
-//        validateSources(errorPrefix, mapping, headers); TODO: instead retrieve the target headers (headers param already there) and compare if all of them are there (size, contain check)
+//        validateSources(errorPrefix, mapping, headers); TODO: instead retrieve the target headers
+//         (headers param already there) and compare if all of them are there (size, contain check)
         validateTargets(errorPrefix, mapping);
     }
 
@@ -60,7 +61,8 @@ public class MappingsService {
 //        }
         for (HeaderModel header : headers) {
             if (!sources.contains(header.getId())) {
-                throw new MappingValidationException(errorPrefix + "has source mappings that are different to the original headers.");
+                throw new MappingValidationException(
+                        errorPrefix + "has source mappings that are different to the original headers.");
             }
         }
     }

@@ -22,6 +22,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,6 +51,9 @@ public class MappedItemEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ItemStatusModel status;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> errorMessages;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mapping_id", nullable = false)
