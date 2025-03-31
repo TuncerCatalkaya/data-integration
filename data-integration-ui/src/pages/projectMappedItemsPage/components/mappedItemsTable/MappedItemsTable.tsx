@@ -120,12 +120,10 @@ export default function MappedItemsTable({
                     sortable: false,
                     pinned: "left",
                     cellRenderer: CellStatusIcon,
-                    cellRendererParams: (params: ICellRendererParams) => {
-                        return {
-                            status: params.data.status,
-                            errorMessages: params.data.errorMessages
-                        }
-                    }
+                    cellRendererParams: (params: ICellRendererParams) => ({
+                        status: params.data.status,
+                        errorMessages: params.data.errorMessages
+                    })
                 },
                 ...[...getHostHeadersResponse.headers]
                     .filter(target => selectedMapping.mapping[target.id])
