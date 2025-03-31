@@ -27,7 +27,7 @@ import CheckboxTableHeader from "../../../../components/checkboxTableHeader/Chec
 import UndoCellRenderer from "../../../../components/undoCellRenderer/UndoCellRenderer"
 import { DataIntegrationHeaderAPIResponse } from "../../../../features/hosts/hosts.types"
 import ColorTooltip from "../../../../components/tooltip/ColorTooltip"
-import CellStatusIcon from "../../../../components/cellStatusIcon/CellStatusIcon"
+import CellStatusIcon from "../../../../components/cellStatus/CellStatusIcon"
 
 interface ItemsTableProps {
     gridApiRef: MutableRefObject<GridApi | null>
@@ -172,12 +172,13 @@ export default function MappedItemsTable({
                                     newValue: params.newValue ?? ""
                                 }).then(response => {
                                     if (response.data) {
+                                        console.log(params.data)
                                         const newData = {
                                             ...params.data,
                                             properties: {
                                                 ...params.data.properties,
                                                 [target.id]: {
-                                                    ...params.data.properties[target.id],
+                                                    ...(params.data.properties ? params.data.properties[target.id] : {}),
                                                     value: response.data.properties[target.id].value,
                                                     originalValue: response.data.properties[target.id].originalValue
                                                 }

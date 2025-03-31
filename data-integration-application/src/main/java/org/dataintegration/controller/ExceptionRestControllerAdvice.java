@@ -41,8 +41,6 @@ public class ExceptionRestControllerAdvice {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private final ExceptionService exceptionService;
-
     private static final Map<List<Class<? extends DataIntegrationRuntimeException>>, HttpStatus>
             RUNTIME_EXCEPTION_STATUS_MAPPING = Map.of(
             List.of(
@@ -79,6 +77,8 @@ public class ExceptionRestControllerAdvice {
             CHECKED_EXCEPTION_STATUS_MAPPING = Map.of(
             List.of(ScopeHeaderValidationException.class), HttpStatus.CONFLICT
     );
+
+    private final ExceptionService exceptionService;
 
     @ExceptionHandler({DataIntegrationRuntimeException.class, DataIntegrationCheckedException.class})
     ResponseEntity<String> handleDataIntegrationException(Exception ex) throws JsonProcessingException {

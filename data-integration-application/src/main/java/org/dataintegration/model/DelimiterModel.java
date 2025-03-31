@@ -16,10 +16,10 @@ public enum DelimiterModel {
     PIPE('|'),
     SPACE(' ');
 
-    private final char delimiterCharacter;
-
     private static final Map<Character, DelimiterModel> CHARACTER_TO_ENUM = new HashMap<>();
     private static final Map<DelimiterModel, Character> ENUM_TO_CHARACTER = new EnumMap<>(DelimiterModel.class);
+
+    private final char delimiterCharacter;
 
     static {
         for (DelimiterModel delimiter : values()) {

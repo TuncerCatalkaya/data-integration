@@ -27,6 +27,7 @@ class ImportDataServiceImpl implements ImportDataService {
     private final DataIntegrationCache dataIntegrationCache;
     private final BatchConfigModel batchConfig;
 
+    @SuppressWarnings("checkstyle:MethodLength")
     public boolean importData(Callable<CSVReader> csvReaderCallable, UUID projectId, UUID scopeId, long lineCount) {
         final ScopeEntity scopeEntity = scopesService.get(scopeId);
         final String scopeKey = scopeEntity.getKey();
@@ -57,9 +58,9 @@ class ImportDataServiceImpl implements ImportDataService {
         final int batchSize = checkpointsService.createOrGetCheckpointBy(scopeEntity, lineCount,  batchConfig.getBatchSize());
 
         try {
-            while (attempt < batchConfig.getBatchRetryScopeMax() && !success &&
-                    !(dataIntegrationCache.getMarkedForDeletionScopes().contains(scopeId) ||
-                            dataIntegrationCache.getInterruptingScopes().contains(scopeId))) {
+            while (attempt < batchConfig.getBatchRetryScopeMax() && !success
+                    && !(dataIntegrationCache.getMarkedForDeletionScopes().contains(scopeId)
+                    || dataIntegrationCache.getInterruptingScopes().contains(scopeId))) {
                 final int batchRetryScopeMax = batchConfig.getBatchRetryScopeMax();
                 attempt++;
 
@@ -72,11 +73,11 @@ class ImportDataServiceImpl implements ImportDataService {
 
             if (!success) {
                 log(Level.ERROR, scopeKey, scopeId,
-                        "All retries failed. " +
-                                "Batch processing aborted. " +
-                                "This could be to an error, " +
-                                "a manual interruption or because the object got deleted during processing. " +
-                                "Please check logs for further information.");
+                        "All retries failed. "
+                                + "Batch processing aborted. "
+                                + "This could be to an error, "
+                                + "a manual interruption or because the object got deleted during processing. "
+                                + "Please check logs for further information.");
                 if (!scopeEntity.isExternal()) {
                     scopesService.markForDeletion(scopeId);
                     checkpointsService.deleteByScopeId(scopeId);

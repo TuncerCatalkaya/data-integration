@@ -76,6 +76,7 @@ public class S3Service {
         }
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     public void completeMultipartUpload(String bucket, String key, String uploadId, long lineCount, char delimiter,
                                         List<CompletedPartModel> completedParts) {
         try {

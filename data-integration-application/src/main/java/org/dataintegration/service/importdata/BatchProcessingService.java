@@ -31,6 +31,7 @@ class BatchProcessingService {
     private final ItemCreationService itemCreationService;
     private final BatchWaitingService batchWaitingService;
 
+    @SuppressWarnings("checkstyle:MethodLength")
     boolean batchProcessing(Callable<CSVReader> csvReaderCallable, UUID projectId, ScopeEntity scopeEntity,
                             int batchSize, long startTime, int attempt) {
         final String scopeKey = scopeEntity.getKey();
