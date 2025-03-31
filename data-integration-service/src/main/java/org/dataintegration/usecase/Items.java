@@ -32,6 +32,7 @@ class Items implements ItemsMethods {
     private final ItemsService itemsService;
     private final MappedItemsService mappedItemsService;
 
+    @Override
     public ItemModel updateItemProperty(UUID projectId, UUID itemId, String key, String newValue, String createdBy) {
         projectsService.isPermitted(projectId, createdBy);
         final ItemEntity itemEntity = itemsService.updateItemProperty(itemId, key, newValue);
@@ -39,6 +40,7 @@ class Items implements ItemsMethods {
     }
 
     @Transactional
+    @Override
     public void updateItemProperties(UUID projectId, UpdateItemPropertiesRequestModel updateItemPropertiesRequest, String key,
                                      String newValue, String createdBy) {
         projectsService.isPermitted(projectId, createdBy);
@@ -47,6 +49,7 @@ class Items implements ItemsMethods {
         }
     }
 
+    @Override
     public Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, boolean filterMappedItems,
                                        String searchHeader, String searchText, String createdBy, Pageable pageable) {
         projectsService.isPermitted(projectId, createdBy);

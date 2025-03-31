@@ -46,7 +46,8 @@ public class ProjectsUsecase {
 
     @Getter(lazy = true)
     private final MappingsMethods mappingsMethods =
-            new Mappings(projectsService, scopesService, itemsService, mappingsService, mappedItemsService, hostsService);
+            new Mappings(projectsService, scopesService, itemsService, mappingsService, mappedItemsService, hostsService,
+                    hostsUsecase);
 
     @Getter(lazy = true)
     private final MappedItemsMethods mappedItemsMethods =

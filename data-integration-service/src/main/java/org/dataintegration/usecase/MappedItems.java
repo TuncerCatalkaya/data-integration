@@ -144,6 +144,7 @@ class MappedItems implements MappedItemsMethods {
         return dataIntegrationAPIResponse;
     }
 
+    @Override
     public MappedItemModel updateMappedItemProperty(UUID projectId, UUID mappedItemId, String key, String newValue,
                                                     String createdBy) {
         projectsService.isPermitted(projectId, createdBy);
@@ -151,6 +152,7 @@ class MappedItems implements MappedItemsMethods {
         return mappedItemMapper.mappedItemEntityToMappedItem(mappedItemEntity);
     }
 
+    @Override
     public Page<MappedItemModel> getAllMappedItems(UUID projectId, UUID mappingId, boolean filterIntegratedItems,
                                                    String createdBy, Pageable pageable) {
         projectsService.isPermitted(projectId, createdBy);
@@ -162,6 +164,7 @@ class MappedItems implements MappedItemsMethods {
         return new PageImpl<>(mappedItems, mappedItemEntities.getPageable(), mappedItemEntities.getTotalElements());
     }
 
+    @Override
     public void deleteMappedItems(UUID projectId, ApplyUnmappingRequestModel applyUnmappingRequest, String createdBy) {
         projectsService.isPermitted(projectId, createdBy);
         mappedItemsService.deleteMappedItems(applyUnmappingRequest.getMappedItemIds());

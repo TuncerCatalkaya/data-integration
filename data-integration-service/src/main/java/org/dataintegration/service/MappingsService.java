@@ -5,7 +5,7 @@ import org.dataintegration.exception.runtime.MappingNotFoundException;
 import org.dataintegration.exception.runtime.MappingValidationException;
 import org.dataintegration.jpa.entity.MappingEntity;
 import org.dataintegration.jpa.repository.JpaMappingRepository;
-import org.dataintegration.model.HeaderModel;
+import org.dataintegration.model.DataIntegrationHeaderDataAPIModel;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,29 +48,21 @@ public class MappingsService {
         jpaMappingRepository.saveAll(mappingEntities);
     }
 
-    public void validateMapping(UUID mappingId, Map<String, String[]> mapping, Set<HeaderModel> headers) {
+    public void validateMapping(UUID mappingId, Map<String, String[]> mapping,
+                                List<DataIntegrationHeaderDataAPIModel> dataIntegrationHeaders) {
         final String errorPrefix = "Mapping with id " + mappingId + " ";
-//        validateSources(errorPrefix, mapping, headers); TODO: instead retrieve the target headers
-//         (headers param already there) and compare if all of them are there (size, contain check)
-        validateTargets(errorPrefix, mapping);
+        validateMapping(errorPrefix, mapping, dataIntegrationHeaders);
     }
 
-    private void validateSources(String errorPrefix, Map<String, String[]> mapping, Set<HeaderModel> headers) {
-        final Set<String> sources = mapping.keySet();
-//        if (sources.size() != headers.size()) {
-//            throw new MappingValidationException(errorPrefix + "has a different size of source mappings than available headers.");
-//        }
-        for (HeaderModel header : headers) {
-            if (!sources.contains(header.getId())) {
-                throw new MappingValidationException(
-                        errorPrefix + "has source mappings that are different to the original headers.");
-            }
-        }
-    }
+    private void validateMapping(String errorPrefix, Map<String, String[]> mapping,
+                                 List<DataIntegrationHeaderDataAPIModel> dataIntegrationHeaders) {
+        final Set<String> hostTargets = dataIntegrationHeaders.stream()
+                .map(DataIntegrationHeaderDataAPIModel::getId)
+                .collect(Collectors.toSet());
 
-    private void validateTargets(String errorPrefix, Map<String, String[]> mapping) {
         final Map<String, String> valueCache = new HashMap<>();
         final Map<String, String> duplicatedValues = new HashMap<>();
+        final Map<String, String> namesNotInHost = new HashMap<>();
         final Set<String> emptyValues = new HashSet<>();
         for (Map.Entry<String, String[]> valueEntry : mapping.entrySet()) {
             for (String value : valueEntry.getValue()) {
@@ -82,6 +75,10 @@ public class MappingsService {
                     duplicatedValues.put(rootDuplicateKey, value);
                 }
                 valueCache.putIfAbsent(value, key);
+
+                if (!hostTargets.contains(value)) {
+                    namesNotInHost.put(key, value);
+                }
             }
         }
         String targetErrorMsg = errorPrefix + "has one or more target errors.";
@@ -91,7 +88,10 @@ public class MappingsService {
         if (!emptyValues.isEmpty()) {
             targetErrorMsg += " Empty values are present in following targets: " + emptyValues + ".";
         }
-        if (!duplicatedValues.isEmpty() || !emptyValues.isEmpty()) {
+        if (!namesNotInHost.isEmpty()) {
+            targetErrorMsg += " Following targets have a name that does not exist on the host: " + namesNotInHost + ".";
+        }
+        if (!duplicatedValues.isEmpty() || !emptyValues.isEmpty() || !namesNotInHost.isEmpty()) {
             throw new MappingValidationException(targetErrorMsg);
         }
     }

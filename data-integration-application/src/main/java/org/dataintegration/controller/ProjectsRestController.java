@@ -168,7 +168,8 @@ public class ProjectsRestController {
                                               @PathVariable UUID scopeId,
                                               @RequestBody CreateOrUpdateMappingsRequestModel createMappingsRequest) {
         return projectsUsecase.getMappingsMethods()
-                .createOrUpdateMapping(projectId, scopeId, createMappingsRequest, DataIntegrationUtils.getJwtUserId(jwt));
+                .createOrUpdateMapping(projectId, scopeId, createMappingsRequest, DataIntegrationUtils.getJwtUserId(jwt),
+                        jwt.getTokenValue());
     }
 
     @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
