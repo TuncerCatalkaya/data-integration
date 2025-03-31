@@ -119,10 +119,12 @@ export default function MappedItemsTable({
                     editable: false,
                     sortable: false,
                     pinned: "left",
-                    cellRenderer: (params: ICellRendererParams) => {
-                        const status = params.data.status
-                        const errorMessages = params.data.errorMessages
-                        return <CellStatusIcon status={status} errorMessages={errorMessages} />
+                    cellRenderer: CellStatusIcon,
+                    cellRendererParams: (params: ICellRendererParams) => {
+                        return {
+                            status: params.data.status,
+                            errorMessages: params.data.errorMessages
+                        }
                     }
                 },
                 ...[...getHostHeadersResponse.headers]
@@ -172,7 +174,6 @@ export default function MappedItemsTable({
                                     newValue: params.newValue ?? ""
                                 }).then(response => {
                                     if (response.data) {
-                                        console.log(params.data)
                                         const newData = {
                                             ...params.data,
                                             properties: {
