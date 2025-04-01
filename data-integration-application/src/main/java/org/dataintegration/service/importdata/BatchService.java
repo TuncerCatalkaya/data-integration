@@ -1,7 +1,7 @@
 package org.dataintegration.service.importdata;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.service.CheckpointsService;
 import org.dataintegration.service.ScopesService;

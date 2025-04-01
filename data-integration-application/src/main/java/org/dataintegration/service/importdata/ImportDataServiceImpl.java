@@ -2,7 +2,7 @@ package org.dataintegration.service.importdata;
 
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.model.BatchConfigModel;
 import org.dataintegration.service.CheckpointsService;
@@ -55,7 +55,7 @@ class ImportDataServiceImpl implements ImportDataService {
             return true;
         }
 
-        final int batchSize = checkpointsService.createOrGetCheckpointBy(scopeEntity, lineCount,  batchConfig.getBatchSize());
+        final int batchSize = checkpointsService.createOrGetBatchSize(scopeEntity, lineCount,  batchConfig.getBatchSize());
 
         try {
             while (attempt < batchConfig.getBatchRetryScopeMax() && !success
@@ -80,10 +80,10 @@ class ImportDataServiceImpl implements ImportDataService {
                                 + "Please check logs for further information.");
                 if (!scopeEntity.isExternal()) {
                     scopesService.markForDeletion(scopeId);
-                    checkpointsService.deleteByScopeId(scopeId);
+                    checkpointsService.delete(scopeId);
                 }
             } else {
-                checkpointsService.deleteByScopeId(scopeId);
+                checkpointsService.delete(scopeId);
             }
 
             return success;

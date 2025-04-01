@@ -1,17 +1,20 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
 import org.dataintegration.exception.runtime.CheckpointNotFoundException;
 import org.dataintegration.jpa.entity.CheckpointEntity;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.jpa.repository.JpaCheckpointBatchRepository;
 import org.dataintegration.jpa.repository.JpaCheckpointRepository;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.usecase.model.CurrentCheckpointStatusResponseModel;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Service for checkpointing.
+ */
 @Service
 @RequiredArgsConstructor
 public class CheckpointsService {
@@ -20,7 +23,15 @@ public class CheckpointsService {
     private final JpaCheckpointBatchRepository jpaCheckpointBatchRepository;
     private final DataIntegrationCache dataIntegrationCache;
 
-    public int createOrGetCheckpointBy(ScopeEntity scopeEntity, long lineCount, int batchSize) {
+    /**
+     * Create or get batch size from checkpoint entity by scope entity. Also creates or gets checkpoint entity by scope entity.
+     *
+     * @param scopeEntity {@link ScopeEntity}
+     * @param lineCount line count (current line)
+     * @param batchSize batch size (size of a batch)
+     * @return batch size (either from database (checkpoint entity) if already exists or the inputted batch size when creating)
+     */
+    public int createOrGetBatchSize(ScopeEntity scopeEntity, long lineCount, int batchSize) {
         return jpaCheckpointRepository.findByScope_Id(scopeEntity.getId())
                 .map(CheckpointEntity::getBatchSize)
                 .orElseGet(() -> {
@@ -33,6 +44,12 @@ public class CheckpointsService {
                 });
     }
 
+    /**
+     * Get current checkpoint status by scope entity.
+     *
+     * @param scopeEntity {@link ScopeEntity}
+     * @return {@link CurrentCheckpointStatusResponseModel} check code to see possibilities of different statuses
+     */
     public CurrentCheckpointStatusResponseModel getCurrentCheckpointStatus(ScopeEntity scopeEntity) {
         final boolean isInterrupted = dataIntegrationCache.getInterruptingScopes().contains(scopeEntity.getId());
         long batchesProcessed = isInterrupted ? 0 : -1;
@@ -50,16 +67,35 @@ public class CheckpointsService {
                 .build();
     }
 
+    /**
+     * Checks if a batch is already processed by scope id and the batch index.
+     *
+     * @param scopeId scope id from {@link ScopeEntity}
+     * @param batchIndex batch index (counter for each batch)
+     * @return true if that batch is already processed and false if not
+     */
     public boolean isBatchAlreadyProcessed(UUID scopeId, long batchIndex) {
         return jpaCheckpointBatchRepository.existsByCheckpoint_ScopeIdAndBatchIndex(scopeId, batchIndex);
     }
 
-    public CheckpointEntity getCheckpoint(UUID scopeId) {
+    /**
+     * Get checkpoint entity by scope id.
+     *
+     * @param scopeId scope id from {@link ScopeEntity}
+     * @return {@link CheckpointEntity}
+     * @throws CheckpointNotFoundException in case checkpoint entity is not found in database
+     */
+    public CheckpointEntity getCheckpoint(UUID scopeId) throws CheckpointNotFoundException {
         return jpaCheckpointRepository.findByScope_Id(scopeId)
                 .orElseThrow(() -> new CheckpointNotFoundException("Checkpoint of scope " + scopeId + " not found."));
     }
 
-    public void deleteByScopeId(UUID scopeId) {
+    /**
+     * Delete checkpoint by scope id.
+     *
+     * @param scopeId scope id
+     */
+    public void delete(UUID scopeId) {
         jpaCheckpointRepository.deleteByScope_Id(scopeId);
     }
 }

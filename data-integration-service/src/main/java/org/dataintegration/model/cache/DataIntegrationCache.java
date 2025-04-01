@@ -1,4 +1,4 @@
-package org.dataintegration.cache;
+package org.dataintegration.model.cache;
 
 import lombok.Getter;
 import org.springframework.stereotype.Component;

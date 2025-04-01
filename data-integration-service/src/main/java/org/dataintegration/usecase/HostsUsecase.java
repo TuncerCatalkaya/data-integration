@@ -30,13 +30,13 @@ public class HostsUsecase {
     public HostModel createOrUpdateHost(CreateOrUpdateHostsRequestModel createOrUpdateHostsRequest) {
         final HostEntity hostEntity = createOrUpdateHostsMapper.createOrUpdateHostsToHostEntity(createOrUpdateHostsRequest);
         return Optional.of(hostEntity)
-                .map(hostsService::createOrUpdate)
+                .map(hostsService::createOrUpdateHost)
                 .map(hostMapper::hostEntityToHost)
                 .orElse(null);
     }
 
     public Set<HostModel> getAllHosts() {
-        return hostsService.getAll().stream()
+        return hostsService.getAllHosts().stream()
                 .map(hostMapper::hostEntityToHost)
                 .collect(Collectors.toSet());
     }
@@ -61,7 +61,7 @@ public class HostsUsecase {
     }
 
     public void deleteHost(UUID hostId) {
-        hostsService.delete(hostId);
+        hostsService.deleteHost(hostId);
     }
 
 }

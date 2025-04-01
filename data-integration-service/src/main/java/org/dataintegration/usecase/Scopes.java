@@ -2,7 +2,7 @@ package org.dataintegration.usecase;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.exception.checked.ScopeHeaderValidationException;
 import org.dataintegration.jpa.entity.ScopeEntity;
 import org.dataintegration.mapper.ScopeMapper;

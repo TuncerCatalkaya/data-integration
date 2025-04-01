@@ -13,9 +13,9 @@ import org.dataintegration.exception.checked.ScopeHeaderValidationException;
 import org.dataintegration.exception.runtime.CheckpointNotFoundException;
 import org.dataintegration.exception.runtime.DataIntegrationRuntimeException;
 import org.dataintegration.exception.runtime.DatabaseNotFoundException;
-import org.dataintegration.exception.runtime.HostDomainNotValidException;
+import org.dataintegration.exception.runtime.HostDomainValidationException;
 import org.dataintegration.exception.runtime.HostNotFoundException;
-import org.dataintegration.exception.runtime.HostNotValidException;
+import org.dataintegration.exception.runtime.HostValidationException;
 import org.dataintegration.exception.runtime.ItemNotFoundException;
 import org.dataintegration.exception.runtime.MappedItemFrozenException;
 import org.dataintegration.exception.runtime.MappedItemNotFoundException;
@@ -60,7 +60,7 @@ public class ExceptionRestControllerAdvice {
             List.of(
                     InvalidUUIDException.class,
                     InvalidDelimiterException.class,
-                    HostNotValidException.class
+                    HostValidationException.class
             ), HttpStatus.BAD_REQUEST,
             List.of(ScopeNotFinishedException.class), HttpStatus.TOO_EARLY,
             List.of(
@@ -68,7 +68,7 @@ public class ExceptionRestControllerAdvice {
                     MappingValidationException.class
             ), HttpStatus.CONFLICT,
             List.of(
-                    HostDomainNotValidException.class,
+                    HostDomainValidationException.class,
                     MappedItemFrozenException.class
             ), HttpStatus.UNPROCESSABLE_ENTITY
     );

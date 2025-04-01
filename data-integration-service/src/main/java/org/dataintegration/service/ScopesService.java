@@ -1,7 +1,7 @@
 package org.dataintegration.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.exception.checked.ScopeHeaderValidationException;
 import org.dataintegration.exception.runtime.ScopeNotFinishedException;
 import org.dataintegration.exception.runtime.ScopeNotFoundException;

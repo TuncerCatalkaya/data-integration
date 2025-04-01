@@ -2,7 +2,7 @@ package org.dataintegration.usecase;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.dataintegration.cache.DataIntegrationCache;
+import org.dataintegration.model.cache.DataIntegrationCache;
 import org.dataintegration.service.CheckpointsService;
 import org.dataintegration.service.HostsService;
 import org.dataintegration.service.ItemsService;
