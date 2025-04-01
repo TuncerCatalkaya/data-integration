@@ -1,5 +1,6 @@
 package org.dataintegration.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -19,6 +21,7 @@ import java.net.URI;
 
 @Configuration
 @DependsOn("frontendDotEnvModel")
+@Slf4j
 public class S3Config {
 
     @Value("${s3.region}")
@@ -38,6 +41,9 @@ public class S3Config {
 
     @Value("${s3.bucket}")
     private String bucket;
+
+    @Value("${s3.enabled}")
+    private boolean enabled;
 
     @Bean
     S3Client s3Client() {
@@ -75,16 +81,25 @@ public class S3Config {
     @Bean
     ApplicationRunner initializeS3(S3Client s3Client) {
         return args -> {
-            try {
-                final HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
-                        .bucket(bucket)
-                        .build();
-                s3Client.headBucket(headBucketRequest);
-            } catch (S3Exception ex) {
-                final CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
-                        .bucket(bucket)
-                        .build();
-                s3Client.createBucket(createBucketRequest);
+            if (enabled) {
+                try {
+                    final HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
+                            .bucket(bucket)
+                            .build();
+                    s3Client.headBucket(headBucketRequest);
+                } catch (S3Exception ex) {
+                    final CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
+                            .bucket(bucket)
+                            .build();
+                    s3Client.createBucket(createBucketRequest);
+                } catch (SdkClientException ex) {
+                    log.warn(
+                            "S3 connection could not be established. "
+                            + "If you don't want to use S3, then disable it by setting the environment variable: "
+                            + "s3.enabled=false (S3_ENABLED=false)"
+                    );
+                    throw ex;
+                }
             }
         };
     }

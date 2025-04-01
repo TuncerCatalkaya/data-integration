@@ -505,6 +505,7 @@ export default function ProjectImportPage() {
                     {"Import Small File =" + GetFrontendEnvironment("VITE_SMALL_FILE_IMPORT_LIMIT")}
                 </MenuItem>
                 <MenuItem
+                    disabled={GetFrontendEnvironment("VITE_S3_ENABLED") === "false"}
                     onClick={() => {
                         handleImportMenuClose()
                         handleClickOpenFileBrowserDialog()
