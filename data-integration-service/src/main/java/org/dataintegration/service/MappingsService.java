@@ -48,14 +48,10 @@ public class MappingsService {
         jpaMappingRepository.saveAll(mappingEntities);
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     public void validateMapping(UUID mappingId, Map<String, String[]> mapping,
                                 List<DataIntegrationHeaderDataAPIModel> dataIntegrationHeaders) {
         final String errorPrefix = "Mapping with id " + mappingId + " ";
-        validateMapping(errorPrefix, mapping, dataIntegrationHeaders);
-    }
-
-    private void validateMapping(String errorPrefix, Map<String, String[]> mapping,
-                                 List<DataIntegrationHeaderDataAPIModel> dataIntegrationHeaders) {
         final Set<String> hostTargets = dataIntegrationHeaders.stream()
                 .map(DataIntegrationHeaderDataAPIModel::getId)
                 .collect(Collectors.toSet());
@@ -64,6 +60,7 @@ public class MappingsService {
         final Map<String, String> duplicatedValues = new HashMap<>();
         final Map<String, String> namesNotInHost = new HashMap<>();
         final Set<String> emptyValues = new HashSet<>();
+
         for (Map.Entry<String, String[]> valueEntry : mapping.entrySet()) {
             for (String value : valueEntry.getValue()) {
                 final String key = valueEntry.getKey();
@@ -81,6 +78,7 @@ public class MappingsService {
                 }
             }
         }
+
         String targetErrorMsg = errorPrefix + "has one or more target errors.";
         if (!duplicatedValues.isEmpty()) {
             targetErrorMsg += " Duplicated values are present in: " + duplicatedValues + ".";
@@ -95,4 +93,5 @@ public class MappingsService {
             throw new MappingValidationException(targetErrorMsg);
         }
     }
+
 }
