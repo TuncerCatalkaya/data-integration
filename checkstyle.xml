@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+
+    <property name="cacheFile" value="${checkstyle.cache.file}"/>
+
+    <module name="LineLength">
+        <property name="max" value="150"/>
+    </module>
+
+    <module name="FileLength">
+        <property name="max" value="500"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="TODO \w+(?=[^\:])\s.*$"/>
+        <property name="ignoreCase" value="true"/>
+        <property name="message" value="Falsches TODO-Format (TODO username: Message)"/>
+    </module>
+
+    <module name="TreeWalker">
+
+        <module name="AvoidStarImport"/>
+
+        <module name="JavadocMethod"/>
+
+        <module name="Regexp">
+            <property name="format" value="(log4j|commons.logging)"/>
+            <property name="message" value="Use slf4j instead of log4j or commons-logging."/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="printStackTrace\(.*\);(?!\s*//\s*NOCHECK)"/>
+            <property name="message" value="Avoid print stack trace."/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <!-- TabSize 2 -->
+        <property name="tabWidth" value="2"/>
+
+        <!-- Checks for Javadoc comments. -->
+        <!-- see http://checkstyle.sourceforge.net/config_javadoc.html#JavadocType -->
+        <module name="JavadocType"/>
+
+        <!-- Checks the Javadoc of a method or constructor -->
+        <!-- see http://checkstyle.sourceforge.net/config_javadoc.html#JavadocMethod -->
+
+        <!-- Validates Javadoc comments to help ensure they are well formed.-->
+        <!-- see http://checkstyle.sourceforge.net/config_javadoc.html#JavadocStyle -->
+        <module name="JavadocStyle">
+            <property name="checkEmptyJavadoc" value="true"/>
+            <property name="checkFirstSentence" value="false"/>
+            <property name="checkHtml" value="false"/>
+        </module>
+
+        <!-- Check for TODO -->
+        <!-- see http://checkstyle.sourceforge.net/config_misc.html#TodoComment -->
+        <module name="TodoComment">
+            <property name="format" value="(?i)TODO"/>
+            <property name="severity" value="warning"/>
+        </module>
+
+        <!--The brace must always be on the end of the line. For example: if (condition) {-->
+        <!-- see http://checkstyle.sourceforge.net/config_blocks.html#LeftCurly -->
+        <module name="LeftCurly"/>
+
+        <!--
+            This property represents the policy for checking the placement of a right curly brace ('}').
+            The brace must be on the same line as the next statement. For example:
+            try {
+              ...
+            } finally {
+        -->
+        <!-- see http://checkstyle.sourceforge.net/config_blocks.html#RightCurly -->
+        <module name="RightCurly"/>
+
+        <!--Detects empty statements (standalone ';')-->
+        <!-- see http://checkstyle.sourceforge.net/config_coding.html#EmptyStatement -->
+        <module name="EmptyStatement"/>
+
+        <!--
+        Checks for imports from a set of illegal packages. By default, the check rejects all sun.*
+        packages since programs that contain direct calls to the sun.* packages are not 100% Pure Java.
+        -->
+        <!-- see http://checkstyle.sourceforge.net/config_imports.html#IllegalImport -->
+        <module name="IllegalImport"/>
+
+        <!--Checks for redundant import statements.-->
+        <!-- see http://checkstyle.sourceforge.net/config_imports.html#RedundantImport -->
+        <module name="RedundantImport"/>
+
+        <!--
+          Checks for unused import statements. Checkstyle uses a simple but very reliable
+          algorithm to report on unused import statements.
+        -->
+        <!-- see http://checkstyle.sourceforge.net/config_imports.html#UnusedImports -->
+        <module name="UnusedImports"/>
+
+        <!--
+          Checks for overly complicated boolean expressions. Currently finds code like
+          if (b == true), b || true, !false, etc.
+        -->
+        <!-- see http://checkstyle.sourceforge.net/config_coding.html#SimplifyBooleanExpression -->
+        <module name="SimplifyBooleanExpression"/>
+
+        <!--
+          Checks for overly complicated boolean return statements. For example the following code
+          if (valid())
+            return false;
+          else
+            return true;
+
+          could be written as return !valid();
+        -->
+        <!-- see http://checkstyle.sourceforge.net/config_coding.html#SimplifyBooleanReturn -->
+        <module name="SimplifyBooleanReturn"/>
+
+        <!-- Checks for braces around code blocks. -->
+        <!-- see http://checkstyle.sourceforge.net/config_blocks.html#NeedBraces -->
+        <module name="NeedBraces"/>
+
+        <!--Checks for empty blocks.-->
+        <!-- see http://checkstyle.sourceforge.net/config_blocks.html#EmptyBlock -->
+        <module name="EmptyBlock">
+            <property name="option" value="text"/>
+            <property name="tokens" value="LITERAL_CATCH"/>
+        </module>
+
+        <!--Checks that classes that override equals() also override hashCode()-->
+        <!-- see http://checkstyle.sourceforge.net/config_coding.html#EqualsHashCode -->
+        <module name="EqualsHashCode"/>
+
+        <module name="MissingDeprecated"/>
+
+
+        <module name="MissingOverride">
+            <property name="javaFiveCompatibility" value="false"/>
+        </module>
+
+        <module name="SuppressWarnings">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <module name="EqualsAvoidNull"/>
+
+        <module name="NoClone"/>
+
+        <module name="NoFinalizer"/>
+
+        <module name="OuterTypeNumber"/>
+
+        <!--<module name="AbstractClassName">-->
+        <!--<property name="format" value="^Abstract.*$"/>-->
+        <!--<property name="severity" value="warning"/>-->
+        <!--</module>-->
+
+        <module name="ClassTypeParameterName"/>
+
+        <module name="LocalFinalVariableName"/>
+
+        <module name="LocalVariableName"/>
+
+        <module name="MemberName"/>
+
+        <module name="MethodName"/>
+
+        <module name="PackageName"/>
+
+        <module name="ParameterName"/>
+
+        <module name="StaticVariableName"/>
+
+        <module name="TypeName"/>
+
+        <module name="MethodLength">
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="max" value="60"/>
+            <property name="countEmpty" value="false"/>
+        </module>
+
+        <module name="MethodParamPad"/>
+
+
+        <module name="OperatorWrap"/>
+
+        <!-- defaults to nl operator on new line -->
+        <module name="ParenPad"/>
+
+        <module name="TypecastParenPad"/>
+        <!-- defaults to no Tab character -->
+
+
+        <module name="AvoidNestedBlocks"/>
+
+        <module name="IllegalInstantiation"/>
+
+        <module name="InnerAssignment"/>
+
+        <module name="MissingSwitchDefault"/>
+
+        <module name="StringLiteralEquality"/>
+
+        <module name="IllegalThrows"/>
+
+        <module name="PackageDeclaration"/>
+
+        <module name="DeclarationOrder"/>
+
+        <module name="DefaultComesLast"/>
+
+        <module name="FallThrough"/>
+
+        <module name="MultipleStringLiterals">
+            <property name="severity" value="warning"/>
+            <property name="allowedDuplicates" value="2"/>
+            <property name="ignoreStringsRegexp" value='^(("")|(", "))$'/>
+        </module>
+
+        <module name="VisibilityModifier"/>
+
+        <module name="HideUtilityClassConstructor">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <module name="BooleanExpressionComplexity"/>
+
+        <module name="JavaNCSS">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <module name="UpperEll"/>
+
+        <module name="SuppressWarningsHolder"/>
+
+        <module name="SuppressionCommentFilter"/>
+
+    </module>
+
+    <module name="SuppressWarningsFilter"/>
+
+</module>

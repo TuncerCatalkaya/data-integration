@@ -1,0 +1,5 @@
+.ag-tooltip {
+    max-width: 500px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}

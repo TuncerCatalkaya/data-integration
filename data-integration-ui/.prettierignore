@@ -1,0 +1,6 @@
+**/dist/**
+**/build/**
+**/target/**
+**/__data__/**
+**.iml
+**/coverage/**

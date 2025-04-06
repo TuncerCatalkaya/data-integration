@@ -1,0 +1,34 @@
+services:
+  data-integration-application:
+    build: .
+    ports:
+      - "8001:8001"
+    environment:
+      - SERVER_PORT=8001
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://data-integration-db:5432/data-integration
+      - S3_ENDPOINT=http://data-integration-minio:9000
+    depends_on:
+      - data-integration-db
+      - data-integration-minio
+
+  data-integration-db:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    volumes:
+      - ./data-integration.sql:/docker-entrypoint-initdb.d/data-integration.sql
+
+  data-integration-minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /minio-data/ --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./minio-data/:/minio-data/
