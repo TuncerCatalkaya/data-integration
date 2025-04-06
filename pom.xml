@@ -427,6 +427,8 @@
                         <exclude>**/*DTO.class</exclude>
                         <exclude>**/*TO.class</exclude>
                         <exclude>**/*MapperImpl.class</exclude>
+                        <exclude>**/usecase/**</exclude>
+                        <exclude>**/rest/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

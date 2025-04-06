@@ -18,6 +18,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Usecase for hosts.
+ */
 @Component
 @RequiredArgsConstructor
 public class HostsUsecase {
@@ -27,6 +30,12 @@ public class HostsUsecase {
     private final HostMapper hostMapper = Mappers.getMapper(HostMapper.class);
     private final HostsService hostsService;
 
+    /**
+     * Create or update host.
+     *
+     * @param createOrUpdateHostsRequest {@link CreateOrUpdateHostsRequestModel}
+     * @return created or updated {@link HostModel}
+     */
     public HostModel createOrUpdateHost(CreateOrUpdateHostsRequestModel createOrUpdateHostsRequest) {
         final HostEntity hostEntity = createOrUpdateHostsMapper.createOrUpdateHostsToHostEntity(createOrUpdateHostsRequest);
         return Optional.of(hostEntity)
@@ -35,12 +44,25 @@ public class HostsUsecase {
                 .orElse(null);
     }
 
+    /**
+     * Get all hosts.
+     *
+     * @return {@link Set} of {@link HostModel}
+     */
     public Set<HostModel> getAllHosts() {
         return hostsService.getAllHosts().stream()
                 .map(hostMapper::hostEntityToHost)
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Get host headers.
+     *
+     * @param hostId host id
+     * @param language language
+     * @param token token
+     * @return {@link DataIntegrationHeaderAPIModel}
+     */
     public DataIntegrationHeaderAPIModel getHostHeaders(UUID hostId, String language, String token) {
         final HostEntity host = hostsService.getHost(hostId);
         final WebClient webClient = WebClient.builder()
@@ -60,6 +82,11 @@ public class HostsUsecase {
                 .block();
     }
 
+    /**
+     * Delete host by host id.
+     *
+     * @param hostId host id
+     */
     public void deleteHost(UUID hostId) {
         hostsService.deleteHost(hostId);
     }

@@ -10,6 +10,9 @@ import org.dataintegration.usecase.model.CurrentCheckpointStatusResponseModel;
 
 import java.util.UUID;
 
+/**
+ * Checkpoints methods implementation.
+ */
 @RequiredArgsConstructor
 class Checkpoints implements CheckpointsMethods {
 
