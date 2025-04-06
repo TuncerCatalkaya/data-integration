@@ -304,8 +304,7 @@ export default function ProjectImportPage() {
             const getItemsResponse = await getItems({
                 projectId: projectId!,
                 scopeId,
-                mappingId: mapping === "select" ? undefined : mapping,
-                filterMappedItems: checkedFilterMappedItems,
+                mappingId: mapping === "select" && !checkedFilterMappedItems ? undefined : mapping,
                 header: searchSelectedHeader === " " ? "" : searchSelectedHeader,
                 search,
                 page,

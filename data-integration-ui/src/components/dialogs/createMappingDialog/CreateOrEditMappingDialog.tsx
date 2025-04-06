@@ -636,7 +636,7 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
                                                                     }}
                                                                 />
                                                             </Tooltip>
-                                                            <IconTooltip color="info" placement="right" messages={[targetHeader.tooltip]} />
+                                                            <IconTooltip color="info" placement="right" messages={[targetHeader.tooltip]} maxHeight={150} />
                                                         </ListItem>
                                                     </Stack>
                                                 )}

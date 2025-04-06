@@ -1,6 +1,8 @@
 package org.dataintegration.service;
 
+import org.dataintegration.exception.runtime.DatabaseNotFoundException;
 import org.dataintegration.exception.runtime.HostDomainValidationException;
+import org.dataintegration.exception.runtime.HostNotFoundException;
 import org.dataintegration.exception.runtime.HostValidationException;
 import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
@@ -79,6 +81,11 @@ class HostsServiceTest {
     }
 
     @Test
+    void testGetDatabaseDatabaseNotFoundException() {
+        assertThatExceptionOfType(DatabaseNotFoundException.class).isThrownBy(() -> subject.getDatabase(DATABASE_ID));
+    }
+
+    @Test
     void testGetAllHosts() {
         final List<HostEntity> hosts = List.of(hostEntity);
         when(jpaHostRepository.findAll()).thenReturn(hosts);
@@ -95,6 +102,11 @@ class HostsServiceTest {
         final HostEntity result = subject.getHost(HOST_ID);
 
         assertThat(result).isEqualTo(hostEntity);
+    }
+
+    @Test
+    void testGetHostHostNotFoundException() {
+        assertThatExceptionOfType(HostNotFoundException.class).isThrownBy(() -> subject.getHost(HOST_ID));
     }
 
     @Test

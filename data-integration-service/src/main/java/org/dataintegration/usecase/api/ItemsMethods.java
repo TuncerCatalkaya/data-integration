@@ -13,6 +13,6 @@ public interface ItemsMethods {
     void updateItemProperties(UUID projectId, UpdateItemPropertiesRequestModel updateItemPropertiesRequest, String key,
                               String newValue, String createdBy);
 
-    Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, boolean filterMappedItems, String header,
-                                String search, String createdBy, Pageable pageable);
+    Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, String header, String search, String createdBy,
+                                Pageable pageable);
 }

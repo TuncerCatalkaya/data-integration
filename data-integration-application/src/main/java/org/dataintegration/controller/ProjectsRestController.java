@@ -206,11 +206,10 @@ public class ProjectsRestController {
     @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")
     @GetMapping("/{projectId}/scopes/{scopeId}/items")
     public Page<ItemModel> getItems(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID projectId, @PathVariable UUID scopeId,
-                                    @RequestParam(required = false) UUID mappingId, @RequestParam boolean filterMappedItems,
-                                    @RequestParam String header, @RequestParam String search,
-                                    @ParameterObject Pageable pageable) {
-        return projectsUsecase.getItemsMethods().getAllItems(projectId, scopeId, mappingId, filterMappedItems, header, search,
-                DataIntegrationUtils.getJwtUserId(jwt), pageable);
+                                    @RequestParam(required = false) UUID mappingId, @RequestParam String header,
+                                    @RequestParam String search, @ParameterObject Pageable pageable) {
+        return projectsUsecase.getItemsMethods()
+                .getAllItems(projectId, scopeId, mappingId, header, search, DataIntegrationUtils.getJwtUserId(jwt), pageable);
     }
 
     @PreAuthorize("hasRegexAuthority(@authorityConfig.authorityRegexes)")

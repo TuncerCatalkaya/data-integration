@@ -21,14 +21,8 @@ public interface JpaMappedItemRepository extends JpaRepository<MappedItemEntity,
     @SuppressWarnings("checkstyle:MethodName")
     Page<MappedItemEntity> findAllByMapping_Id(UUID mappingId, Pageable pageable);
 
-    @Query("""
-        SELECT mi FROM MappedItemEntity mi
-        WHERE mi.mapping.id = :mappingId AND mi.status != :itemStatus
-        ORDER BY mi.item.lineNumber ASC
-    """)
-    Page<MappedItemEntity> findAllByMappingIdAndStatusNot(@Param("mappingId") UUID mappingId,
-                                                           @Param("itemStatus") ItemStatusModel itemStatus,
-                                                           Pageable pageable);
+    @SuppressWarnings("checkstyle:MethodName")
+    Page<MappedItemEntity> findAllByMapping_IdAndStatusNot(UUID mappingId, ItemStatusModel itemStatus, Pageable pageable);
 
     @Modifying
     @Transactional
