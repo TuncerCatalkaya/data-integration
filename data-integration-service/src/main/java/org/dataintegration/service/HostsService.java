@@ -9,6 +9,7 @@ import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
 import org.dataintegration.jpa.repository.JpaDatabaseRepository;
 import org.dataintegration.jpa.repository.JpaHostRepository;
+import org.dataintegration.model.DataIntegrationHeaderDataAPIModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +43,16 @@ public class HostsService {
             throw new HostDomainValidationException();
         }
         return jpaHostRepository.save(hostEntity);
+    }
+
+    /**
+     * Update headers by host id.
+     *
+     * @param hostId host id
+     * @param headers headers
+     */
+    public void updateHeadersByHostId(UUID hostId, List<DataIntegrationHeaderDataAPIModel> headers) {
+        jpaHostRepository.updateHeadersByHostId(hostId, headers);
     }
 
     /**

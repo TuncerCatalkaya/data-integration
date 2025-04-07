@@ -14,9 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dataintegration.model.DataIntegrationHeaderDataAPIModel;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,6 +56,9 @@ public class HostEntity {
     @Size(max = 255)
     @Column(nullable = false)
     private String headerPath;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<DataIntegrationHeaderDataAPIModel> headers;
 
     @OneToMany(
             mappedBy = "host",

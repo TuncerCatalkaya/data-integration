@@ -8,6 +8,7 @@ import org.dataintegration.jpa.entity.DatabaseEntity;
 import org.dataintegration.jpa.entity.HostEntity;
 import org.dataintegration.jpa.repository.JpaDatabaseRepository;
 import org.dataintegration.jpa.repository.JpaHostRepository;
+import org.dataintegration.model.DataIntegrationHeaderDataAPIModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,6 +45,8 @@ class HostsServiceTest {
     private HostEntity hostEntity;
     @Mock
     private DatabaseEntity databaseEntity;
+    @Mock
+    private List<DataIntegrationHeaderDataAPIModel> headers;
 
     @Test
     void testCreateOrUpdateHost() {
@@ -69,6 +72,12 @@ class HostsServiceTest {
         when(urlService.isDomainValid("baseUrl")).thenReturn(false);
 
         assertThatExceptionOfType(HostDomainValidationException.class).isThrownBy(() -> subject.createOrUpdateHost(hostEntity));
+    }
+
+    @Test
+    void testUpdateHeadersByHostId() {
+        subject.updateHeadersByHostId(HOST_ID, headers);
+        verify(jpaHostRepository).updateHeadersByHostId(HOST_ID, headers);
     }
 
     @Test

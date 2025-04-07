@@ -91,6 +91,7 @@ ALTER TABLE public.database OWNER TO postgres;
 
 CREATE TABLE public.host (
     id uuid NOT NULL,
+    headers jsonb,
     base_url character varying(255) NOT NULL,
     header_path character varying(255) NOT NULL,
     integration_path character varying(255) NOT NULL,

@@ -68,7 +68,7 @@ public class HostsUsecase {
         final WebClient webClient = WebClient.builder()
                 .baseUrl(host.getBaseUrl())
                 .build();
-        return webClient.get()
+        DataIntegrationHeaderAPIModel dataIntegrationHeader = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(host.getHeaderPath())
                         .queryParam("language", language)
                         .build()
@@ -79,7 +79,17 @@ public class HostsUsecase {
                         clientResponse -> clientResponse.bodyToMono(String.class)
                                 .flatMap(body -> Mono.error(new RuntimeException(body))))
                 .bodyToMono(DataIntegrationHeaderAPIModel.class)
+                .onErrorResume(e -> Mono.empty())
                 .block();
+
+        if (dataIntegrationHeader != null) {
+            hostsService.updateHeadersByHostId(hostId,  dataIntegrationHeader.getHeaders());
+            return dataIntegrationHeader;
+        }
+
+        return DataIntegrationHeaderAPIModel.builder()
+                .headers(host.getHeaders())
+                .build();
     }
 
     /**
