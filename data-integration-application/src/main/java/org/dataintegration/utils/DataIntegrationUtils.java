@@ -13,7 +13,7 @@ import java.util.UUID;
 public class DataIntegrationUtils {
 
     public static String getJwtUserId(Jwt jwt) {
-        return Optional.ofNullable(jwt.getClaims().get("userId"))
+        return Optional.ofNullable(jwt.getClaims().get(DataIntegrationUtilsConfig.USER_ID_CLAIM))
                 .map(String::valueOf)
                 .or(() -> Optional.ofNullable(jwt.getSubject()))
                 .orElse(null);

@@ -27,17 +27,17 @@ public class ImportDataBatchConfig {
 
     @Value("${batch.retry.scope.max}")
     private int batchRetryScopeMax;
-    @Value("${batch.retry.scope.delayMs}")
+    @Value("${batch.retry.scope.delay-ms}")
     private long batchRetryScopeDelayMs;
 
     @Value("${batch.retry.batch.max}")
     private int batchRetryBatchMax;
-    @Value("${batch.retry.batch.delayMs}")
+    @Value("${batch.retry.batch.delay-ms}")
     private long batchRetryBatchDelayMs;
 
-    @Value("${batch.waitForFullQueue.delayMs}")
+    @Value("${batch.wait-for-full-queue.delay-ms}")
     private long batchWaitForFullQueueDelayMs;
-    @Value("${batch.waitForBatchesToFinish.delayMs}")
+    @Value("${batch.wait-for-batches-to-finish.delay-ms}")
     private long batchWaitForBatchesToFinishDelayMs;
 
     private ExecutorService executorService;

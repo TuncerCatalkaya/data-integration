@@ -30,13 +30,13 @@ public class S3Config {
     @Value("${s3.endpoint}")
     private String s3Endpoint;
 
-    @Value("${s3.accessKey}")
+    @Value("${s3.access-key}")
     private String s3AccessKey;
 
-    @Value("${s3.secretKey}")
+    @Value("${s3.secret-key}")
     private String s3SecretKey;
 
-    @Value("${s3.pathStyleAccessEnabled}")
+    @Value("${s3.path-style-access-enabled}")
     private boolean pathStyleAccessEnabled;
 
     @Value("${s3.bucket}")
