@@ -431,77 +431,109 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
                                             <Typography>{"Automapper"}</Typography>
                                         </AccordionSummary>
                                         <AccordionDetails>
-                                            <Stack direction="row" justifyContent="center" spacing={5}>
-                                                <Stack spacing={2}>
-                                                    <Tooltip
-                                                        title={Algorithms[algorithm].display}
-                                                        arrow
-                                                        PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
-                                                    >
-                                                        <FormControl color="warning" sx={{ minWidth: 200, maxWidth: 200, textAlign: "left" }}>
-                                                            <InputLabel>Algorithm</InputLabel>
-                                                            <Select
-                                                                value={algorithm}
-                                                                onChange={e => setAlgorithm(e.target.value)}
-                                                                color="warning"
-                                                                label="Algorithm"
-                                                            >
-                                                                <MenuItem value="select" disabled>
-                                                                    {"Select an algorithm"}
-                                                                </MenuItem>
-                                                                {Object.entries(Algorithms).map(([key, value]) => (
-                                                                    <MenuItem key={key} value={key}>
-                                                                        {value.display}
+                                            <Stack spacing={3}>
+                                                <Typography color={theme.palette.text.secondary} variant="body1">
+                                                    {"Tries to auto map sources to targets."}
+                                                </Typography>
+                                                <Stack direction="row" justifyContent="center" spacing={5}>
+                                                    <Stack spacing={2}>
+                                                        <Tooltip
+                                                            title={Algorithms[algorithm].display}
+                                                            arrow
+                                                            PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                                                        >
+                                                            <FormControl color="warning" sx={{ minWidth: 200, maxWidth: 200, textAlign: "left" }}>
+                                                                <InputLabel>Algorithm</InputLabel>
+                                                                <Select
+                                                                    value={algorithm}
+                                                                    onChange={e => setAlgorithm(e.target.value)}
+                                                                    color="warning"
+                                                                    label="Algorithm"
+                                                                >
+                                                                    <MenuItem value="select" disabled>
+                                                                        {"Select an algorithm"}
                                                                     </MenuItem>
-                                                                ))}
-                                                            </Select>
-                                                        </FormControl>
-                                                    </Tooltip>
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Checkbox
-                                                                color="warning"
-                                                                checked={enableHeuristic}
-                                                                onChange={e => setEnableHeuristic(e.target.checked)}
+                                                                    {Object.entries(Algorithms).map(([key, value]) => (
+                                                                        <MenuItem key={key} value={key}>
+                                                                            {value.display}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                        </Tooltip>
+                                                        <Tooltip
+                                                            title={
+                                                                "Instead of only using the target names. It also uses alternative names that are manually defined for the targets. Hover over the targets to see them."
+                                                            }
+                                                            enterDelay={1000}
+                                                            arrow
+                                                            PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                                                        >
+                                                            <FormControlLabel
+                                                                control={
+                                                                    <Checkbox
+                                                                        color="warning"
+                                                                        checked={enableHeuristic}
+                                                                        onChange={e => setEnableHeuristic(e.target.checked)}
+                                                                    />
+                                                                }
+                                                                label="Enable Heuristic"
                                                             />
-                                                        }
-                                                        label="Enable Heuristic"
-                                                    />
+                                                        </Tooltip>
+                                                    </Stack>
+                                                    <Stack spacing={2}>
+                                                        <Tooltip
+                                                            title={
+                                                                "The similarity threshold is defining how similar a source needs to be to the target in order to be considered. (equal or greater)"
+                                                            }
+                                                            enterDelay={1000}
+                                                            arrow
+                                                            PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                                                        >
+                                                            <FormControl sx={{ width: 300 }}>
+                                                                <FormLabel>Similarity Threshold</FormLabel>
+                                                                <Slider
+                                                                    color="warning"
+                                                                    defaultValue={similarityThresholdDefault}
+                                                                    onChangeCommitted={(_, value) => setSimilarityThreshold(value as number)}
+                                                                    valueLabelDisplay="auto"
+                                                                    min={0}
+                                                                    max={1}
+                                                                    step={0.01}
+                                                                />
+                                                            </FormControl>
+                                                        </Tooltip>
+                                                        <Tooltip
+                                                            title={
+                                                                "It chooses all of the best matches that are above the similarity threshold. If 3 is chosen, then the top 3 above the threshold are considered."
+                                                            }
+                                                            enterDelay={1000}
+                                                            arrow
+                                                            PopperProps={{ style: { zIndex: theme.zIndex.modal } }}
+                                                        >
+                                                            <FormControl sx={{ width: 300 }}>
+                                                                <FormLabel>Limit matches (top matches)</FormLabel>
+                                                                <Slider
+                                                                    color="warning"
+                                                                    defaultValue={limitMatchesDefault}
+                                                                    onChangeCommitted={(_, value) => setLimitMatches(value as number)}
+                                                                    valueLabelDisplay="auto"
+                                                                    min={1}
+                                                                    max={5}
+                                                                />
+                                                            </FormControl>
+                                                        </Tooltip>
+                                                    </Stack>
+                                                    <Button
+                                                        color="warning"
+                                                        variant="contained"
+                                                        endIcon={<AutoFixHigh />}
+                                                        onClick={handleClickAutomapper}
+                                                        sx={{ color: theme.palette.common.white }}
+                                                    >
+                                                        {"Run Automapper"}
+                                                    </Button>
                                                 </Stack>
-                                                <Stack spacing={2}>
-                                                    <FormControl sx={{ width: 300 }}>
-                                                        <FormLabel>Similarity Threshold</FormLabel>
-                                                        <Slider
-                                                            color="warning"
-                                                            defaultValue={similarityThresholdDefault}
-                                                            onChangeCommitted={(_, value) => setSimilarityThreshold(value as number)}
-                                                            valueLabelDisplay="auto"
-                                                            min={0}
-                                                            max={1}
-                                                            step={0.01}
-                                                        />
-                                                    </FormControl>
-                                                    <FormControl sx={{ width: 300 }}>
-                                                        <FormLabel>Limit matches (top matches)</FormLabel>
-                                                        <Slider
-                                                            color="warning"
-                                                            defaultValue={limitMatchesDefault}
-                                                            onChangeCommitted={(_, value) => setLimitMatches(value as number)}
-                                                            valueLabelDisplay="auto"
-                                                            min={1}
-                                                            max={5}
-                                                        />
-                                                    </FormControl>
-                                                </Stack>
-                                                <Button
-                                                    color="warning"
-                                                    variant="contained"
-                                                    endIcon={<AutoFixHigh />}
-                                                    onClick={handleClickAutomapper}
-                                                    sx={{ color: theme.palette.common.white }}
-                                                >
-                                                    {"Run Automapper"}
-                                                </Button>
                                             </Stack>
                                         </AccordionDetails>
                                     </Accordion>
@@ -621,7 +653,7 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
                                                                 <Output />
                                                             </ListItemIcon>
                                                             <Tooltip
-                                                                title={targetHeader.id}
+                                                                title={targetHeader.id + "\nAlternatives: " + targetHeader.alternatives}
                                                                 arrow
                                                                 PopperProps={{ style: { zIndex: theme.zIndex.modal }, disablePortal: true }}
                                                             >
@@ -636,7 +668,7 @@ export default function CreateOrEditMappingDialog({ open, handleClickClose, scop
                                                                     }}
                                                                 />
                                                             </Tooltip>
-                                                            <IconTooltip color="info" placement="right" messages={[targetHeader.tooltip]} maxHeight={150} />
+                                                            <IconTooltip color="info" placement="right" messages={[targetHeader.tooltip]} maxHeight={175} />
                                                         </ListItem>
                                                     </Stack>
                                                 )}

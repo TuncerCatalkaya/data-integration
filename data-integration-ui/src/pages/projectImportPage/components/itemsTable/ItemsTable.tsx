@@ -199,6 +199,7 @@ export default function ItemsTable({
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}
+                    tooltipHideDelay={60000}
                     tooltipInteraction
                     enableCellTextSelection
                     stopEditingWhenCellsLoseFocus

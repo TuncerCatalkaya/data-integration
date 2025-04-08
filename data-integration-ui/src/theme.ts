@@ -53,6 +53,14 @@ const theme = createTheme({
                     borderRadius: 25
                 }
             }
+        },
+        MuiTooltip: {
+            styleOverrides: {
+                tooltip: {
+                    fontSize: "14px",
+                    whiteSpace: "pre-line"
+                }
+            }
         }
     }
 })

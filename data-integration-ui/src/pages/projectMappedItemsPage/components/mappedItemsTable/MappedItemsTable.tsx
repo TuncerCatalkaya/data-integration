@@ -136,7 +136,7 @@ export default function MappedItemsTable({
                             tooltipComponentParams: {
                                 color: "info",
                                 messages: [target.tooltip],
-                                maxHeight: 150
+                                maxHeight: 175
                             },
                             editable: (params: EditableCallbackParams) => params.data.status !== ItemStatusResponse.INTEGRATED,
                             cellRenderer: UndoCellRenderer,
@@ -276,6 +276,7 @@ export default function MappedItemsTable({
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     tooltipShowDelay={1000}
+                    tooltipHideDelay={60000}
                     tooltipInteraction
                     enableCellTextSelection
                     stopEditingWhenCellsLoseFocus
