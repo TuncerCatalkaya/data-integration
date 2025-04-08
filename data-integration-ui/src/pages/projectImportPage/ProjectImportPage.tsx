@@ -132,7 +132,7 @@ export default function ProjectImportPage() {
             await handleClickSearch()
         }
     }
-    const handleClickSearch = async () => await fetchItemsData(scope, searchSelectedHeader, search, page, pageSize, sort)
+    const handleClickSearch = async () => await fetchItemsData(scope, searchSelectedHeader, search, 0, pageSize, sort)
 
     const handleClickOpenImportDataDialog = () => setOpenImportDataDialog(true)
     const handleClickCloseImportDataDialog = () => setOpenImportDataDialog(false)
