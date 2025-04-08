@@ -51,7 +51,7 @@ class ItemsServiceTest {
         when(jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItems(eq(SCOPE_ID), eq(MAPPING_ID),
                 any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, "", "", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, true, "", "", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }
@@ -61,7 +61,7 @@ class ItemsServiceTest {
         when(jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItemsAndDynamicHeader(eq(SCOPE_ID), eq(MAPPING_ID),
                 eq("searchHeader"), eq("searchText"), any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, "searchHeader", "searchText", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, true, "searchHeader", "searchText", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }
@@ -71,7 +71,7 @@ class ItemsServiceTest {
         when(jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItemsWithFreeTextSearch(eq(SCOPE_ID), eq(MAPPING_ID),
                 eq("searchText"), any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, "", "searchText", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, true, "", "searchText", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }
@@ -80,7 +80,7 @@ class ItemsServiceTest {
     void testGetAllWithoutSearchText() {
         when(jpaItemRepository.findAllByScopeId(eq(SCOPE_ID), any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, null, "", "", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, MAPPING_ID, false, "", "", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }
@@ -90,7 +90,7 @@ class ItemsServiceTest {
         when(jpaItemRepository.findAllByScopeIdAndDynamicHeader(eq(SCOPE_ID), eq("searchHeader"), eq("searchText"),
                 any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, null, "searchHeader", "searchText", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, null, true ,"searchHeader", "searchText", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }
@@ -100,7 +100,7 @@ class ItemsServiceTest {
         when(jpaItemRepository.findAllByScopeIdWithFreeTextSearch(eq(SCOPE_ID), eq("searchText"),
                 any(Pageable.class))).thenReturn(itemEntityPage);
 
-        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, null, "", "searchText", PAGEABLE);
+        final Page<ItemEntity> result = subject.getAll(SCOPE_ID, null, false, "", "searchText", PAGEABLE);
 
         assertThat(result).isEqualTo(itemEntityPage);
     }

@@ -26,7 +26,7 @@ COPY checkstyle.xml .
 COPY lombok.config .
 
 # Build
-RUN mvn clean "$ENV_MVN_LIFECYCLE" -DskipTests
+RUN mvn clean "$ENV_MVN_LIFECYCLE"
 
 FROM maven:3.8.5-openjdk-17 AS data-integration-app
 COPY --from=build data-integration-application/target/data-integration-application.jar .

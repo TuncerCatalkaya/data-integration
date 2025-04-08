@@ -104,7 +104,7 @@ export default function CreateOrEditHostDialog({ open, handleClickClose, hostToE
         }
         const createOrUpdateHostResponse = await createOrUpdateHost(host)
         if (createOrUpdateHostResponse.data) {
-            enqueueSnackbar(hostToEdit ? "Host edited" : "Host created", { variant: "error" })
+            enqueueSnackbar(hostToEdit ? "Host edited" : "Host created", { variant: "success" })
             handleClickClose(true)
         } else if (createOrUpdateHostResponse.error) {
             const createOrUpdateHostResponseError = createOrUpdateHostResponse.error as FetchBaseQueryError

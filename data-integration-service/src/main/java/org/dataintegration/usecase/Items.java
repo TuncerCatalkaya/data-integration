@@ -50,12 +50,12 @@ class Items implements ItemsMethods {
     }
 
     @Override
-    public Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, String searchHeader, String searchText,
-                                       String createdBy, Pageable pageable) {
+    public Page<ItemModel> getAllItems(UUID projectId, UUID scopeId, UUID mappingId, boolean filterMappedItems,
+                                       String searchHeader, String searchText, String createdBy, Pageable pageable) {
         projectsService.isPermitted(projectId, createdBy);
         final Set<HeaderModel> headers = scopesService.getAndCheckIfScopeFinished(scopeId).getHeaders();
         final Page<ItemEntity> itemEntityPage =
-                itemsService.getAll(scopeId, mappingId, searchHeader, searchText, pageable);
+                itemsService.getAll(scopeId, mappingId, filterMappedItems, searchHeader, searchText, pageable);
 
         final Map<UUID, List<UUID>> itemToMappingsMap =
                 mappedItemsService.getItemsWithMappings(itemEntityPage.stream()

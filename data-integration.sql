@@ -408,6 +408,21 @@ ALTER TABLE ONLY public.database
 ALTER TABLE ONLY public.mapping
     ADD CONSTRAINT fkpn0lambsq8gtchk672xv582u3 FOREIGN KEY (scope_id) REFERENCES public.scope(id);
 
+--
+-- Create indexes for item
+--
+
+CREATE INDEX idx_item_line_number ON public.item(line_number);
+CREATE INDEX idx_item_scope_id ON public.item(scope_id);
+
+--
+-- Create indexes for mapped_item
+--
+
+CREATE INDEX idx_mapped_item_item_id ON public.mapped_item(item_id);
+CREATE INDEX idx_mapped_item_mapping_id ON public.mapped_item(mapping_id);
+CREATE INDEX idx_mapped_item_mapping_id_status ON public.mapped_item(mapping_id, status);
+CREATE INDEX idx_mapped_item_item_id_mapping_id ON public.mapped_item(item_id, mapping_id);
 
 --
 -- PostgreSQL database dump complete

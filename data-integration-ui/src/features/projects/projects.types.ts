@@ -169,6 +169,7 @@ export interface GetItemsRequest {
     projectId: string
     scopeId: string
     mappingId?: string
+    filterMappedItems: boolean
     header: string
     search: string
     page: number

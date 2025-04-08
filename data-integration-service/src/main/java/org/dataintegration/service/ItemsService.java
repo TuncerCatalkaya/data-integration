@@ -29,17 +29,19 @@ public class ItemsService {
     /**
      * Get all items paginated and filtered.
      *
-     * @param scopeId scope id, so the items fetched are only from that scope
-     * @param mappingId mapping id that will be used to filter already mapped items
+     * @param scopeId      scope id, so the items fetched are only from that scope
+     * @param mappingId    mapping id that will be used to filter already mapped items
+     * @param filterMappedItems boolean to indicate if mapped items will be filtered out (true = will be filtered out)
      * @param searchHeader the header that is searched for (if null or empty then it is a free text search across all headers)
-     * @param searchText text that is searched for
-     * @param pageable {@link Pageable}
+     * @param searchText   text that is searched for
+     * @param pageable     {@link Pageable}
      * @return {@link Page} of {@link ItemEntity}
      */
-    public Page<ItemEntity> getAll(UUID scopeId, UUID mappingId, String searchHeader, String searchText, Pageable pageable) {
+    public Page<ItemEntity> getAll(UUID scopeId, UUID mappingId, boolean filterMappedItems, String searchHeader,
+                                   String searchText, Pageable pageable) {
         final Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "line_number")));
-        if (mappingId != null) {
+        if (filterMappedItems && mappingId != null) {
             if (StringUtils.hasLength(searchText)) {
                 if (StringUtils.hasText(searchHeader)) {
                     return jpaItemRepository.findAllByScopeIdAndMappingIdNotInMappedItemsAndDynamicHeader(scopeId, mappingId,
@@ -89,8 +91,8 @@ public class ItemsService {
     /**
      * Update item property.
      *
-     * @param itemId item id
-     * @param key key
+     * @param itemId   item id
+     * @param key      key
      * @param newValue new value
      * @return updated {@link ItemEntity}
      */

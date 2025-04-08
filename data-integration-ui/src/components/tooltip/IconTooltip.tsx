@@ -55,7 +55,8 @@ export default function IconTooltip({ color, messages, placement, maxWidth, maxH
                     justifyContent: "center",
                     alignItems: "center",
                     width: 40,
-                    height: 40
+                    height: 40,
+                    cursor: "help"
                 }}
             >
                 {color === "info" && <Info color="info" />}
