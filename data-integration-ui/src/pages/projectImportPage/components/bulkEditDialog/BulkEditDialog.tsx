@@ -137,7 +137,7 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" disabled={header === "select" || !newValue} onClick={handleClickBulkEdit}>
+                <Button variant="contained" disabled={header === "select"} onClick={handleClickBulkEdit}>
                     {"Submit"}
                 </Button>
                 <Button variant="contained" color="error" onClick={() => closeDialog()} sx={shakeSx}>
