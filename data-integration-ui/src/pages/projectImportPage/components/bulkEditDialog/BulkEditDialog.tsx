@@ -26,12 +26,13 @@ import { useSnackbar } from "notistack"
 import theme from "../../../../theme"
 import { useParams } from "react-router-dom"
 import useShake from "../../../../components/shake/hooks/useShake"
+import { ScopeHeaderResponse } from "../../../../features/projects/projects.types"
 
 interface BulkEditDialogProps {
     open: boolean
     handleClickClose: (shouldReload?: boolean) => void
     itemIds: string[]
-    headers: string[]
+    headers: ScopeHeaderResponse[]
 }
 
 function PaperComponent(props: PaperProps) {
@@ -107,8 +108,8 @@ export default function BulkEditDialog(bulkEditDialogProps: Readonly<BulkEditDia
                                     {"Select a header"}
                                 </MenuItem>
                                 {bulkEditDialogProps.headers.map(header => (
-                                    <MenuItem key={header} value={header}>
-                                        {header}
+                                    <MenuItem key={header.id} value={header.id}>
+                                        {header.display}
                                     </MenuItem>
                                 ))}
                             </Select>

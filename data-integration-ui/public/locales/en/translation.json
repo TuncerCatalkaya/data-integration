@@ -6,6 +6,14 @@
                 "h5": "Please make sure that you are logged in and have sufficient permissions"
             }
         },
+        "projectDetails": {
+            "fields": {
+                "id": "ID",
+                "name": "Name",
+                "createdDate": "Created Date",
+                "lastModifiedDate": "Last Modified Date"
+            }
+        },
         "projectImport": {
             "components": {
                 "dialogs": {

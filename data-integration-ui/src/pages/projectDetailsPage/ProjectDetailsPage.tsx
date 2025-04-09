@@ -1,4 +1,4 @@
-import { Box, Button, capitalize, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { useParams } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
 import { ProjectsApi } from "../../features/projects/projects.api"
@@ -6,6 +6,7 @@ import { ProjectResponse } from "../../features/projects/projects.types"
 import theme from "../../theme"
 import { Edit } from "@mui/icons-material"
 import FormatDate from "../../utils/FormatDate"
+import { useTranslation } from "react-i18next"
 
 const excludedKeys = ["createdBy"]
 const readOnlyKeys = ["id", "createdDate", "lastModifiedDate"]
@@ -18,6 +19,8 @@ export default function ProjectDetailsPage() {
 
     const [getProject] = ProjectsApi.useLazyGetProjectQuery()
     const [updateProject] = ProjectsApi.useUpdateProjectMutation()
+
+    const translation = useTranslation()
 
     const fetchData = useCallback(async () => {
         const response = await getProject({ projectId: projectId! })
@@ -62,7 +65,7 @@ export default function ProjectDetailsPage() {
                         return (
                             <Stack key={key}>
                                 <Typography variant="h6" align="left">
-                                    {capitalize(key)}:
+                                    {translation.t(`pages.projectDetails.fields.${key}`)}
                                 </Typography>
                                 <TextField
                                     disabled={readOnlyKeys.includes(key)}

@@ -91,9 +91,9 @@ ALTER TABLE public.database OWNER TO postgres;
 
 CREATE TABLE public.host (
     id uuid NOT NULL,
-    headers jsonb,
     base_url character varying(255) NOT NULL,
     header_path character varying(255) NOT NULL,
+    headers jsonb,
     integration_path character varying(255) NOT NULL,
     name character varying(255) NOT NULL
 );
@@ -213,7 +213,7 @@ COPY public.database (id, name, host_id) FROM stdin;
 -- Data for Name: host; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.host (id, base_url, header_path, integration_path, name) FROM stdin;
+COPY public.host (id, base_url, header_path, headers, integration_path, name) FROM stdin;
 \.
 
 
@@ -338,6 +338,48 @@ ALTER TABLE ONLY public.mapped_item
 
 
 --
+-- Name: idx_item_line_number; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_item_line_number ON public.item USING btree (line_number);
+
+
+--
+-- Name: idx_item_scope_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_item_scope_id ON public.item USING btree (scope_id);
+
+
+--
+-- Name: idx_mapped_item_item_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_mapped_item_item_id ON public.mapped_item USING btree (item_id);
+
+
+--
+-- Name: idx_mapped_item_item_id_mapping_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_mapped_item_item_id_mapping_id ON public.mapped_item USING btree (item_id, mapping_id);
+
+
+--
+-- Name: idx_mapped_item_mapping_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_mapped_item_mapping_id ON public.mapped_item USING btree (mapping_id);
+
+
+--
+-- Name: idx_mapped_item_mapping_id_status; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_mapped_item_mapping_id_status ON public.mapped_item USING btree (mapping_id, status);
+
+
+--
 -- Name: mapped_item fk6edf5gj2fynogxbyhe7kl76p5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -408,21 +450,6 @@ ALTER TABLE ONLY public.database
 ALTER TABLE ONLY public.mapping
     ADD CONSTRAINT fkpn0lambsq8gtchk672xv582u3 FOREIGN KEY (scope_id) REFERENCES public.scope(id);
 
---
--- Create indexes for item
---
-
-CREATE INDEX idx_item_line_number ON public.item(line_number);
-CREATE INDEX idx_item_scope_id ON public.item(scope_id);
-
---
--- Create indexes for mapped_item
---
-
-CREATE INDEX idx_mapped_item_item_id ON public.mapped_item(item_id);
-CREATE INDEX idx_mapped_item_mapping_id ON public.mapped_item(mapping_id);
-CREATE INDEX idx_mapped_item_mapping_id_status ON public.mapped_item(mapping_id, status);
-CREATE INDEX idx_mapped_item_item_id_mapping_id ON public.mapped_item(item_id, mapping_id);
 
 --
 -- PostgreSQL database dump complete

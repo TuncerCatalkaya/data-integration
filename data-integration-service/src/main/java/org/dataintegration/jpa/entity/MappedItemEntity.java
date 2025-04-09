@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -31,6 +32,12 @@ import java.util.UUID;
         name = "mapped_item",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"item_id", "mapping_id"})
+        },
+        indexes = {
+                @Index(name = "idx_mapped_item_item_id", columnList = "item_id"),
+                @Index(name = "idx_mapped_item_mapping_id", columnList = "mapping_id"),
+                @Index(name = "idx_mapped_item_mapping_id_status", columnList = "mapping_id, status"),
+                @Index(name = "idx_mapped_item_item_id_mapping_id", columnList = "item_id, mapping_id")
         }
 )
 @Getter

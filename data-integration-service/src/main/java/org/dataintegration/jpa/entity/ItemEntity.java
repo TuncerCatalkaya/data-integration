@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -25,7 +26,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "item")
+@Table(
+        name = "item",
+        indexes = {
+                @Index(name = "idx_item_line_number", columnList = "lineNumber"),
+                @Index(name = "idx_item_scope_id", columnList = "scope_id")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor

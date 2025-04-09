@@ -312,7 +312,7 @@ export default function ProjectImportPage() {
                 size: pageSize,
                 sort
             }).unwrap()
-            setRowData(getItemsResponse.content)
+            setRowData([...getItemsResponse.content])
             setTotalElements(getItemsResponse.totalElements)
             const getScopeHeadersResponse = await getScopeHeaders({ projectId: projectId!, scopeId }).unwrap()
             setScopeHeaders(getScopeHeadersResponse)
@@ -489,7 +489,7 @@ export default function ProjectImportPage() {
                     open={openBulkEditDialog}
                     handleClickClose={handleClickCloseBulkEditDialog}
                     itemIds={rowData.map(data => data.id)}
-                    headers={GetScopeHeaders(scopeHeaders).map(header => header.display)}
+                    headers={GetScopeHeaders(scopeHeaders)}
                 />
             )}
             <Menu anchorEl={importAnchorEl} open={Boolean(importAnchorEl)} onClose={handleImportMenuClose}>
