@@ -19,7 +19,7 @@
 
         <!-- dependency versions -->
         <spring.version>3.0.6</spring.version>
-        <guava.version>33.3.0-jre</guava.version>
+        <opencsv.version>5.9</opencsv.version>
         <archunit.version>1.2.1</archunit.version>
         <postgresql.version>42.6.0</postgresql.version>
         <h2.version>2.1.214</h2.version>
@@ -233,11 +233,11 @@
                 <version>${apache.commons-io.version}</version>
             </dependency>
 
-            <!-- guava -->
+            <!-- opencsv -->
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>${opencsv.version}</version>
             </dependency>
 
             <!-- mapstruct -->
