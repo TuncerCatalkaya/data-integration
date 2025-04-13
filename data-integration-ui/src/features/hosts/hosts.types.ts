@@ -21,6 +21,7 @@ export interface DataIntegrationHeaderAPIResponse {
 export interface DataIntegrationHeaderDataAPIResponse {
     id: string
     display: string
+    optional: boolean
     tooltip: string
     alternatives: string[]
 }

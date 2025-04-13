@@ -132,6 +132,7 @@ export default function MappedItemsTable({
                             colId: "dynamic_" + target.id,
                             headerName: target.display,
                             headerTooltip: target.tooltip,
+                            headerClass: target.optional ? "optional-header" : undefined,
                             tooltipComponent: ColorTooltip,
                             tooltipComponentParams: {
                                 color: "info",

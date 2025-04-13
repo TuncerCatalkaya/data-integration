@@ -74,7 +74,7 @@ class MappedItems implements MappedItemsMethods {
                 if (sources != null) {
                     for (String source : sources) {
                         final ItemPropertiesModel itemProperties;
-                        if (mappedItem.getProperties() != null && mappedItem.getProperties().containsKey(target.getId())) {
+                        if (mappedItem.getProperties() != null && mappedItem.getProperties().containsKey(target.getId()) && mappedItem.getProperties().get(target.getId()) != null) {
                             itemProperties = mappedItem.getProperties().get(target.getId());
                         } else {
                             final ItemPropertiesModel itemPropertiesFromItem = mappedItem.getItem().getProperties().get(source);

@@ -18,6 +18,7 @@ public class DataIntegrationHeaderDataAPIModel {
     private String id;
     @NonNull
     private String display;
+    private boolean optional;
     @NonNull
     private String tooltip;
     @NonNull

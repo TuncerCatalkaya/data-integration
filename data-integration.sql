@@ -330,11 +330,11 @@ ALTER TABLE ONLY public.scope
 
 
 --
--- Name: mapped_item ukd2tx23cunu24y0oqgs5i1r0m6; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: mapped_item uk_mapped_item_item_id_mapping_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.mapped_item
-    ADD CONSTRAINT ukd2tx23cunu24y0oqgs5i1r0m6 UNIQUE (item_id, mapping_id);
+    ADD CONSTRAINT uk_mapped_item_item_id_mapping_id UNIQUE (item_id, mapping_id);
 
 
 --

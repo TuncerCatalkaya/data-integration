@@ -31,7 +31,7 @@ import java.util.UUID;
 @Table(
         name = "mapped_item",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"item_id", "mapping_id"})
+                @UniqueConstraint(name = "uk_mapped_item_item_id_mapping_id", columnNames = {"item_id", "mapping_id"})
         },
         indexes = {
                 @Index(name = "idx_mapped_item_item_id", columnList = "item_id"),

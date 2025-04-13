@@ -3,3 +3,13 @@
     white-space: normal;
     overflow-wrap: break-word;
 }
+
+.optional-header {
+    background-color: #f0f8ff;
+    font-style: italic;
+}
+
+.ag-theme-alpine .ag-header-cell.optional-header:hover,
+.ag-theme-alpine .ag-header-cell.optional-header.ag-header-cell-focus {
+    background-color: #f0f8ff !important;
+}
