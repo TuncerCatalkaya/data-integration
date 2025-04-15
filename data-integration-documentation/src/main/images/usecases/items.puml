@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+
+actor Benutzer as Actor1
+
+rectangle Items {
+    (#018 Importierte Items anzeigen) as (UC18)
+    (#019 Importierte Items filtern) as (UC19)
+    (#020 Importierte Items einzeln editieren) as (UC20)
+    (#021 Importierte Items in Masse editieren) as (UC21)
+    (#022 Editierte Items zum Ursprung zurücksetzen) as (UC22)
+}
+
+Actor1 -- (UC18)
+Actor1 -- (UC19)
+Actor1 -- (UC20)
+Actor1 - (UC21)
+Actor1 -- (UC22)
+
+(UC19) .> (UC18) : <<extend>>
+
+(UC18) -[hidden]- (UC21)
+(UC19) -[hidden]- (UC22)
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+left to right direction
+
+actor Benutzer as Actor1
+actor Scheduler as Actor2
+
+rectangle Mappings {
+    (#029 Mapping erstellen) as (UC29)
+    (#030 Mapping editieren) as (UC30)
+    (#031 Mapping zur Löschung markieren) as (UC31)
+    (#032 Mapping wiederherstellen) as (UC32)
+    (#033 Mapping löschen) as (UC33)
+    (#034 Mapping anzeigen) as (UC34)
+    (#035 Mapping speichern) as (UC35)
+    (#036 Gespeichertes Mapping laden) as (UC36)
+    (#037 Gespeichertes Mapping löschen) as (UC37)
+    (#038 Erstelltes Mapping zu importierten Items zuweisen) as (UC38)
+    (#039 Automapper konfigurieren) as (UC39)
+    (#040 Konfigurierten Automapper anwenden) as (UC40)
+}
+
+note "Host/Datenbank wird\nmit ausgewählt" as N1
+
+Actor2 -- (UC33)
+
+Actor1 -- (UC29)
+Actor1 -- (UC30)
+Actor1 -- (UC31)
+Actor1 -- (UC32)
+Actor1 -- (UC34)
+Actor1 -- (UC35)
+Actor1 -- (UC36)
+Actor1 -- (UC37)
+Actor1 -- (UC38)
+Actor1 -- (UC39)
+Actor1 -- (UC40)
+
+N1 .. (UC29)
+N1 .. (UC30)
+
+(UC33) ..> (UC31) : <<extend>>
+(UC32) ..> (UC31) : <<extend>>
+(UC39) ..> (UC40) : <<extend>>
+
+@enduml

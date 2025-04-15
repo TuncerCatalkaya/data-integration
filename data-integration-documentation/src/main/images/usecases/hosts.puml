@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+actor Benutzer as Actor1
+
+rectangle "Hosts/Datenbanken" {
+    (#023 Host/Datenbank erstellen) as (UC23)
+    (#024 Host/Datenbank editieren) as (UC24)
+    (#025 Host/Datenbank löschen) as (UC25)
+    (#026 Hosts/Datenbanken anzeigen) as (UC26)
+    (#027 Host auswählen) as (UC27)
+    (#028 Daten vom ausgewählten Host laden) as (UC28)
+}
+
+note "Entweder vom ausgewählten Host\noder von der eigenen Datenbank" as N1
+
+Actor1 -- (UC23)
+Actor1 -- (UC24)
+Actor1 -- (UC25)
+Actor1 -- (UC26)
+Actor1 -- (UC27)
+
+(UC27) ..> (UC28): <<include>>
+
+N1 . (UC28)
+
+(UC23) -[hidden]- (UC24)
+(UC25) -[hidden]- (UC26)
+
+@enduml

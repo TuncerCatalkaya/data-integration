@@ -1,0 +1,37 @@
+@startuml
+left to right direction
+
+actor Benutzer as Actor1
+actor Scheduler as Actor2
+
+rectangle "S3 Objektspeicher" {
+    (#009 Spaltenbasierte Datei hochladen) as (UC9)
+}
+
+rectangle "Importe" {
+    (#012 Editieren von Spaltenbezeichnungen) as (UC12)
+    (#015 Importierte Datei zur Löschung markieren) as (UC15)
+    (#010 Spaltenbasierte Datei importieren) as (UC10)
+    (#011 Hinzufügen neuer Spalten) as (UC11)
+    (#013 Ausblenden/Einblenden von Spalten) as (UC13)
+    (#014 Reihenfolge der Spalten ändern) as (UC14)
+    (#016 Import löschen) as (UC16)
+    (#017 Import wiederherstellen) as (UC17)
+}
+
+Actor2 -- (UC16)
+
+Actor1 - (UC9)
+Actor1 - (UC10)
+Actor1 - (UC11)
+Actor1 - (UC12)
+Actor1 - (UC13)
+Actor1 - (UC14)
+Actor1 - (UC15)
+Actor1 - (UC17)
+
+(UC9) ..> UC10 : <<extend>>
+(UC16) ..> (UC15) : <<extend>>
+(UC17) ..> UC15 : <<extend>>
+
+@enduml

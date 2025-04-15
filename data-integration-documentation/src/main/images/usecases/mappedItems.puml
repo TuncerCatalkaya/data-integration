@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+
+actor Benutzer as Actor1
+
+rectangle "Mapped Items" {
+    (#041 Mapped Items anzeigen) as (UC41)
+    (#042 Mapped Items filtern) as (UC42)
+    (#043 Mapped Items einzeln editieren) as (UC43)
+    (#044 Mapped Items in Masse editieren) as (UC44)
+    (#045 Mapped Items zum Ursprung zurücksetzen) as (UC45)
+    (#046 Mapped Items integrieren ins Zielsystem) as (UC46)
+}
+
+note "Host/Datenbank\nRechteabhängig" as N1
+
+Actor1 -- (UC41)
+Actor1 -- (UC42)
+Actor1 -- (UC43)
+Actor1 -- (UC44)
+Actor1 -- (UC45)
+Actor1 -- (UC46)
+
+(UC42) .> (UC41) : <<extend>>
+
+(UC41) -[hidden]- (UC44)
+(UC42) -[hidden]- (UC45)
+
+N1 .. (UC46)
+
+@enduml
