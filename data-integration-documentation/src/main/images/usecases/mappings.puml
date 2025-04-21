@@ -5,41 +5,41 @@ actor Benutzer as Actor1
 actor Scheduler as Actor2
 
 rectangle Abbildungen {
-    (#029 Abbildung erstellen) as (UC29)
-    (#030 Abbildung editieren) as (UC30)
-    (#031 Abbildung zur Löschung markieren) as (UC31)
-    (#032 Abbildung wiederherstellen) as (UC32)
-    (#033 Abbildung löschen) as (UC33)
-    (#034 Abbildung anzeigen) as (UC34)
-    (#035 Abbildung speichern) as (UC35)
-    (#036 Gespeicherte Abbildung laden) as (UC36)
-    (#037 Gespeicherte Abbildung löschen) as (UC37)
-    (#038 Erstellte Abbildung zu importierten Items zuweisen) as (UC38)
-    (#039 Automapper konfigurieren) as (UC39)
-    (#040 Konfigurierten Automapper anwenden) as (UC40)
+    (#030 Abbildung erstellen) as (UC30)
+    (#031 Abbildung editieren) as (UC31)
+    (#032 Abbildung zur Löschung markieren) as (UC32)
+    (#033 Abbildung wiederherstellen) as (UC33)
+    (#034 Abbildung löschen) as (UC34)
+    (#035 Abbildung anzeigen) as (UC35)
+    (#036 Abbildung speichern) as (UC36)
+    (#037 Gespeicherte Abbildung laden) as (UC37)
+    (#038 Gespeicherte Abbildung löschen) as (UC38)
+    (#039 Erstellte Abbildung zu importierten Items zuweisen) as (UC39)
+    (#040 Automapper konfigurieren) as (UC40)
+    (#041 Konfigurierten Automapper anwenden) as (UC41)
 }
 
 note "Host/Datenbank wird\nmit ausgewählt" as N1
 
-Actor2 -- (UC33)
+Actor2 -- (UC34)
 
-Actor1 -- (UC29)
 Actor1 -- (UC30)
 Actor1 -- (UC31)
 Actor1 -- (UC32)
-Actor1 -- (UC34)
+Actor1 -- (UC33)
 Actor1 -- (UC35)
 Actor1 -- (UC36)
 Actor1 -- (UC37)
 Actor1 -- (UC38)
 Actor1 -- (UC39)
 Actor1 -- (UC40)
+Actor1 -- (UC41)
 
-N1 .. (UC29)
 N1 .. (UC30)
+N1 .. (UC31)
 
-(UC33) ..> (UC31) : <<extend>>
-(UC32) ..> (UC31) : <<extend>>
-(UC39) ..> (UC40) : <<extend>>
+(UC34) ..> (UC32) : <<extend>>
+(UC33) ..> (UC32) : <<extend>>
+(UC40) ..> (UC41) : <<extend>>
 
 @enduml

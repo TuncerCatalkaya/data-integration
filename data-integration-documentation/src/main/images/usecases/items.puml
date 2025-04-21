@@ -4,22 +4,22 @@ left to right direction
 actor Benutzer as Actor1
 
 rectangle "Importierte Items" {
-    (#018 Importierte Items anzeigen) as (UC18)
-    (#019 Importierte Items filtern) as (UC19)
-    (#020 Importierte Items einzeln editieren) as (UC20)
-    (#021 Importierte Items in Masse editieren) as (UC21)
-    (#022 Editierte importierte Items zum Ursprung zurücksetzen) as (UC22)
+    (#019 Importierte Items anzeigen) as (UC19)
+    (#020 Importierte Items filtern) as (UC20)
+    (#021 Importierte Items einzeln editieren) as (UC21)
+    (#022 Importierte Items in Masse editieren) as (UC22)
+    (#023 Editierte importierte Items zum Ursprung zurücksetzen) as (UC23)
 }
 
-Actor1 -- (UC18)
 Actor1 -- (UC19)
 Actor1 -- (UC20)
-Actor1 - (UC21)
-Actor1 -- (UC22)
+Actor1 -- (UC21)
+Actor1 - (UC22)
+Actor1 -- (UC23)
 
-(UC19) .> (UC18) : <<extend>>
+(UC20) .> (UC19) : <<extend>>
 
-(UC18) -[hidden]- (UC21)
 (UC19) -[hidden]- (UC22)
+(UC20) -[hidden]- (UC23)
 
 @enduml

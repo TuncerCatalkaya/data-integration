@@ -4,28 +4,28 @@ left to right direction
 actor Benutzer as Actor1
 
 rectangle "Abgebildete Items" {
-    (#041 Abgebildete Items anzeigen) as (UC41)
-    (#042 Abgebildete Items filtern) as (UC42)
-    (#043 Abgebildete Items einzeln editieren) as (UC43)
-    (#044 Abgebildete Items in Masse editieren) as (UC44)
-    (#045 Editierte abgebildete Items zum Ursprung zurücksetzen) as (UC45)
-    (#046 Abgebildete Items ins Zielsystem integrieren) as (UC46)
+    (#042 Abgebildete Items anzeigen) as (UC42)
+    (#043 Abgebildete Items filtern) as (UC43)
+    (#044 Abgebildete Items einzeln editieren) as (UC44)
+    (#045 Abgebildete Items in Masse editieren) as (UC45)
+    (#046 Editierte abgebildete Items zum Ursprung zurücksetzen) as (UC46)
+    (#047 Abgebildete Items ins Zielsystem integrieren) as (UC47)
 }
 
 note "Host/Datenbank\nRechteabhängig" as N1
 
-Actor1 -- (UC41)
 Actor1 -- (UC42)
 Actor1 -- (UC43)
 Actor1 -- (UC44)
 Actor1 -- (UC45)
 Actor1 -- (UC46)
+Actor1 -- (UC47)
 
-(UC42) .> (UC41) : <<extend>>
+(UC43) .> (UC42) : <<extend>>
 
-(UC41) -[hidden]- (UC44)
 (UC42) -[hidden]- (UC45)
+(UC43) -[hidden]- (UC46)
 
-N1 .. (UC46)
+N1 .. (UC47)
 
 @enduml
