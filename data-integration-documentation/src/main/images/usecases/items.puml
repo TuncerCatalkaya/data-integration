@@ -3,12 +3,12 @@ left to right direction
 
 actor Benutzer as Actor1
 
-rectangle Items {
+rectangle "Importierte Items" {
     (#018 Importierte Items anzeigen) as (UC18)
     (#019 Importierte Items filtern) as (UC19)
     (#020 Importierte Items einzeln editieren) as (UC20)
     (#021 Importierte Items in Masse editieren) as (UC21)
-    (#022 Editierte Items zum Ursprung zurücksetzen) as (UC22)
+    (#022 Editierte importierte Items zum Ursprung zurücksetzen) as (UC22)
 }
 
 Actor1 -- (UC18)

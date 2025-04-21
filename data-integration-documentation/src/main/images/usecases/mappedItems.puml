@@ -3,13 +3,13 @@ left to right direction
 
 actor Benutzer as Actor1
 
-rectangle "Mapped Items" {
-    (#041 Mapped Items anzeigen) as (UC41)
-    (#042 Mapped Items filtern) as (UC42)
-    (#043 Mapped Items einzeln editieren) as (UC43)
-    (#044 Mapped Items in Masse editieren) as (UC44)
-    (#045 Mapped Items zum Ursprung zurücksetzen) as (UC45)
-    (#046 Mapped Items integrieren ins Zielsystem) as (UC46)
+rectangle "Abgebildete Items" {
+    (#041 Abgebildete Items anzeigen) as (UC41)
+    (#042 Abgebildete Items filtern) as (UC42)
+    (#043 Abgebildete Items einzeln editieren) as (UC43)
+    (#044 Abgebildete Items in Masse editieren) as (UC44)
+    (#045 Editierte abgebildete Items zum Ursprung zurücksetzen) as (UC45)
+    (#046 Abgebildete Items ins Zielsystem integrieren) as (UC46)
 }
 
 note "Host/Datenbank\nRechteabhängig" as N1

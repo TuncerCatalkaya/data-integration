@@ -4,17 +4,17 @@ left to right direction
 actor Benutzer as Actor1
 actor Scheduler as Actor2
 
-rectangle Mappings {
-    (#029 Mapping erstellen) as (UC29)
-    (#030 Mapping editieren) as (UC30)
-    (#031 Mapping zur Löschung markieren) as (UC31)
-    (#032 Mapping wiederherstellen) as (UC32)
-    (#033 Mapping löschen) as (UC33)
-    (#034 Mapping anzeigen) as (UC34)
-    (#035 Mapping speichern) as (UC35)
-    (#036 Gespeichertes Mapping laden) as (UC36)
-    (#037 Gespeichertes Mapping löschen) as (UC37)
-    (#038 Erstelltes Mapping zu importierten Items zuweisen) as (UC38)
+rectangle Abbildungen {
+    (#029 Abbildung erstellen) as (UC29)
+    (#030 Abbildung editieren) as (UC30)
+    (#031 Abbildung zur Löschung markieren) as (UC31)
+    (#032 Abbildung wiederherstellen) as (UC32)
+    (#033 Abbildung löschen) as (UC33)
+    (#034 Abbildung anzeigen) as (UC34)
+    (#035 Abbildung speichern) as (UC35)
+    (#036 Gespeicherte Abbildung laden) as (UC36)
+    (#037 Gespeicherte Abbildung löschen) as (UC37)
+    (#038 Erstellte Abbildung zu importierten Items zuweisen) as (UC38)
     (#039 Automapper konfigurieren) as (UC39)
     (#040 Konfigurierten Automapper anwenden) as (UC40)
 }
