@@ -6,9 +6,9 @@ actor Benutzer as Actor1
 rectangle "Importierte Items" {
     (#019 Importierte Items anzeigen) as (UC19)
     (#020 Importierte Items filtern) as (UC20)
-    (#021 Importierte Items einzeln editieren) as (UC21)
-    (#022 Importierte Items in Masse editieren) as (UC22)
-    (#023 Editierte importierte Items zum Ursprung zurücksetzen) as (UC23)
+    (#021 Importierte Items\neinzeln editieren) as (UC21)
+    (#022 Importierte Items\nin Masse editieren) as (UC22)
+    (#023 Editierte importierte Items\nzum Ursprung zurücksetzen) as (UC23)
 }
 
 Actor1 -- (UC19)

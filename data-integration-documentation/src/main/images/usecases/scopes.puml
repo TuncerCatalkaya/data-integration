@@ -5,20 +5,22 @@ actor Benutzer as Actor1
 actor Scheduler as Actor2
 
 rectangle "S3-Objektspeicher" {
-    (#009 CSV-Datei hochladen) as (UC9)
+    (#009 CSV-Datei\nhochladen) as (UC9)
 }
 
 rectangle "Importe" {
-    (#012 Editieren von Spaltenbezeichnungen) as (UC12)
-    (#016 Importierte Datei zur Löschung markieren) as (UC16)
+    (#012 Editieren von\nSpaltenbezeichnungen) as (UC12)
+    (#016 Import zur\nLöschung markieren) as (UC16)
     (#010 CSV-Datei importieren) as (UC10)
-    (#011 Hinzufügen neuer Spalten) as (UC11)
-    (#013 Ausblenden/Einblenden von Spalten) as (UC13)
-    (#014 Reihenfolge der Spalten ändern) as (UC14)
+    (#011 Hinzufügen neuer\nSpalten) as (UC11)
+    (#013 Ausblenden/Einblenden\nvon Spalten) as (UC13)
+    (#014 Reihenfolge der\nSpalten ändern) as (UC14)
     (#015 Spalte löschen) as (UC15)
     (#017 Import löschen) as (UC17)
-    (#018 Import wiederherstellen) as (UC18)
+    (#018 Import\nwiederherstellen) as (UC18)
 }
+
+note "Große CSV-Dateien\nmit Hilfe des S3" as N1
 
 Actor2 -- (UC17)
 
@@ -35,5 +37,7 @@ Actor1 - (UC18)
 (UC9) ..> UC10 : <<extend>>
 (UC17) ..> (UC16) : <<extend>>
 (UC18) ..> UC16 : <<extend>>
+
+N1 .. (UC10)
 
 @enduml

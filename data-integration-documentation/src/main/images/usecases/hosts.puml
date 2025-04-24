@@ -8,8 +8,8 @@ rectangle "Hosts/Datenbanken" {
     (#025 Host/Datenbank editieren) as (UC25)
     (#026 Host/Datenbank löschen) as (UC26)
     (#027 Hosts/Datenbanken anzeigen) as (UC27)
-    (#028 Host auswählen) as (UC28)
-    (#029 Daten vom ausgewählten Host laden) as (UC29)
+    (#028 Host/Datenbank auswählen) as (UC28)
+    (#029 Daten vom\nausgewählten Host laden) as (UC29)
 }
 
 note "Entweder vom ausgewählten Host\noder von der eigenen Datenbank" as N1

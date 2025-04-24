@@ -10,8 +10,8 @@ rectangle Projekte {
     (#003 Projekte anzeigen) as (UC3)
     (#004 Projekte filtern) as (UC4)
     (#005 Projekt editieren) as (UC5)
-    (#006 Projekt zur Löschung markieren) as (UC6)
-    (#007 Projekt wiederherstellen) as (UC7)
+    (#006 Projekt zur\nLöschung markieren) as (UC6)
+    (#007 Projekt\nwiederherstellen) as (UC7)
     (#008 Projekt löschen) as (UC8)
 }
 
