@@ -1,0 +1,38 @@
+@startuml
+start
+group Async multi-threaded Import
+    :Retrieve scope from scope id;
+    if (scope does not end with csv?) then (yes)
+      :Mark scope for deletion;
+      stop
+    else (no)
+    endif
+    if (scope is marked for deletion?) then (yes)
+      stop
+    else (no)
+    endif
+    if (scope is already being processed?) then (yes)
+        stop
+    else (no)
+    endif
+    if (scope is already finished (imported)?) then (yes)
+        stop
+    else (no)
+    end if
+    while (retry attempts for scope are available AND not successful AND \n (scope is not marked for deletion OR is not marked to be interrupted))
+        group Batch Processing
+          :Call batch processing;
+        end group
+    endwhile
+    if (import was successful?) then (yes)
+        :Delete checkpoint;
+    else (no)
+        if (import is file import (not from s3)?) then (yes)
+            :Mark scope for deletion;
+            :Delete checkpoint;
+        else (no)
+        endif
+    endif
+end group
+stop
+@enduml

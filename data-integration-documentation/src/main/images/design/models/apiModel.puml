@@ -1,0 +1,75 @@
+@startuml
+
+package "org.dataintegration.api" as apiPackage {
+
+    abstract class DataIntegrationControllerAPI {
+        - dataIntegrationHeaderAPI: DataIntegrationHeaderAPI
+        - dataIntegrationAPI: DataIntegrationAPI
+        + getHeadersRestCall(language: String): DataIntegrationHeaderAPIModel {abstract}
+        # defaultGetHeadersRestCall(language: String): DataIntegrationHeaderAPIModel
+        + integrationRestCall(database: String, language: String, dataIntegrationInput: DataIntegrationInputAPIModel): DataIntegrationAPIModel {abstract}
+        # defaultIntegrationRestCall(database: String, language: String, dataIntegrationInput: DataIntegrationInputAPIModel): DataIntegrationAPIModel
+        # getDataIntegrationHeaderAPI()
+        # getDataIntegrationAPI()
+    }
+
+    interface DataIntegrationAPI {
+        + doIntegration(database: String, language: String, dataIntegrationInput: DataIntegrationInputAPIModel): DataIntegrationAPIModel
+    }
+
+    interface DataIntegrationHeaderAPI {
+        + getHeaders(language: String): DataIntegrationHeaderAPIModel
+    }
+
+}
+
+DataIntegrationControllerAPI --> "0..1" DataIntegrationHeaderAPI: dataIntegrationHeaderAPI
+DataIntegrationControllerAPI --> "0..1" DataIntegrationAPI: dataIntegrationAPI
+
+package "org.dataintegration.model" as modelPackage {
+
+    class DataIntegrationAPIModel {
+        - integrationResults: List<DataIntegrationResultAPIModel>
+    }
+
+    class DataIntegrationResultAPIModel {
+        - input: DataIntegrationInputDataAPIModel
+        - errorMessages: List<String>
+    }
+
+    class DataIntegrationInputAPIModel {
+        - inputs: List<DataIntegrationInputDataAPIModel>
+    }
+
+    class DataIntegrationInputDataAPIModel {
+        - mappedItemId: UUID
+        - data: Map<String, String>
+    }
+
+    class DataIntegrationHeaderAPIModel {
+        - headers: List<DataIntegrationHeaderDataAPIModel>
+    }
+
+    class DataIntegrationHeaderDataAPIModel {
+        - id: String
+        - display: String
+        - optional: boolean
+        - tooltip: String
+        - alternatives: List<String>
+    }
+
+}
+
+DataIntegrationAPIModel --> "0..*" DataIntegrationResultAPIModel: integrationResults
+DataIntegrationResultAPIModel --> "1" DataIntegrationInputDataAPIModel: input
+DataIntegrationInputAPIModel --> "0..*" DataIntegrationInputDataAPIModel: inputs
+
+DataIntegrationHeaderAPIModel --> "0..*" DataIntegrationHeaderDataAPIModel: headers
+
+
+DataIntegrationAPI --> "0..1" DataIntegrationInputAPIModel
+DataIntegrationAPI --> "0..1" DataIntegrationAPIModel
+
+DataIntegrationHeaderAPI --> "0..1" DataIntegrationHeaderAPIModel
+
+@enduml

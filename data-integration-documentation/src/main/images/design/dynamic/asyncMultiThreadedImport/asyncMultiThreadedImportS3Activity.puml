@@ -1,0 +1,18 @@
+@startuml
+start
+group Import from S3
+    :Read project id from s3 key;
+    :Check if user has permission to import a file to project;
+    :Read number of lines of file from s3 object tags;
+    :Read delimiter from s3 object tags;
+    :Create csv reader from s3 object inputstream;
+    group Async multi-threaded Import
+      :Call async multi-threaded Import;
+    end group
+    if (import was successful?) then (yes)
+      :Delete s3 object that was imported;
+    else (no)
+    endif
+end group
+stop
+@enduml

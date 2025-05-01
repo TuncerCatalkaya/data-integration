@@ -37,7 +37,7 @@ import java.util.UUID;
                 @Index(name = "idx_mapped_item_item_id", columnList = "item_id"),
                 @Index(name = "idx_mapped_item_mapping_id", columnList = "mapping_id"),
                 @Index(name = "idx_mapped_item_mapping_id_status", columnList = "mapping_id, status"),
-                @Index(name = "idx_mapped_item_item_id_mapping_id", columnList = "item_id, mapping_id")
+                @Index(name = "idx_mapped_item_item_id_mapping_id", columnList = "mapping_id, item_id")
         }
 )
 @Getter

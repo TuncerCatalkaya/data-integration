@@ -1,0 +1,38 @@
+@startuml
+
+node "Datenintegrationssoftware" {
+    component "Frontend"
+
+    component "Backend" as b1
+    interface REST as r1
+
+    component "S3-Objektspeicher" as s3
+    interface "Presigned URLs" as p1
+
+    database "Datenbank"
+}
+
+note left of p1
+Generiert
+vom
+Backend
+end note
+
+node "Zielsystem" {
+    component "Backend" as b2
+    interface REST as r2
+}
+
+b1 --> Datenbank: lesen/schreiben
+b1 --> s3: lesen/schreiben
+
+Frontend -> r1
+Frontend ---> p1: Hochladen von CSV-Dateien
+
+p1 - s3
+r1 - b1
+r2 - b2
+
+b1 --> r2: "Integration der Daten\nund lesen der Header-Daten"
+
+@enduml

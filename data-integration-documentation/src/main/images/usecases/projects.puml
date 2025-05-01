@@ -25,6 +25,8 @@ Actor1 -- (UC5)
 Actor1 -- (UC6)
 Actor1 -- (UC7)
 
+(UC1) -[hidden]- (UC5)
+
 (UC4) ..> (UC3) : <<extend>>
 (UC7) ..> UC6 : <<extend>>
 (UC8) ..> UC6 : <<extend>>

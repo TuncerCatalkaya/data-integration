@@ -1,0 +1,7 @@
+@startuml
+start
+group Async Batch Processing
+    
+end group
+stop
+@enduml

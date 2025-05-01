@@ -1,0 +1,23 @@
+@startuml
+start
+group Batch Pre-Processing
+    :Retrieve csv reader;
+    :Set batchIndex=1\nSet activeBatchesScope=0\nSet failed=false;
+    :Read first line from csv and transform to header model;
+    if (header is valid?) then (yes)
+        if (are scope headers null in entity (new import)?) then (yes)
+            :Set scope headers in entity and persist;
+        else (no)
+        endif
+    else (no)
+        :Set failed=true;
+    endif
+    group Batch Processing
+        :Call batch processing;
+    end group
+    group Batch Post-Processing
+        :Call batch post-processing;
+    end group
+end group
+stop
+@enduml

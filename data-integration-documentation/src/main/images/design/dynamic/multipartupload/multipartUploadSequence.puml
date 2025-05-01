@@ -1,0 +1,71 @@
+@startuml
+autonumber
+
+actor user
+participant frontend
+participant backend
+participant s3
+
+user -> frontend: Upload file to s3
+
+alt
+
+    activate frontend
+    frontend -> backend: initiate multipart upload (bucket, key)
+    activate backend
+    backend -> s3: CreateMultipartUpload (bucket, key)
+    activate s3
+    s3 --> backend: CreateMultipartUploadResponse
+    backend --> frontend: upload id
+
+    frontend -> frontend: calculate total number of parts
+    loop each part
+        frontend -> frontend: calculate start and end byte of file/part
+        frontend -> frontend: estimate number of lines for file/part
+        par limited by how many threads should be used  (configuration)
+            frontend -> backend: generate presigned url multipart upload\n(bucket, key, uploadId, partNumber)
+            backend -> s3: PresignUploadPart\n(bucket, key, uploadId, partNumber)
+            s3 --> backend: PresignedUploadPartResponse
+            backend --> frontend: presigned url
+            frontend -> s3: upload file/part with the presigned url
+            s3 --> frontend: upload response
+            opt upload response not ok
+            frontend -> frontend: failed to upload file/part
+            end
+            opt Etag does not exist in upload response
+            frontend -> frontend: missing Etag in upload response
+            end
+            frontend --> user: update upload progress
+        end
+        frontend -> frontend: add upload response (eTag, partNumber)\nto completedParts array
+    end
+
+newpage
+
+    frontend -> backend: complete multipart upload\n(bucket, key, uploadId, lineCount, delimiter, completedParts)
+    backend -> s3: CompleteMultipartUpload\n(bucket, key, uploadId, completedParts)
+    s3 --> backend: CompleteMultipartUploadResponse
+    backend -> s3: PutObjectTagging\n(bucket, key, lineCount, delimiter)
+    s3 --> backend: PutObjectTaggingResponse
+    backend --> frontend: OK
+
+else exception
+
+    frontend -> backend: abort multipart upload (bucket, key, uploadId)
+    backend -> s3: AbortMultipartUpload\n(bucket, key, uploadId)
+    s3 --> backend: AbortMultipartUploadResponse
+    deactivate s3
+    backend --> frontend: OK
+    deactivate backend
+
+end
+
+alt success
+    frontend --> user: upload progress done
+else error
+    frontend --> user: show error,\nalso log in console
+end
+
+deactivate frontend
+
+@enduml

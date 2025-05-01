@@ -18,6 +18,7 @@ rectangle "Importe" {
     (#015 Spalte löschen) as (UC15)
     (#017 Import löschen) as (UC17)
     (#018 Import\nwiederherstellen) as (UC18)
+    (#048 Import\nunterbrechen) as (UC48)
 }
 
 note "Große CSV-Dateien\nmit Hilfe des S3" as N1
@@ -33,6 +34,9 @@ Actor1 - (UC14)
 Actor1 - (UC15)
 Actor1 - (UC16)
 Actor1 - (UC18)
+Actor1 - (UC48)
+
+(UC12) -[hidden]- (UC48)
 
 (UC9) ..> UC10 : <<extend>>
 (UC17) ..> (UC16) : <<extend>>

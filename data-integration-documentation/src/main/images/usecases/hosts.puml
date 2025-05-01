@@ -17,7 +17,7 @@ note "Entweder vom ausgewählten Host\noder von der eigenen Datenbank" as N1
 Actor1 -- (UC24)
 Actor1 -- (UC25)
 Actor1 -- (UC26)
-Actor1 -- (UC27)
+Actor1 - (UC27)
 Actor1 -- (UC28)
 
 (UC28) ..> (UC29): <<include>>

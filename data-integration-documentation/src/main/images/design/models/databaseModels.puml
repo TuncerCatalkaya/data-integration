@@ -1,0 +1,95 @@
+@startuml
+left to right direction
+
+package "org.dataintegration.model" as modelPackage {
+    class ProjectModel {
+        - id: UUID
+        - name: String
+        - createdBy: String
+        - createdDate: Date
+        - lastModifiedDate: Date
+    }
+
+    class ScopeModel {
+        - id: UUID
+        - key: String
+        - createdDate: Date
+    }
+
+    class ItemModel {
+        - id: UUID
+        - properties: Map<String, ItemPropertiesModel>
+        - mappingIds: List<UUID>
+    }
+
+    class MappedItemModel {
+        - id: UUID
+        - properties: Map<String, ItemPropertiesModel>
+        - status: ItemStatusModel
+        - errorMessages: List<String>
+        - item: ItemModel
+    }
+
+    class ItemPropertiesModel {
+        - value: String
+        - originalValue: String
+    }
+
+    enum ItemStatusModel {
+        MAPPED
+        INTEGRATED
+        FAILED
+    }
+
+    class HostModel {
+        - id: UUID
+        - name: String
+        - baseUrl: String
+        - integrationPath: String
+        - headerPath: String
+        - inUse: boolean
+        - databases: List<DatabaseModel>
+    }
+
+    class DatabaseModel {
+        - id: UUID
+        - name: String
+        - inUse: boolean
+    }
+
+    class MappingModel {
+        - id: UUID
+        - name: String
+        - createdDate: Date
+        - finished: boolean
+        - processing: boolean
+        - mapping: Map<String, String[]>
+        - database: SelectedDatabaseModel
+    }
+
+    class SelectedDatabaseModel {
+        - id: UUID
+        - name: String
+        - host: SelectedHostModel
+    }
+
+    class SelectedHostModel {
+        - id: UUID
+        - name: String
+        - baseUrl: String
+        - integrationPath: String
+        - headerPath: String
+    }
+
+}
+
+ItemModel -> "0..*" ItemPropertiesModel: properties
+MappedItemModel --> "0..*" ItemPropertiesModel: properties
+MappedItemModel --> "0..1" ItemStatusModel: status
+MappedItemModel --> "0..1" ItemModel: item
+
+HostModel --> "0..*" DatabaseModel: databases
+MappingModel --> "0..1" SelectedDatabaseModel: database
+SelectedDatabaseModel -> "0..1" SelectedHostModel: host
+
+@enduml
