@@ -1,0 +1,35 @@
+@startuml
+
+class ScopeEntity {
+    ...
+    - headers: LinkedHashSet<HeaderModel>
+    ...
+}
+
+class HeaderModel {
+    - id: String
+    - display: String
+    - hidden: boolean
+    + HeaderModel(id: String)
+}
+
+class ItemEntity {
+    ...
+    - properties: Map<String, ItemPropertiesModel>
+    ...
+}
+
+class ItemPropertiesModel {
+    - value: String
+    - originalValue: String
+}
+
+ScopeEntity --> "0..*" HeaderModel: headers
+ItemEntity --> "0..*" ItemPropertiesModel: properties
+
+note right of HeaderModel
+Konstruktor:
+this.id = id + "_" + UUID.randomUUID();
+end note
+
+@enduml

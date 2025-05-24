@@ -2,9 +2,9 @@
 left to right direction
 
 actor Biologieexperte as biologieExperte
-actor BDW as bdw
+actor "      <<System>>\nBDW-Applikation\n (Zielapplikation)" as bdw
 
-rectangle "Datenintegrationssoftware" {
+rectangle "Datenintegration" {
     (#001 CSV-Datei importieren) as (UC1)
     (#002 Neue Spalte hinzufügen) as (UC2)
     (#003 Zelleninhalt editieren) as (UC3)
@@ -12,7 +12,6 @@ rectangle "Datenintegrationssoftware" {
     (#005 Automapper ausführen) as (UC5)
     (#006 Abgebildete Daten integrieren/importieren) as (UC6)
     (#007 Biodiversitätsfunddaten importieren) as (UC7)
-    (#008 Aussagekräftige Fehlermeldungen\nrückmelden) as (UC8)
 }
 
 
@@ -24,7 +23,6 @@ biologieExperte -- UC5
 biologieExperte -- UC6
 
 UC7 --- bdw
-UC8 --- bdw
 
 UC2 ..> UC1: <<extend>>
 UC3 ..> UC1: <<extend>>
@@ -32,8 +30,6 @@ UC3 ..> UC1: <<extend>>
 UC5 ..> UC4: <<include>>
 
 UC6 .> UC7: <<include>>
-UC8 .> UC7: <<extend>>
-UC8 .> UC6: <<extend>>
 
 'UC1 -[hidden]- UC3
 'UC2 -[hidden]- UC4

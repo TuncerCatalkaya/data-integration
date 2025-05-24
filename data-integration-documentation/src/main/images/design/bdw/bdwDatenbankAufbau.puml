@@ -1,0 +1,32 @@
+@startuml
+
+node "Biodiversity Warehouse (BDW)" {
+
+    component "BDW Backend" as backend
+    interface REST as rest
+    backend - rest
+
+    component "BDW Frontend" as frontend
+
+    node atlas {
+        database fish
+        database mammal
+        database mussel
+        database pernambuco_fish
+        database naturschutzstiftung_fww
+    }
+
+    database auth
+
+    rest <- frontend: /{atlas}/...
+
+    auth <- backend
+
+    backend ---> fish
+    backend ---> mammal
+    backend ---> mussel
+    backend ---> pernambuco_fish
+    backend ---> naturschutzstiftung_fww
+}
+
+@enduml

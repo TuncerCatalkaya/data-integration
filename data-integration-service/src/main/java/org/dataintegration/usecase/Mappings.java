@@ -122,10 +122,7 @@ class Mappings implements MappingsMethods {
 
     private MappingEntity getNewMappingEntity() {
         final MappingEntity mappingEntity = new MappingEntity();
-        mappingEntity.setFinished(false);
-        mappingEntity.setProcessing(false);
         mappingEntity.setDelete(false);
-        mappingEntity.setLastProcessedBatch(-1);
         return mappingEntity;
     }
 

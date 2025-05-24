@@ -55,13 +55,7 @@ public class MappingEntity {
     @Column(nullable = false)
     private Date createdDate;
 
-    private boolean finished;
-
-    private boolean processing;
-
     private boolean delete;
-
-    private long lastProcessedBatch;
 
     @NotNull
     @Column(nullable = false)

@@ -1,0 +1,14 @@
+@startuml
+
+class MappingEntity {
+    ...
+    - mappings: Map<String, String[]>
+    ...
+}
+
+note right of MappingEntity
+Schlüssel = Quelle
+Wert = Ziele
+end note
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+start
+
+:Algorithmus auswählen;
+
+:Ähnlichkeitsschwelle konfigurieren;
+
+:Anzahl der Top-Vorschläge konfigurieren;
+
+:Heuristik an- oder ausschalten;
+
+:Automapper ausführen;
+
+if (Ziele, denen keine Quelle zugeordnet werden konnte?) is (ja) then
+    :Auswahl, für welcher dieser Ziele eine Spalte generiert werden soll;
+    if (Generieren?) is (ja) then
+        :Alle ausgewählten Ziele bekommen eine Spalte generiert;
+    else (nein)
+    endif
+else (nein)
+endif
+
+stop
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+
+class MappedItemEntity {
+    ...
+    - properties: Map<String, ItemPropertiesModel>
+    - status: ItemStatusModel
+    - errorMessages: List<String>
+    ...
+}
+
+enum ItemStatusModel {
+    MAPPED
+    INTEGRATED
+    FAILED
+}
+
+class ItemPropertiesModel {
+    - value: String
+    - originalValue: String
+}
+
+MappedItemEntity -> "0..*" ItemPropertiesModel: properties
+MappedItemEntity --> "0..1" ItemStatusModel: status
+
+@enduml

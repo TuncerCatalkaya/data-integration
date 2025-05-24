@@ -6,7 +6,8 @@ services:
     environment:
       - SERVER_PORT=8001
       - SPRING_DATASOURCE_URL=jdbc:postgresql://data-integration-db:5432/data-integration
-      - S3_ENDPOINT=http://data-integration-minio:9000
+      - S3_ENDPOINT_CLIENT=http://data-integration-minio:9000
+      - S3_ENDPOINT_PRESIGNER=http://data-integration-minio:9000
     depends_on:
       - data-integration-db
       - data-integration-minio

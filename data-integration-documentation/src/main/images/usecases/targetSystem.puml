@@ -4,7 +4,7 @@ rectangle Biodiversitätsfunddatensätze as biodiversitätsfunddatensätze
 
 usecase Datenintegrationssoftware as datenIntegration
 rectangle "Datenbank\n(Datenintegration)" as datenIntegrationDatenbank
-rectangle "Objektspeicher (S3)" as s3
+rectangle "MinIO (S3-Objektspeicher)" as s3
 
 rectangle "Biodiversity Warehouse (BDW)" as bdw
 rectangle "Datenbank\n(BDW)" as bdwDatenbank

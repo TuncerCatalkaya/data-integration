@@ -1,0 +1,33 @@
+@startuml
+start
+
+repeat
+    :Auslesen der Spaltenheader und Pesistierung als Scope headers;
+
+    while (CSV-Datei hat nächste Zeile und kein Fehler aufgetreten?) is (ja)
+        :Zeile auslesen und als ItemEntity ablegen; ItemEntity dem Batch hinzufügen;
+        if (Ist Batch voll?) is (ja) then
+             group Synchronized Block
+                while (Maximale Anzahl an zu parallel verarbeiteten Batches erreicht?) is (ja)
+                    :Warten (Thread.sleep);
+                endwhile (nein)
+            end group
+            group Parallele Verarbeitung (für jeden Batch einzeln)
+                fork
+                    repeat
+                        :Persistieren eines Batches;
+                        :Persistieren des Checkpoints (Batch wird vermerkt als abgeschlossen);
+                    repeat while (Fehler aufgetreten und Wiederholversuche noch verfügbar? (Batch)) is (ja) not (nein)
+                end fork
+                :Freigeben der Ressource (Anpassen des Zählers für die parallel verarbeiteten Batches);
+            end group
+            :Batch leeren (Bereit machen zur erneuten Befüllung);
+        else (nein)
+        endif
+    endwhile (nein)
+repeat while (Fehler aufgetreten und Wiederholversuche noch verfügbar? (Scope)) is (ja) not (nein)
+
+
+
+stop
+@enduml

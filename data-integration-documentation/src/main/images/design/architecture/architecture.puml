@@ -1,59 +1,82 @@
 @startuml
 
-node "data-integration-parent" as dataIntegrationParent {
-    node "backend" as dataIntegrationBackend {
-        component "data-integration-application" as application
-        interface REST as dataIntegrationApplicationRest
+actor "Biologieexperte" as biologe
 
-        component "data-integration-service" as service
+node "Biodiversitätsportale" {
+    component "GBIF" as gbif {
+        portout "Biodiversitätsfunddatensätze" as gbifExportPort
     }
 
-    component "data-integration-frontend" as frontend
-    interface "build" as frontendBuild
-
-    component "data-integration-model" as model
-
-    component "data-integration-api" as api
-    interface "API" as apiInterface
-
-    database "data-integration" as db
+    component "PANGAEA" as pangaea {
+        portout "Biodiversitätsfunddatensätze" as pangaeaExportPort
+    }
 }
 
-node "target-application" as targetApplication {
-    component backend as targetApplicationBackend
-    interface REST as targetApplicationBackendRest
+component "Datenintegrationssoftware" {
+    portin "CSV" as csv
+
+    storage "MinIO (S3-Objektspeicher)" as s3
+    interface "          Vorab signierte URLs" as s3Interface
+    s3Interface -- s3
+
+    component "Import" as import
+    interface REST as importRest
+    importRest -- import
+
+    component "Abbildung" as abbildung
+    interface "Abgebildete Daten" as abbildungInterface
+    abbildungInterface - abbildung
+
+    component "Integration" as integration
+    portout "JavaScript-Datei\nder Benutzeroberfläche" as javascriptDatei
+
+    component "API" as api
+    interface "API-Definitionen" as apiInterface
+    api -- apiInterface
+
+    database "Datenbank" as datenbank
 }
 
-component s3
-interface "  presigned urls" as s3PresignedUrl
+gbifExportPort --> csv
+pangaeaExportPort --> csv
+csv --> s3Interface: hochladen
+csv -> importRest: direkt\nimportieren
 
-targetApplication -l[hidden]-> dataIntegrationParent
+import -> s3: liest
+import --> datenbank: persistiert
 
-dataIntegrationBackend --> db: read/write
+abbildung -> datenbank: schreiben/lesen
 
-s3PresignedUrl - s3
-frontend --> s3PresignedUrl: upload files
-application -> s3: read/write
+integration -> abbildungInterface: verwendet
 
-targetApplicationBackendRest - targetApplicationBackend
-api -- apiInterface
+node "Biodiversity Warehouse (BDW)" {
 
-dataIntegrationApplicationRest -- application
-frontend --> dataIntegrationApplicationRest: communicates
+    component "Benutzeroberfläche\nfür Administratoren" as adminUI
 
-frontend - frontendBuild
-application --> frontendBuild: includes\nand serves
+    component "BDW Backend" as backend {
+        component Funddatenimport as funddatenImport
+    }
+    interface "REST Funddatenimport" as restDatenintegration
+    interface "REST" as rest
+    restDatenintegration -- funddatenImport
+    backend -- rest
 
-application ..> service: uses
-service ..> model: uses
-api ..> model: uses
+    component "BDW Frontend" as frontend
 
-targetApplicationBackend --> apiInterface: implements
-application --> targetApplicationBackendRest: integration \nand reading header data
+    database "Datenbank" as bdwDatenbank
 
-note right of s3PresignedUrl
-generated
-by backend
-end note
+}
+
+backend --> bdwDatenbank: schreiben/lesen
+apiInterface <-- backend: implementiert/benutzt
+
+integration --> restDatenintegration: import der Funddaten\n(abgebildeten Daten)
+frontend --> rest: Kommunikation
+
+javascriptDatei -> adminUI: eingebunden
+
+biologe -> adminUI: interagiert
+biologe -> gbif: exportiert Funddaten
+biologe -> pangaea: exportiert Funddaten
 
 @enduml

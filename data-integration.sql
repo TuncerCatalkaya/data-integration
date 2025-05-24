@@ -139,11 +139,8 @@ CREATE TABLE public.mapping (
     id uuid NOT NULL,
     created_date timestamp(6) without time zone NOT NULL,
     delete boolean NOT NULL,
-    finished boolean NOT NULL,
-    last_processed_batch bigint NOT NULL,
     mapping jsonb NOT NULL,
     name character varying(255) NOT NULL,
-    processing boolean NOT NULL,
     database_id uuid NOT NULL,
     scope_id uuid NOT NULL
 );
@@ -237,7 +234,7 @@ COPY public.mapped_item (id, error_messages, properties, status, item_id, mappin
 -- Data for Name: mapping; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mapping (id, created_date, delete, finished, last_processed_batch, mapping, name, processing, database_id, scope_id) FROM stdin;
+COPY public.mapping (id, created_date, delete, mapping, name, database_id, scope_id) FROM stdin;
 \.
 
 

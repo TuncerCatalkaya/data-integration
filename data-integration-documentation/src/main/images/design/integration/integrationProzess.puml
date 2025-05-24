@@ -1,0 +1,12 @@
+@startuml
+start
+
+repeat
+    :Abgebildetes Item integrieren;
+    backward:Fehler beheben;
+repeat while (Integration fehlgeschlagen?) is (ja) not (nein)
+
+:Daten werden kopiert in das properties-Attribut von MappedItemEntity\nund vor Editierung geschützt (read-only/data freeze);
+
+stop
+@enduml

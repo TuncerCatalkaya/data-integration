@@ -37,8 +37,6 @@ export interface MappingResponse {
     id: string
     name: string
     createdDate: Date
-    finished: boolean
-    processing: boolean
     mapping: Mapping
     database: SelectedDatabaseResponse
 }

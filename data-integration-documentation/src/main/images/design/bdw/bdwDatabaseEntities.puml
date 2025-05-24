@@ -1,0 +1,218 @@
+@startuml
+
+entity dist_record_species {
+    * id : integer <<generated>>
+    --
+    recordid : integer <<FK>>
+    speciesid : integer <<FK>>
+    count : integer
+    classified : boolean
+    comment : integer
+    * recordqualityid : integer <<FK>>
+}
+
+entity desc_species {
+    * id : integer <<generated>>
+    --
+    * scientificname : character varying(100)
+    form : character varying(100)
+    * discoverer : character varying(100)
+    discoveryyear : character varying(4)
+    * revisionflag : integer
+    imageid : integer <<FK>>
+    taxonomyid : integer <<FK>>
+    * editorid : integer
+    published : smallint
+    checked_out : integer
+    checked_out_time :: timestamp with time zone
+}
+
+entity dist_record_image {
+    * recordid : integer <<FK>>
+    * imageid : integer <<FK>>
+}
+
+entity dist_record_right {
+    * recordid : integer <<FK>>
+    * rightid : integer <<FK>>
+    value : boolean
+}
+
+entity dist_recordquality {
+    * id : integer <<generated>>
+    --
+    * recordquality : character varying(255)
+}
+
+entity dist_recordquality_language {
+    * id : integer <<generated>>
+    --
+    * recordqualityid : integer <<FK>>
+    languageid : integer <<FK>>
+    * recordquality_name : character varying(255)
+}
+
+entity img_image {
+    * id : integer <<generated>>
+    --
+    name : character varying(255)
+    source : character varying(255)
+    path : character varying(255)
+    belongs_to_record : boolean
+}
+
+entity dist_right {
+    * id : integer <<generated>>
+    --
+    * name : text
+    description : text
+    * position : integer
+    * default : boolean
+}
+
+entity dist_record {
+    * id : integer <<generated>>
+    --
+    creatorid : integer
+    editorid : integer
+    validatorid : integer
+    sourcetypeid : integer <<FK>>
+    samplemethodid : integer <<FK>>
+    entrydate : date
+    samplingdatestart : date
+    samplingdateend : date
+    comment : text
+    reference : text
+    published : boolean
+    isDraft : boolean
+    locationpoint : geometry(Point,4326)
+    locationcomment : text
+    locationinaccuracy : integer
+    additionalproperties : text
+    locationid : integer <<FK>>
+    samplingdatestartaccuracy : integer
+    samplingdateendaccuracy : integer
+    referencepublication : integer <<FK>>
+    referencecollection : integer <<FK>>
+    referencedatabase : integer <<FK>>
+    * isownsighting : boolean
+    referenceexternalsighting : integer <<FK>>
+    <back:yellow>referenceportal : integer <<FK>></back>
+}
+
+entity dist_sourcetype {
+    * id : integer <<generated>>
+    --
+    * sourcename : character varying(100)
+    short : character varying(100)
+    sourceproperties : text
+}
+
+entity dist_samplemethod {
+    * id : integer <<generated>>
+    --
+    * sample_method_name : character varying(100)
+}
+
+entity dist_samplemethod_language {
+    * id : integer <<generated>>
+    --
+    * samplemethodid : integer <<FK>>
+    languageid : integer <<FK>>
+    * samplemethod_name : character varying(255)
+}
+
+entity dist_location {
+    * id : integer <<generated>>
+    --
+    staticidentifier : character varying(6)
+    description : text
+    location : geometry(MultiPolygon,4326)
+    gridsystemid : integer
+    centerpoint : geometry(Point,4326)
+}
+
+entity dist_gridsystem {
+    * id : integer <<generated>>
+    --
+    name : character varying(50)
+}
+
+entity ref_publication {
+    * id : integer <<generated>>
+    --
+    * data : jsonb
+}
+
+entity ref_database {
+    * id : integer <<generated>>
+    --
+    * database : integer <<FK>>
+    externalrecordid : text
+}
+
+entity desc_database {
+    * id : integer <<generated>>
+    --
+    * name : text
+    * shortreference : text
+}
+
+entity ref_portal #yellow {
+    * id : integer <<generated>>
+    --
+    * referencedatabase : integer <<FK>>
+    referencepublisherdatabase : integer <<FK>>
+    * referencepublication : integer <<FK>>
+}
+
+entity desc_language {
+    * id : integer <<generated>>
+    --
+    language : character varying(50)
+    code : character varying(11)
+}
+
+dist_record_species }o..|| dist_record: recordid
+'dist_recordquality ||..|{ dist_record_species: recordqualityid
+dist_record_species ||..|{ dist_recordquality: recordqualityid
+desc_species ||.o{ dist_record_species: speciesid
+desc_species }o.|| img_image: imageid
+
+'dist_recordquality_language }|..|| dist_recordquality: recordqualityid
+dist_recordquality }|..|| dist_recordquality_language: recordqualityid
+'desc_language ||.o{  dist_recordquality_language: languageid
+dist_recordquality_language ||..o{  desc_language: languageid
+
+dist_record_image }|..|| dist_record: recordid
+img_image ||..|{ dist_record_image: imageid
+
+dist_record_right }|..|| dist_record: recordid
+dist_right ||..|{ dist_record_right: rightid
+
+dist_record }o..l|| dist_sourcetype: sourcetypeid
+dist_sourcetype -[hidden]- ref_portal
+
+dist_record }o..|| dist_samplemethod: samplemethodid
+dist_samplemethod ||..|{ dist_samplemethod_language: samplemethodid
+desc_language ||.o{  dist_samplemethod_language: languageid
+
+dist_record }o....|| dist_location: locationid
+dist_location }o.|| dist_gridsystem: gridsystemid
+desc_language -[hidden]- dist_gridsystem
+
+dist_record }o....|| ref_publication: referencepublication
+
+dist_record }o..|| ref_database: referencedatabase
+ref_database }|..|| desc_database: database
+
+dist_record }o..[#orange]r|| ref_portal: referenceportal
+ref_portal }|..[#orange]|| ref_database: referencedatabase
+ref_portal }o..[#orange]|| ref_database: referencepublisherdatabase
+ref_portal }|..[#orange]|| ref_publication: " " "referencepublication"
+
+note right of dist_sourcetype
+Portal
+end note
+
+@enduml

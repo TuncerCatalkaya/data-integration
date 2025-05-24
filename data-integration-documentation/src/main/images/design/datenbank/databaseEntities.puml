@@ -1,0 +1,112 @@
+@startuml
+skinparam linetype ortho
+
+entity project {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * delete : boolean
+    * created_by : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * last_modified_date : timestamp(6) without time zone
+}
+
+entity scope {
+    * id : uuid <<generated>>
+    --
+    * key : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * finished : boolean
+    * external : boolean
+    * delete : boolean
+    headers : jsonb
+    * project_id : uuid <<FK>>
+}
+
+entity item {
+    * id : uuid <<generated>>
+    --
+    * line_number : bigint
+    * properties : jsonb
+    * scope_id : uuid <<FK>>
+}
+
+entity checkpoint {
+    * id : uuid <<generated>>
+    --
+    * batch_size : integer
+    * total_batches : bigint
+    * scope_id : uuid <<FK>>
+}
+
+entity checkpoint_batch {
+    * id : uuid <<generated>>
+    --
+    * batch_index : bigint
+    * checkpoint_id : uuid <<FK>>
+}
+
+entity host {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * base_url : character varying(255)
+    * integration_path : character varying(255)
+    * header_path : character varying(255)
+    headers : jsonb
+}
+
+entity database {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * host_id : uuid <<FK>>
+}
+
+entity mapping {
+    * id : uuid <<generated>>
+    --
+    * name : character varying(255)
+    * created_date : timestamp(6) without time zone
+    * delete : boolean
+    * mappings : jsonb
+    * database_id : uuid <<FK>>
+    * scope_id : uuid <<FK>>
+}
+
+entity mapped_item {
+    * id : uuid <<generated>>
+    --
+    properties : jsonb
+    * status : character varying(255)
+    error_messages : jsonb
+    * mapping_id : uuid <<FK>>
+    * item_id : uuid <<FK>>
+}
+
+note right of item
+index: line_number
+index: scope_id
+end note
+
+note right of mapped_item
+index: item_id
+index: mapping_id
+index: (mapping_id, status)
+index: (mapping_id, item_id)
+end note
+
+project ||..|{ scope
+scope ||..|{ item
+
+scope ||..|| checkpoint
+checkpoint ||..|{ checkpoint_batch
+
+database ||..|{ mapping
+host ||..|{ database
+scope ||..|{ mapping
+
+item ||..|{ mapped_item
+mapping ||..|{ mapped_item
+
+@enduml
