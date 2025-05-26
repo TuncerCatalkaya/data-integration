@@ -9,7 +9,7 @@ participant backend
 participant import
 participant checkpoint
 participant item
-database datenbank
+database "data-integration" as datenbank
 
 Biologieexperte -> frontend: Importiere CSV-Datei
 

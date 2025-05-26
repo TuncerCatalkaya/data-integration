@@ -1,0 +1,38 @@
+@startuml
+start
+
+:Parameter werden übergeben:
+1. referencedatabase: Kurzreferenz und externe ID
+2. referencepublisherdatabase: Kurzreferenz und externe ID (kann leer sein);
+
+    note right
+      Publisher kann leer sein,
+      falls referencedatabase
+      gleichzeitig der publisher ist
+    end note
+
+group Duplikatserkennung referencedatabase
+    if (Ist die externe ID der angegebenen Kurzreferenz bereits vorhanden?) is (ja) then
+        ->Duplikat erkannt;
+        stop
+    else (nein)
+    endif
+end group
+
+group Duplikatserkennung referencepublisherdatabase
+    if (Gibt es einen Publisher?) is (ja) then
+    else (nein)
+        ->Kein Duplikat erkannt;
+        stop
+    endif
+
+    if (Ist die externe ID der angegebenen Kurzreferenz bereits vorhanden?) is (ja) then
+        ->Duplikat erkannt;
+        stop
+    else (nein)
+    endif
+end group
+
+->Kein Duplikat erkannt;
+stop
+@enduml

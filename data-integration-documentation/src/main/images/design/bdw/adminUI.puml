@@ -1,0 +1,38 @@
+@startuml
+
+actor Biologieexperte as expert
+
+component "Benutzeroberfläche für Administratoren" as adminUI
+component "BDW Frontend" as bdwFrontend
+
+component "BDW Backend" as bdwBackend
+interface REST
+interface "REST Funddaten" as funddatenREST
+REST - bdwBackend
+bdwBackend - funddatenREST
+
+component Datenintegrationssoftware
+interface "    Frontend als\nJavaScript-Datei" as frontend
+frontend -- Datenintegrationssoftware
+
+component "Anderer Service" as otherService
+interface "Frontend-Schnittstelle\nTechnologie nach Wahl" as otherFrontend
+otherFrontend -- otherService
+
+database "data-integration" as dataIntegrationDb
+database "Atlas Datenbanken" as bdwDb
+
+adminUI --> frontend: inkludiert/zeigt an
+adminUI --> otherFrontend: zeigt an
+
+Datenintegrationssoftware --> funddatenREST: Import von\nBiodiversitätsfunddaten
+
+bdwFrontend --> REST: Kommunikation
+
+expert --> adminUI: interagiert
+expert --> bdwFrontend: interagiert
+
+Datenintegrationssoftware -> dataIntegrationDb: lesen/schreiben
+bdwBackend --> bdwDb: lesen/schreiben
+
+@enduml

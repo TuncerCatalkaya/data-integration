@@ -1,0 +1,33 @@
+@startuml
+
+component "Datenintegrationssoftware" {
+
+    component API as api {
+        portout "                                  Controller-API" as controllerAPI
+        portout "                               Integration-API" as integrationAPI
+        portout "Header-API                         " as headerAPI
+        portout "Gemeinsame                                              \nModelldefinitionen                                         " as sharedModel
+    }
+
+}
+
+node "Zielapplikation" as targetApp {
+
+    component "REST Controller" as restController {
+        component "Integration-Implementation" as integrationImplementation
+        component "Header-Implementation" as headerImplementation
+    }
+
+    database "db" as db
+
+}
+
+controllerAPI <-- restController: implementiert
+headerAPI <-- headerImplementation: implementiert
+integrationAPI <-- integrationImplementation: implementiert
+
+targetApp --> sharedModel: benutzt
+
+integrationImplementation --> db
+
+@enduml

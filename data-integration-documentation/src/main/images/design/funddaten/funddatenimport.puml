@@ -1,0 +1,33 @@
+@startuml
+start
+
+:Liste an Biodiversitätsfunddaten zur Importierung über REST-Schnittstelle erhalten;
+
+while (Hat Liste an Biodiversitätsfunddaten noch ein weiteres Element?) is (ja)
+    if (Sind alle Zielfelder im aktuellen Element vorhanden?) is (ja) then
+        :Attribute zur Duplikatserkennung auslesen/umwandeln;
+        if (Fehler generiert für Attribute zur Duplikatserkennung?) is (ja) then
+        else (nein)
+            if (Handelt es sich beim aktuellen Element um ein Duplikat?) is (ja) then
+
+            else (nein)
+                :Übrige Attribute auslesen/umwandeln;
+                if (Fehler generiert für die übrigen Attributen?) is (ja) then
+                else (nein)
+                    :Zuordnung der Attribute zu den entsprechenden
+                    BDW-Entitäten für den Funddatenimport;
+                    :Persistieren der BDW-Entitäten für den Funddatenimport;
+                endif
+            endif
+        endif
+    else (nein)
+        :Generiere Fehlermeldung
+        mit Liste fehlender Zielfelder;
+    endif
+    :Ergebnisse (generierte Fehlermeldungen) des aktuellen
+    Elements in einer Liste der Funddatenimportergebnisse hinzufügen;
+endwhile (nein)
+:Funddatenimportergebnisse sammeln und als Antwort der REST-Schnittstelle zurückgeben;
+->Funddatenimportergebnisse;
+stop
+@enduml

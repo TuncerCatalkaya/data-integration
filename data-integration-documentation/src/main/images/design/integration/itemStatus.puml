@@ -1,11 +1,11 @@
 @startuml
 hide empty description
 
-[*] --> MAPPED
+[*] -> MAPPED
 MAPPED -> INTEGRATED: Integration\nerfolgreich
 MAPPED -> FAILED: Integration\nfehlgeschlagen
 FAILED -> FAILED: Integration\nfehlgeschlagen
 FAILED --> INTEGRATED
-INTEGRATED --> [*]
+INTEGRATED -> [*]
 
 @enduml

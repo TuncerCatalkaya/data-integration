@@ -34,7 +34,7 @@ component "Datenintegrationssoftware" {
     interface "API-Definitionen" as apiInterface
     api -- apiInterface
 
-    database "Datenbank" as datenbank
+    database "data-integration" as datenbank
 }
 
 gbifExportPort --> csv
@@ -63,7 +63,7 @@ node "Biodiversity Warehouse (BDW)" {
 
     component "BDW Frontend" as frontend
 
-    database "Datenbank" as bdwDatenbank
+    database "bdw" as bdwDatenbank
 
 }
 
