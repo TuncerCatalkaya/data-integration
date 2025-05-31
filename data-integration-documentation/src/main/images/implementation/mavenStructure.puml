@@ -1,0 +1,25 @@
+@startuml
+
+component "data-integration-parent" <<Maven Modul>> {
+
+    component "data-integration-api" as api <<Maven Modul>>
+    component "data-integration-application" as application <<Maven Modul>>
+    component "data-integration-model" as model <<Maven Modul>>
+    component "data-integration-service" as service <<Maven Modul>>
+    component "data-integration-ui" as ui <<Maven Modul>>
+
+}
+
+model <-- api
+service -> model
+
+application --> model
+application --> service
+application --> ui
+
+note bottom of api
+Wird von Zielapplikation genutzt.
+Im Szenerio der Masterarbeit = BDW
+end note
+
+@enduml

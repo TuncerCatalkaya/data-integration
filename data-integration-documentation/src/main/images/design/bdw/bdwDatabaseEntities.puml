@@ -182,7 +182,7 @@ desc_species }o.|| img_image: imageid
 'dist_recordquality_language }|..|| dist_recordquality: recordqualityid
 dist_recordquality }|..|| dist_recordquality_language: recordqualityid
 'desc_language ||.o{  dist_recordquality_language: languageid
-dist_recordquality_language ||..o{  desc_language: languageid
+dist_recordquality_language }o..||  desc_language: languageid
 
 dist_record_image }|..|| dist_record: recordid
 img_image ||..|{ dist_record_image: imageid

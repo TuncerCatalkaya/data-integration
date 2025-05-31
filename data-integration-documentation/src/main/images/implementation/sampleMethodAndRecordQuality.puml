@@ -1,0 +1,44 @@
+@startuml
+
+entity dist_recordquality {
+    * id : integer <<generated>>
+    --
+    * recordquality : character varying(255)
+}
+
+entity dist_recordquality_language {
+    * id : integer <<generated>>
+    --
+    * recordqualityid : integer <<FK>>
+    languageid : integer <<FK>>
+    * recordquality_name : character varying(255)
+}
+
+entity dist_samplemethod {
+    * id : integer <<generated>>
+    --
+    * sample_method_name : character varying(100)
+}
+
+entity dist_samplemethod_language {
+    * id : integer <<generated>>
+    --
+    * samplemethodid : integer <<FK>>
+    languageid : integer <<FK>>
+    * samplemethod_name : character varying(255)
+}
+
+entity desc_language {
+    * id : integer <<generated>>
+    --
+    language : character varying(50)
+    code : character varying(11)
+}
+
+dist_recordquality }|..|| dist_recordquality_language: recordqualityid
+dist_samplemethod ||..|{ dist_samplemethod_language: samplemethodid
+
+dist_recordquality_language }o..||  desc_language: languageid
+dist_samplemethod_language }o..||  desc_language: languageid
+
+@enduml

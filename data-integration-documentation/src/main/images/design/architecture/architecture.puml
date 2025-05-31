@@ -65,9 +65,18 @@ node "Biodiversity Warehouse (BDW)" {
 
     database "bdw" as bdwDatenbank
 
+    component "BDW MinIO Service" as bdwMinioService
+    interface "REST" as minioInterface
+    minioInterface -- bdwMinioService
+
+    storage "MinIO (S3-Objektspeicher)" as s3Bdw
+
 }
 
-backend --> bdwDatenbank: schreiben/lesen
+backend --> minioInterface
+s3Bdw <- bdwMinioService: schreiben/lesen
+
+backend -> bdwDatenbank: schreiben/lesen
 apiInterface <-- backend: implementiert/benutzt
 
 integration --> restDatenintegration: import der Funddaten\n(abgebildeten Daten)

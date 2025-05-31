@@ -2,7 +2,7 @@
 
 autonumber
 
-actor Datenintegrationssoftware
+actor Datenintegrationssoftware <<System>>
 
 participant "BDW Backend" as backend
 participant "Funddatenimport" as import
@@ -27,62 +27,5 @@ import -> import: Funddatenimportergebnisse sammeln
 
 import --> backend: Funddatenimportergebnisse
 backend --> Datenintegrationssoftware: Funddatenimportergebnisse
-
-
-'actor Biologieexperte
-'
-'participant frontend
-'participant backend
-'participant import
-'participant checkpoint
-'participant item
-'database datenbank
-'
-'Biologieexperte -> frontend: Importiere CSV-Datei
-'
-'activate frontend
-'frontend -> backend: REST /import
-'
-'activate backend
-'backend -> import: Starte Import-Prozess
-'
-'activate import
-'
-'import -> datenbank: Batches und Checkpoints\npersistieren
-'
-'alt Import noch am Laufen
-'
-'    Biologieexperte -> frontend: Einsehen des\nmomentanen\nImport-Status
-'    frontend -> backend: REST /status
-'    backend -> checkpoint: Status abfragen
-'
-'    activate checkpoint
-'    checkpoint -> datenbank: Checkpoint\nauslesen
-'
-'    datenbank --> checkpoint: Checkpoint\nDaten
-'    checkpoint --> backend: Checkpoint Daten
-'    deactivate checkpoint
-'
-'    backend --> frontend: Checkpoint Daten
-'    frontend --> Biologieexperte: Import-Status
-'
-'else Import abgeschlossen
-'
-'    deactivate import
-'    Biologieexperte -> frontend: Einsehen der\nimportierten Daten
-'    frontend -> backend: REST /items
-'    backend -> item: Importierte Items abfragen zum Import
-'
-'    activate item
-'    item -> datenbank: Items\nauslesen
-'
-'    datenbank --> item: Importierte\nItems
-'    item --> backend: Importierte Items
-'    deactivate item
-'
-'    backend --> frontend: Importierte Items
-'    frontend --> Biologieexperte: Importierte Daten
-'
-'end
 
 @enduml

@@ -1,0 +1,85 @@
+@startuml
+
+package "org.dataintegration" as a {
+
+    package usecase {
+        class ImportDataUsecase {
+            +importFromFile(bytes: byte[], projectId: UUID, scopeId: UUID, delimiter: char, createdBy: String): void
+            +importFromS3(scopeId: UUID, bucket: String, key: String, createdBy: String): void
+        }
+
+        note bottom of ImportDataUsecase
+        @Async bei beiden Methoden
+        end note
+    }
+
+    package service {
+        interface ImportDataService {
+            +importData(csvReaderCallable: Callable<CSVReader>, projectId: UUID, scopeId: UUID, lineCount: long): boolean
+        }
+
+        package importdata {
+            class AsyncBatchService <<package-private>> {
+
+            }
+
+            class AsyncRetryBatchExceptionService <<package-private>> {
+
+            }
+
+            class AsyncRetryBatchService <<package-private>> {
+
+            }
+
+            class BatchProcessingService <<package-private>> {
+
+            }
+
+            class BatchService <<package-private>> {
+
+            }
+
+            class BatchWaitingService <<package-private>> {
+
+            }
+
+            class HandleAsyncBatchService <<package-private>> {
+
+            }
+
+            class HandleBatchService <<package-private>> {
+
+            }
+
+            class ImportDataServiceImpl <<package-private>> {
+
+            }
+
+            class ItemCreationService <<package-private>> {
+
+            }
+        }
+    }
+
+}
+
+ImportDataUsecase ---> ImportDataService
+ImportDataService <|-- ImportDataServiceImpl
+
+ImportDataServiceImpl --> BatchProcessingService
+
+BatchProcessingService --> HandleBatchService
+BatchProcessingService --> BatchService
+BatchProcessingService --> ItemCreationService
+BatchProcessingService --> BatchWaitingService
+
+HandleBatchService --> HandleAsyncBatchService
+
+HandleAsyncBatchService --> BatchWaitingService
+HandleAsyncBatchService --> AsyncRetryBatchService
+
+AsyncRetryBatchService -> AsyncBatchService
+AsyncRetryBatchService --> BatchWaitingService
+AsyncRetryBatchService --> AsyncRetryBatchExceptionService
+
+@enduml

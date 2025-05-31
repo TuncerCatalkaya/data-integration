@@ -1,0 +1,120 @@
+ @startuml
+
+package "org.dataintegration.api" as dataIntegrationAPI {
+    abstract class DataIntegrationControllerAPI {
+
+    }
+
+    interface DataIntegrationAPI {
+
+    }
+
+    interface DataIntegrationHeaderAPI {
+
+    }
+}
+
+DataIntegrationHeaderAPI  <-- "0..1" DataIntegrationControllerAPI: dataIntegrationHeaderAPI
+DataIntegrationAPI  <-- "0..1" DataIntegrationControllerAPI: dataIntegrationAPI
+
+package "de.hsb.bdw.services" as bdwServices {
+
+    package record {
+        package rest {
+            class ImportRecordRestController
+        }
+
+        package constants {
+            enum ImportRecordFields
+            class ImportRecordTranslationKeys
+        }
+
+        package "usecase.importrecord" as importRecordUsecase {
+            rectangle " " as importRecords {
+                class GetImportRecordData
+                class ImportRecord
+                class ValidateImportRecord
+            }
+
+            class GetImportRecordHeaders
+        }
+
+        package service {
+            class ImportRecordService
+        }
+    }
+
+     package location {
+        package usecase {
+            class TransformCRS
+        }
+    }
+
+    package portal {
+        package usecase {
+            class CreatePortal
+        }
+
+        package service {
+            class PortalService
+        }
+
+        package repository {
+            interface PortalRepository
+        }
+    }
+
+    package "common.translation" as commonTranslation {
+        package model {
+            class LocaleHolder
+        }
+
+        class Translate
+    }
+
+}
+
+package resources {
+    artifact "messages.properties" as messagesProperties {
+    }
+}
+
+DataIntegrationAPI <|-- ImportRecord
+DataIntegrationHeaderAPI <|-- GetImportRecordHeaders
+
+DataIntegrationControllerAPI <|-- ImportRecordRestController
+
+ImportRecordRestController --> GetImportRecordHeaders
+
+ImportRecordRestController --> ImportRecord
+ImportRecord -> GetImportRecordData
+ImportRecord --> ValidateImportRecord
+ImportRecord --> ImportRecordService
+
+GetImportRecordData ---> ImportRecordService
+
+importRecords ---> ImportRecordFields
+GetImportRecordHeaders ---> ImportRecordFields
+
+Translate -> LocaleHolder
+
+ImportRecordService ---> Translate
+importRecords -> Translate
+
+ImportRecordService --> ImportRecordTranslationKeys
+importRecords -> ImportRecordTranslationKeys
+
+GetImportRecordData -> TransformCRS
+
+ImportRecord -> CreatePortal
+CreatePortal --> PortalService
+PortalService --> PortalRepository
+
+location -[hidden]-> portal
+
+ImportRecord -> LocaleHolder
+
+Translate --> messagesProperties
+ImportRecordFields --> messagesProperties: tooltips
+
+@enduml

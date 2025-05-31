@@ -1,0 +1,42 @@
+@startuml
+
+package "Controller-Schicht" {
+    class Controller
+}
+
+package "Usecase-Schicht" {
+    class Usecase
+}
+
+package "Service-Schicht" {
+    class Service
+}
+
+package "Repository-Schicht" {
+    class Repository
+}
+
+package "Entity-Modell" {
+    class EntityModel
+}
+
+package "Modell" {
+    class Model
+}
+
+Controller -> Usecase
+Usecase -> Service
+Service -> Repository
+
+Usecase -> Usecase
+Service -> Service
+Usecase -> Repository
+
+Usecase --> EntityModel
+Service --> EntityModel
+Repository --> EntityModel
+
+Controller --> Model
+Usecase --> Model
+
+@enduml
