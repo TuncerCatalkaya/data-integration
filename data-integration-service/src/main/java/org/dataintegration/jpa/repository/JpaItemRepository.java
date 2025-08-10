@@ -15,7 +15,7 @@ public interface JpaItemRepository extends JpaRepository<ItemEntity, UUID> {
             SELECT * FROM item i
             WHERE i.scope_id = :scopeId
             """, nativeQuery = true)
-    Page<ItemEntity> findAllByScopeId(UUID scopeId, Pageable pageable);
+    Page<ItemEntity> findAllByScopeId(@Param("scopeId") UUID scopeId, Pageable pageable);
 
     @Query(value = """
         SELECT * FROM item i
