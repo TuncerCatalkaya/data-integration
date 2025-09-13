@@ -91,6 +91,7 @@ class ImportDataServiceImpl implements ImportDataService {
             log(Level.ERROR, scopeKey, scopeId, "Error occurred: " + Arrays.toString(ex.getStackTrace()));
             return false;
         } finally {
+            System.gc();
             dataIntegrationCache.getProcessingScopes().remove(scopeId);
             dataIntegrationCache.getInterruptingScopes().remove(scopeId);
         }
